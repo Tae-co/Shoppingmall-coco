@@ -19,12 +19,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:3000")
 public class ReviewController {
 
@@ -35,9 +37,17 @@ public class ReviewController {
     // 리뷰 작성 페이지 데이터 저장
     @PostMapping("/reviews")
     public Long insertReview(@RequestPart("reviewDTO") ReviewDTO reviewDTO,
-        @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+        @RequestPart(value = "files", required = false) List<MultipartFile> files,
+        Authentication authentication) {
+        
+        if (authentication == null || authentication.getName() == null) {
+            throw new RuntimeException("인증이 필요합니다.");
+        }
+        
+        Member member = memberRepository.findByMemId(authentication.getName())
+            .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
 
-        Long reviewNo = reviewService.insertReview(reviewDTO, files);
+        Long reviewNo = reviewService.insertReview(reviewDTO, files, member.getMemNo());
         return reviewNo;
     }
 
@@ -70,7 +80,7 @@ public class ReviewController {
     }
 
     // 태그 목록 조회
-    @GetMapping("api/tags")
+    @GetMapping("/tags")
     public List<TagDTO> getTags() {
         List<Tag> tagList = tagService.getTagList();
         List<TagDTO> tagDTOList = tagList.stream().map(TagDTO::toDTO).collect(Collectors.toList());
