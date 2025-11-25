@@ -59,15 +59,23 @@ const ComateContent = ({
     switch(activeTab) {
         case 'review':
             title = "누적 리뷰";
-            content = reviewList.map((item, index) => <ComateReviewCard key={`review-${item.id}-${index}`} {...item} />);
+            content = reviewList.map((item, index) => <ComateReviewCard 
+                                                        key={`review-${item.id}-${index}`}
+                                                        {...item} />);
             break;
         case 'like':
             title = "좋아요";
             content = likeList.map((item, index) => <ComateReviewCard 
-                                                    key={`like-${item.id}-${index}`} 
-                                                    {...item} 
-                                                    authorNo={item.authorNo}
-                                                    authorNickname={item.authorNickname} />);
+                                                        key={`like-${item.id}-${index}`} 
+                                                        {...item} 
+                                                        authorNo={item.authorNo}
+                                                        authorNickname={item.authorNickname}
+                                                        onToggleLike={async (reviewNo, likedByCurrentUser) => {
+                                                            if (likedByCurrentUser) {
+                                                                setLikeList(prev => prev.filter(r => r.reviewNo !== reviewNo));
+                                                            } 
+                                                        }}
+                                                        />);
             break;
         case 'follower':
             title = "팔로워";

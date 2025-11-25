@@ -68,5 +68,14 @@ export const unfollow = async (targetMemNo) => {
         method: "DELETE"
     });
     if (!response.ok) throw new Error('언팔로우 실패');
-    return response.text(); // "언팔로우 완료" 문자열 반환
+    return response.text();
+};
+
+
+/* 리뷰 좋아요 토글 */
+export const toggleLike = async (reviewNo) => {
+    const response = await fetchWithAuth(`/reviews/${reviewNo}/like`, {method: 'POST'});
+    if (!response.ok) throw new Error('좋아요 처리 실패');
+    const result = await response.json();
+    return result === 1;
 };

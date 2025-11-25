@@ -18,5 +18,7 @@ public class MyReviewDTO {
     private String content;
     private LocalDateTime createdAt;
     private List<String> tags;
+    
+    private boolean likedByCurrentUser;
     private int likeCount;
 }

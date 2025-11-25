@@ -120,19 +120,25 @@ public class ComateController {
     }
     
     // 사용자가 작성한 리뷰 목록
-    @GetMapping("/review/{memNo}")
+    @GetMapping("/review/{targetMemNo}")
     public List<MyReviewDTO> getMyReviews(
-    		@PathVariable("memNo") Long memNo,
-    		@RequestParam(value="sort", defaultValue="latest") String sort) {
-        return reviewService.getMyReviews(memNo, sort);
+    		@PathVariable("targetMemNo") Long targetMemNo,
+    		@RequestParam(value="sort", defaultValue="latest") String sort,
+    		HttpServletRequest request) {
+  
+    	Long currentMemNo = getCurrentMemNo(request);
+        return reviewService.getMyReviews(targetMemNo, currentMemNo, sort);
     }
     
     // 사용자가 좋아요 누른 리뷰 목록
     @GetMapping("/like/{memNo}")
     public List<LikedReviewDTO> getLikedReviews(
-    		@PathVariable("memNo") Long memNo,
-    		@RequestParam(value = "sort", defaultValue = "latest") String sort) {
-        return reviewService.getLikedReviews(memNo, sort);
+    		@PathVariable("memNo") Long targetMemNo,
+    		@RequestParam(value = "sort", defaultValue = "latest") String sort,
+    		HttpServletRequest request) {
+    	
+    	Long currentMemNo = getCurrentMemNo(request);
+        return reviewService.getLikedReviews(targetMemNo, currentMemNo, sort);
     }
 
     // 메인용 - 전체 회원 목록 조회

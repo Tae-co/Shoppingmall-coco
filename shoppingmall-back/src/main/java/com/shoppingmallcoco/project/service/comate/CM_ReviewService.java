@@ -20,23 +20,24 @@ public class CM_ReviewService {
     private final ReviewRepository reviewRepository;
     private final LikeRepository likeRepository;
 
-    /* 사용자가 작성한 리뷰 목록
+    /* 
+     * 사용자가 작성한 리뷰 목록
      * sort option: "latest" "highRating" "lowRating" 
      */
-    public List<MyReviewDTO> getMyReviews(Long memNo, String sort) {
+    public List<MyReviewDTO> getMyReviews(Long targetMemNo, Long currentMemNo, String sort) {
     	
     	List<Review> reviews;
     	
     	switch(sort) {
     	case "highRating":
-    		reviews = reviewRepository.findByOrderItem_Order_Member_MemNoOrderByRatingDesc(memNo);
+    		reviews = reviewRepository.findByOrderItem_Order_Member_MemNoOrderByRatingDesc(targetMemNo);
     		break;
     	case "lowRating":
-    		reviews = reviewRepository.findByOrderItem_Order_Member_MemNoOrderByRatingAsc(memNo);
+    		reviews = reviewRepository.findByOrderItem_Order_Member_MemNoOrderByRatingAsc(targetMemNo);
     		break;
     	case "latest":
     	default:
-    		reviews = reviews = reviewRepository.findByOrderItem_Order_Member_MemNoOrderByCreatedAtDesc(memNo);
+    		reviews = reviewRepository.findByOrderItem_Order_Member_MemNoOrderByCreatedAtDesc(targetMemNo);
     	}
     	
     	return reviews.stream().map(review -> {
@@ -49,6 +50,8 @@ public class CM_ReviewService {
         		.toList();
         		
         	int likeCount = likeRepository.countByReview_ReviewNo(review.getReviewNo());
+        	boolean likedByCurrentUser = currentMemNo != null &&
+        		likeRepository.existsByMember_MemNoAndReview_ReviewNo(currentMemNo, review.getReviewNo());
         	
         	return MyReviewDTO.builder()
         		.reviewNo(review.getReviewNo())
@@ -60,32 +63,33 @@ public class CM_ReviewService {
                 .tags(tags)
                 .content(review.getContent())
                 .likeCount(likeCount)
+                .likedByCurrentUser(likedByCurrentUser)
                 .build();
         })
         .toList();
     }
 
     /* 사용자가 좋아요 누른 리뷰 목록 */
-    public List<LikedReviewDTO> getLikedReviews(Long memNo, String sort) {
+    public List<LikedReviewDTO> getLikedReviews(Long targetMemNo, Long currentMemNo, String sort) {
     	
     	List<Review> reviews;
     	
     	switch(sort) {
     	case "highRating":
-    		reviews = likeRepository.findByMember_MemNo(memNo).stream()
+    		reviews = likeRepository.findByMember_MemNo(targetMemNo).stream()
     					.map(ReviewLike::getReview)
     					.sorted((a, b) -> Integer.compare(b.getRating(), a.getRating()))
     					.toList();
     		break;
     	case "lowRating":
-    		reviews = likeRepository.findByMember_MemNo(memNo).stream()
+    		reviews = likeRepository.findByMember_MemNo(targetMemNo).stream()
 						.map(ReviewLike::getReview)
 						.sorted((a, b) -> Integer.compare(a.getRating(), b.getRating()))
 						.toList();
 			break;
     	case "latest":
     	default:
-    		reviews = likeRepository.findByMember_MemNo(memNo).stream()
+    		reviews = likeRepository.findByMember_MemNo(targetMemNo).stream()
 						.map(ReviewLike::getReview)
 						.sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
 						.toList();
@@ -103,7 +107,9 @@ public class CM_ReviewService {
         			
         			int likeCount = likeRepository.countByReview_ReviewNo(review.getReviewNo());
         			var reviewMember = orderItem.getOrder().getMember();
-        			
+        			boolean likedByCurrentUser = currentMemNo != null &&
+        	        		likeRepository.existsByMember_MemNoAndReview_ReviewNo(currentMemNo, review.getReviewNo());
+        	        	
         			return LikedReviewDTO.builder()
         					.reviewNo(review.getReviewNo())
                             .productNo(product.getPrdNo())
@@ -114,6 +120,7 @@ public class CM_ReviewService {
                             .tags(tags)
                             .content(review.getContent())
                             .likeCount(likeCount)
+                            .likedByCurrentUser(likedByCurrentUser)
                             .authorNo(reviewMember.getMemNo())
                             .authorNickname(reviewMember.getMemNickname())
                             .build();
