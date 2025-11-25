@@ -121,14 +121,18 @@ public class ComateController {
     
     // 사용자가 작성한 리뷰 목록
     @GetMapping("/review/{memNo}")
-    public List<MyReviewDTO> getMyReviews(@PathVariable("memNo") Long memNo) {
-        return reviewService.getMyReviews(memNo);
+    public List<MyReviewDTO> getMyReviews(
+    		@PathVariable("memNo") Long memNo,
+    		@RequestParam(value="sort", defaultValue="latest") String sort) {
+        return reviewService.getMyReviews(memNo, sort);
     }
     
     // 사용자가 좋아요 누른 리뷰 목록
     @GetMapping("/like/{memNo}")
-    public List<LikedReviewDTO> getLikedReviews(@PathVariable("memNo") Long memNo) {
-        return reviewService.getLikedReviews(memNo);
+    public List<LikedReviewDTO> getLikedReviews(
+    		@PathVariable("memNo") Long memNo,
+    		@RequestParam(value = "sort", defaultValue = "latest") String sort) {
+        return reviewService.getLikedReviews(memNo, sort);
     }
 
     // 메인용 - 전체 회원 목록 조회

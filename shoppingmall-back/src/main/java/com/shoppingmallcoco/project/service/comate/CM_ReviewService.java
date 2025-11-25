@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.shoppingmallcoco.project.dto.comate.LikedReviewDTO;
 import com.shoppingmallcoco.project.dto.comate.MyReviewDTO;
+import com.shoppingmallcoco.project.entity.review.Review;
+import com.shoppingmallcoco.project.entity.review.ReviewLike;
 import com.shoppingmallcoco.project.repository.review.LikeRepository;
 import com.shoppingmallcoco.project.repository.review.ReviewRepository;
 
@@ -18,11 +20,26 @@ public class CM_ReviewService {
     private final ReviewRepository reviewRepository;
     private final LikeRepository likeRepository;
 
-    /* 사용자가 작성한 리뷰 목록 */
-    public List<MyReviewDTO> getMyReviews(Long memNo) {
-    	return reviewRepository.findByOrderItem_Order_Member_MemNoOrderByCreatedAtDesc(memNo)
-        .stream()
-        .map(review -> {
+    /* 사용자가 작성한 리뷰 목록
+     * sort option: "latest" "highRating" "lowRating" 
+     */
+    public List<MyReviewDTO> getMyReviews(Long memNo, String sort) {
+    	
+    	List<Review> reviews;
+    	
+    	switch(sort) {
+    	case "highRating":
+    		reviews = reviewRepository.findByOrderItem_Order_Member_MemNoOrderByRatingDesc(memNo);
+    		break;
+    	case "lowRating":
+    		reviews = reviewRepository.findByOrderItem_Order_Member_MemNoOrderByRatingAsc(memNo);
+    		break;
+    	case "latest":
+    	default:
+    		reviews = reviews = reviewRepository.findByOrderItem_Order_Member_MemNoOrderByCreatedAtDesc(memNo);
+    	}
+    	
+    	return reviews.stream().map(review -> {
         	var orderItem = review.getOrderItem();
         	var product = orderItem.getProduct();
         	var option = orderItem.getProductOption();
@@ -49,17 +66,38 @@ public class CM_ReviewService {
     }
 
     /* 사용자가 좋아요 누른 리뷰 목록 */
-    public List<LikedReviewDTO> getLikedReviews(Long memNo) {
-        return likeRepository.findByMember_MemNo(memNo)
-        		.stream()
-        		.map(like -> {
-        			var review = like.getReview();
+    public List<LikedReviewDTO> getLikedReviews(Long memNo, String sort) {
+    	
+    	List<Review> reviews;
+    	
+    	switch(sort) {
+    	case "highRating":
+    		reviews = likeRepository.findByMember_MemNo(memNo).stream()
+    					.map(ReviewLike::getReview)
+    					.sorted((a, b) -> Integer.compare(b.getRating(), a.getRating()))
+    					.toList();
+    		break;
+    	case "lowRating":
+    		reviews = likeRepository.findByMember_MemNo(memNo).stream()
+						.map(ReviewLike::getReview)
+						.sorted((a, b) -> Integer.compare(a.getRating(), b.getRating()))
+						.toList();
+			break;
+    	case "latest":
+    	default:
+    		reviews = likeRepository.findByMember_MemNo(memNo).stream()
+						.map(ReviewLike::getReview)
+						.sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
+						.toList();
+			break;
+    	}
+    	
+        return reviews.stream().map(review -> {
         			var orderItem = review.getOrderItem();
         			var product = orderItem.getProduct();
         			var option = orderItem.getProductOption();
         			
-        			List<String> tags = review.getReviewTagMaps()
-        					.stream()
+        			List<String> tags = review.getReviewTagMaps().stream()
         					.map(map -> map.getTag().getTagName())
         					.toList();
         			

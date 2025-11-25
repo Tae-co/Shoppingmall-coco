@@ -14,7 +14,7 @@ public class MyReviewDTO {
     private String productName;
     private String productOption;
     
-    private int rating;
+    private Integer rating;
     private String content;
     private LocalDateTime createdAt;
     private List<String> tags;

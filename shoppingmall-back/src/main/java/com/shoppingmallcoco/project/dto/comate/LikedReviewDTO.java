@@ -18,7 +18,7 @@ public class LikedReviewDTO {
     private Long authorNo;
     private String authorNickname;
     
-    private int rating;
+    private Integer rating;
     private String content;
     private LocalDateTime createdAt;
     private List<String> tags;

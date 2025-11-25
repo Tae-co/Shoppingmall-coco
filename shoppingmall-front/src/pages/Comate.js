@@ -171,9 +171,13 @@ const Comate = () => {
                 followingList={followingList}
                 loginUserNo={loginUser?.memNo}
 
+                setReviewList={setReviewList}
+                setLikeList={setLikeList}
                 setFollowerList={setFollowerList}
                 setFollowingList={setFollowingList}
 
+                targetMemNo={targetMemNo}
+                
                 onListFollowChange={(type, newState) => {
                     // 리스트에서 팔로우/언팔로우 클릭-> Full Profile count 반영
                     // targetMember !== loginMember -> count 상태 변경 금지
@@ -182,7 +186,7 @@ const Comate = () => {
                     setMember(prev => {
                         if (!prev) return prev;
                         const updated = {...prev};
-                        
+
                         if (type === 'follower') {
                             updated.followerCount += newState ? 1 : -1;
                         } else if (type === 'following') {

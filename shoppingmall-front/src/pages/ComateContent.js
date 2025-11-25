@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import ComateReviewCard from './ComateReviewCard';
 import ComateFollowListCard from './ComateFollowListCard';
+import { getReviewList, getLikedList } from '../utils/comate_api';
 
 const ComateContent = ({ 
     activeTab,
@@ -10,8 +11,11 @@ const ComateContent = ({
     followerList,
     followingList,
     loginUserNo,
+    setReviewList,
+    setLikeList,
     setFollowerList,
-    setFollowingList
+    setFollowingList,
+    targetMemNo
 }) => {
 
     let title = null;
@@ -33,6 +37,24 @@ const ComateContent = ({
         });
     };
 
+    const handleSortChange = async (e) => {
+        const value = e.target.value;
+        setSortOption(value);
+
+        try {
+            if (activeTab === 'review') {
+                const sortedList = await getReviewList(targetMemNo, value);
+                setReviewList(sortedList);
+            } else if (activeTab === 'like') {
+                const sortedList = await getLikedList(targetMemNo, value);
+                setLikeList(sortedList);
+            }
+        } catch (error) {
+            console.error(error);
+            alert('리스트를 불러오는 중 오류가 발생했습니다.');
+        }
+    };
+
     switch(activeTab) {
         case 'review':
             title = "누적 리뷰";
@@ -41,7 +63,8 @@ const ComateContent = ({
         case 'like':
             title = "좋아요";
             content = likeList.map((item, index) => <ComateReviewCard 
-                                                    key={`like-${item.id}-${index}`} {...item} 
+                                                    key={`like-${item.id}-${index}`} 
+                                                    {...item} 
                                                     authorNo={item.authorNo}
                                                     authorNickname={item.authorNickname} />);
             break;
@@ -93,7 +116,7 @@ const ComateContent = ({
                 <select
                     className="sort_selector"
                     value={sortOption}
-                    onChange={(e) => setSortOption(e.target.value)}
+                    onChange={handleSortChange}
                 >
                     <option value="latest">최신순</option>
                     <option value="highRating">별점 높은순</option>
