@@ -63,14 +63,30 @@ public class ReviewController {
     @PutMapping("/reviews/{reviewNo}")
     public void updateReview(@PathVariable("reviewNo") long reviewNo,
         @RequestPart("reviewDTO") ReviewDTO reviewDTO,
-        @RequestPart(value = "files", required = false) List<MultipartFile> files) {
-        reviewService.updateReview(reviewNo, reviewDTO, files);
+        @RequestPart(value = "files", required = false) List<MultipartFile> files,
+        Authentication authentication) {
+        
+        if (authentication == null || authentication.getName() == null) {
+            throw new RuntimeException("인증이 필요합니다.");
+        }
+        
+        Member member = memberRepository.findByMemId(authentication.getName())
+            .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+        
+        reviewService.updateReview(reviewNo, reviewDTO, files, member.getMemNo());
     }
 
     // 리뷰 삭제
     @DeleteMapping("/reviews/{reviewNo}")
-    public void deleteReview(@PathVariable long reviewNo) {
-        reviewService.delete(reviewNo);
+    public void deleteReview(@PathVariable long reviewNo, Authentication authentication) {
+        if (authentication == null || authentication.getName() == null) {
+            throw new RuntimeException("인증이 필요합니다.");
+        }
+        
+        Member member = memberRepository.findByMemId(authentication.getName())
+            .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+        
+        reviewService.delete(reviewNo, member.getMemNo());
     }
 
     // 리뷰 목록 조회

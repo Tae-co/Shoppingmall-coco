@@ -4,6 +4,7 @@ import com.shoppingmallcoco.project.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -51,19 +52,22 @@ public class WebSecurityConfig {
 					"/api/member/find-password/**",
 					"/api/member/reset-password"
 				).permitAll()
-				// 인증 없이 접근 가능한 리뷰 조회 API
-				.requestMatchers(
-					"/api/reviews/*",
-					"/api/products/*/reviews"
-				).permitAll()
-				// 로그인된 사용자만 접근할 수 있는 API
+				// 인증 없이 접근 가능한 리뷰 조회 API (GET만 허용)
+				.requestMatchers(HttpMethod.GET, "/api/reviews/*").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/products/*/reviews").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/tags").permitAll()
+				// 로그인된 사용자만 접근할 수 있는 리뷰 관련 API
+				.requestMatchers(HttpMethod.POST, "/api/reviews").authenticated()
+				.requestMatchers(HttpMethod.PUT, "/api/reviews/*").authenticated()
+				.requestMatchers(HttpMethod.DELETE, "/api/reviews/*").authenticated()
+				.requestMatchers(HttpMethod.POST, "/api/reviews/*/like").authenticated()
+				// 로그인된 사용자만 접근할 수 있는 회원 관련 API
 				.requestMatchers(
 					"/api/member/me", 
 					"/api/member/update", 
 					"/api/member/change-password", 
 					"/api/member/delete",
-					"/api/mypage",
-					"/api/reviews"
+					"/api/mypage"
 				).authenticated()
 				// 관리자만 접근할 수 있는 API
 				.requestMatchers("/api/member/admin/**").authenticated()
