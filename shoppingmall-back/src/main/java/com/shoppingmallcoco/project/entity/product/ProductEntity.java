@@ -70,20 +70,20 @@ public class ProductEntity {
 	}
 
 	// 판매량 (인기순 정렬용)
-//	@Column(name = "SALES_COUNT")
-//	@ColumnDefault("0") // 기본값 0
-//	private long salesCount;
-//
-//	// 판매량 증가 메서드 (주문 시 호출)
-//	public void addSalesCount(int count) {
-//		this.salesCount += count;
-//	}
-//
-//	// 판매량 감소 메서드 (주문 취소 시 호출)
-//	public void removeSalesCount(int count) {
-//		this.salesCount -= count;
-//		if (this.salesCount < 0)
-//			this.salesCount = 0;
-//	}
+	@Column(name = "SALES_COUNT")
+	@ColumnDefault("0") // 기본값 0
+	private long salesCount;
+
+	// 판매량 증가 메서드 (주문 시 호출)
+	public void addSalesCount(int count) {
+		this.salesCount += count;
+	}
+
+	// 판매량 감소 메서드 (주문 취소 시 호출)
+	public void removeSalesCount(int count) {
+		this.salesCount -= count;
+		if (this.salesCount < 0)
+			this.salesCount = 0;
+	}
 
 }

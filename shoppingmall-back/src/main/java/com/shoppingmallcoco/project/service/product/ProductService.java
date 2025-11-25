@@ -58,7 +58,8 @@ public class ProductService {
 			sortObj = Sort.by("prdPrice").descending();
 			break;
 		case "popularity": // 인기순
-			sortObj = Sort.by("salesCount").descending(); 
+			//sortObj = Sort.by("salesCount").descending();
+			sortObj = Sort.by("prdNo").descending();
 			break;
 		default: // 기본값
 			sortObj = Sort.by("prdNo").ascending();
