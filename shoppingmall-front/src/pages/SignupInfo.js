@@ -430,7 +430,7 @@ const SignupInfo = () => {
           </div>
 
           <div className="button-group">
-            <button type="button" className="back-button" onClick={handleBack}>
+            <button type="button" className="cancel-button" onClick={handleBack}>
               취소
             </button>
             <button type="submit" className="submit-button">

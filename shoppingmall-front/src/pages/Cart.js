@@ -12,15 +12,18 @@ function Cart() {
   // 장바구니 목록 불러오기
   useEffect(() => {
     if (!memNo) {
-        alert("로그인이 필요합니다.");
-        return;
+      alert("로그인이 필요합니다.");
+      return;
     }
 
     axios
       .get(`http://localhost:8080/api/coco/members/cart/items/${memNo}`)
       .then((res) => {
         setCartItems(res.data);
-        console.log(" 장바구니 불러오기 성공:", res.data);
+        console.log("장바구니 불러오기 성공:", res.data);
+
+        // 헤더에 장바구니 변경 알림
+        window.dispatchEvent(new Event("cartUpdated"));
       })
       .catch((err) => {
         console.error("장바구니 불러오기 실패:", err);
@@ -36,12 +39,15 @@ function Cart() {
       .then((res) => {
         setCartItems((prev) =>
           prev.map((item) =>
-            item.cartNo === cartNo ? { ...item, cartQty: res.data.cartQty } : item
+            item.cartNo === cartNo
+              ? { ...item, cartQty: res.data.cartQty }
+              : item
           )
         );
       })
       .catch((err) => console.error("수량 변경 실패:", err));
   };
+
   const increaseQuantity = (cartNo, currentQty) => {
     updateQuantity(cartNo, currentQty + 1);
   };
@@ -58,15 +64,25 @@ function Cart() {
       .delete(`http://localhost:8080/api/coco/members/cart/items/${cartNo}`)
       .then(() => {
         setCartItems((prev) => prev.filter((item) => item.cartNo !== cartNo));
+
+        // 삭제 후 헤더 업데이트
+        window.dispatchEvent(new Event("cartUpdated"));
       })
       .catch((err) => console.error("삭제 실패:", err));
   };
 
-  //  전체 비우기
+  // 전체 비우기
   const clearCart = () => {
     axios
-      .delete(`http://localhost:8080/api/coco/members/cart/items/clear/${memNo}`)
-      .then(() => setCartItems([]))
+      .delete(
+        `http://localhost:8080/api/coco/members/cart/items/clear/${memNo}`
+      )
+      .then(() => {
+        setCartItems([]);
+
+        // 전체 비우기 후 헤더 업데이트
+        window.dispatchEvent(new Event("cartUpdated"));
+      })
       .catch((err) => console.error("전체 삭제 실패:", err));
   };
 

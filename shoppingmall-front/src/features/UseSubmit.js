@@ -1,4 +1,5 @@
 import axios from "axios";
+import { storage, STORAGE_KEYS } from "../utils/api";
 
 function useSubmit(
     ptagsList,
@@ -9,13 +10,13 @@ function useSubmit(
     starTotal,
     previewFiles,
     navigate,
-    orderItemNo ,
-    reviewNo    
+    orderItemNo,
+    reviewNo
 
 ) {
     const handleSubmit = async (event) => {
         event.preventDefault();
-        
+
         const formData = new FormData();
         const positiveTags = ptagsList.filter((tag, index) => ptagsClicked[index]);
         const negativeTags = ntagsList.filter((tag, index) => ntagsClicked[index]);
@@ -42,7 +43,7 @@ function useSubmit(
         const allSelectedTags = [...positiveTags, ...negativeTags];
         const tagIds = allSelectedTags.map(tag => tag.tagNo);
 
-        const orderItemNoNum = Number(orderItemNo); 
+        const orderItemNoNum = Number(orderItemNo);
 
         const reviewDto = {
             rating: starTotal,
@@ -54,11 +55,6 @@ function useSubmit(
         formData.append(
             "reviewDTO", new Blob([JSON.stringify(reviewDto)], { type: "application/json" })
         )
-
-        console.log("reviewDto:", reviewDto);
-        console.log("order",orderItemNoNum)
-        console.log("review",reviewNo)
-
         if (previewFiles && previewFiles.length > 0) {
             previewFiles.forEach((pf) => {
                 if (pf.file) {
@@ -69,20 +65,32 @@ function useSubmit(
 
         try {
             if (reviewNo) {
-                await axios.put(`http://localhost:8080/reviews/${reviewNo}`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
+                // 리뷰 수정 (인증 필요)
+                const token = storage.get(STORAGE_KEYS.TOKEN);
+                const headers = { 'Content-Type': 'multipart/form-data' };
+                
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                await axios.put(`http://localhost:8080/api/reviews/${reviewNo}`, formData, { headers });
                 alert("리뷰가 수정되었습니다.");
             } else {
-                await axios.post('http://localhost:8080/reviews', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
+                // 리뷰 작성 (인증 필요)
+                const token = storage.get(STORAGE_KEYS.TOKEN);
+                const headers = { 'Content-Type': 'multipart/form-data' };
+                
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                await axios.post('http://localhost:8080/api/reviews', formData, { headers });
                 alert("리뷰가 등록되었습니다.");
             }
             navigate('/'); // (TODO: 성공 후 상품 상세 페이지로 이동)
         } catch (error) {
             console.error("리뷰 등록/수정 실패:", error);
-            alert("리뷰 처리 중 오류가 발생했습니다.");
+            alert(error.message || "리뷰 처리 중 오류가 발생했습니다.");
         }
 
     };

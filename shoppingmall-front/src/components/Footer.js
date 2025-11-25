@@ -1,8 +1,17 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Logo from '../images/logo.png';
 import '../css/Footer.css';
 
 const Footer = () => {
+    const navigate = useNavigate(); // 훅 선언
+
+    // 카테고리 이동 핸들러
+    const handleCategoryClick = (categoryNo) => {
+        navigate(`/product?categoryNo=${categoryNo}`);
+        window.scrollTo(0, 0);
+    };
+
     return (
         <div>
             <div className="footer">
@@ -16,10 +25,20 @@ const Footer = () => {
                             <div className="menu_box">
                                 <strong className="menu_title">쇼핑</strong>
                                 <ul className="menu_list">
-                                    <li className="menu_item"><div>스킨케어</div></li>
-                                    <li className="menu_item"><div>메이크업</div></li>
-                                    <li className="menu_item"><div>클렌징</div></li>
-                                    <li className="menu_item"><div>마스크팩</div></li>
+                                    <li className="menu_item" onClick={() => handleCategoryClick(1)}>
+                                        <div>스킨케어</div>
+                                    </li>
+                                    <li className="menu_item" onClick={() => handleCategoryClick(2)}>
+                                        <div>메이크업</div>
+                                    </li>
+                                    {/* 홈에 맞춰 클렌징' -> 바디/헤어로 변경 */}
+                                    <li className="menu_item" onClick={() => handleCategoryClick(3)}>
+                                        <div>바디/헤어</div>
+                                    </li>
+                                    {/* 홈에 맞춰 마스크팩 -> 옴므로 변경 */}
+                                    <li className="menu_item" onClick={() => handleCategoryClick(4)}>
+                                        <div>옴므</div>
+                                    </li>
                                 </ul>
                             </div>
                             <div className="menu_box">

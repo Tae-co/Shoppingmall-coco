@@ -40,6 +40,12 @@
 }
 .menu_item {
     color: #777777;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.menu_item:hover {
+    color: #000;
+    font-weight: 500;
 }
 .customer_service {
     display: flex;

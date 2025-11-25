@@ -1,7 +1,5 @@
 package com.shoppingmallcoco.project.dto.review;
 
-import com.shoppingmallcoco.project.entity.auth.Member;
-import com.shoppingmallcoco.project.entity.review.Review;
 import com.shoppingmallcoco.project.entity.review.ReviewLike;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +19,7 @@ public class LikeDTO {
     private Long reviewNo; // 리뷰 번호
 
     public static LikeDTO toDto(ReviewLike entity) {
-        return LikeDTO.builder().likeNo(entity.getLikeNo()).memNo(entity.getMember().getMemNo())
+        return LikeDTO.builder().likeNo(entity.getLikeNo())
             .reviewNo(entity.getReview().getReviewNo())
             .build();
     }

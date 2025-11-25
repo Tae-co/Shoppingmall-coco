@@ -123,6 +123,10 @@ ul {
     width: 300px;
     font-size: 12px;
     border-radius: 25px 0 0 25px;
+    outline: none;
+}
+.search_container input[type="text"]:focus {
+    background-color: #fdfdfd; 
 }
 
 .btn_search {
@@ -173,3 +177,23 @@ ul {
 .li_tab+.li_tab {
         margin-left: 24px;
     }
+.btn_cart {
+  position: relative; /* 뱃지 위치 기준 */
+}
+
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background-color: #ff4b4b;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

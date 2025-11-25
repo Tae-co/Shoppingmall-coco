@@ -153,3 +153,17 @@
 .detail-btn:hover {
   background: #f5f5f5;
 }
+
+.review-btn {
+  background: none;
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.review-btn:hover {
+  background: #f5f5f5;
+}

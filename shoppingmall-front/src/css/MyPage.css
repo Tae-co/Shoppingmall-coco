@@ -240,3 +240,95 @@
 .recent-order-item:hover .arrow {
   transform: translateX(3px);
 }
+
+/* 최근 주문 카드 */
+.recent-order-item {
+  display: flex;
+  align-items: center;
+  padding: 18px;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  background: #fff;
+}
+
+/* 이미지 박스 */
+.order-image-box {
+  width: 80px;
+  height: 80px;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.order-thumbnail {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+/* 내용 영역 */
+.order-content {
+  flex: 1;
+}
+
+.order-date {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 4px;
+}
+
+.order-date span {
+  margin-left: 8px;
+  color: #999;
+}
+
+/* 상품명 줄이기 */
+.order-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #222;
+}
+
+.extra-count {
+  font-size: 14px;
+  color: #666;
+}
+
+/* 가격 */
+.order-price {
+  font-size: 15px;
+  font-weight: 500;
+  color: #111;
+}
+
+/* 오른쪽 배지 영역 */
+.order-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 20px;
+}
+
+.complete {
+  background: white;
+  color: black;
+}
+
+.shipping {
+  background: white;
+  color:  black;
+}
+
+.arrow {
+  margin-top: 6px;
+  font-size: 16px;
+  color: black;
+}

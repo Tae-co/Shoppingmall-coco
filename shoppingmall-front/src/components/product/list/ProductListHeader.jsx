@@ -75,15 +75,6 @@ const ProductListHeader = ({
 }) => {
   return (
     <>
-      <SearchContainer>
-        <SearchInput
-          type="text"
-          placeholder="상품명으로 검색..."
-          value={searchTerm}
-          onChange={onSearchChange}
-        />
-      </SearchContainer>
-
       <TopBar>
         <TopBarControls>
           <FilterButton onClick={onFilterToggle}>

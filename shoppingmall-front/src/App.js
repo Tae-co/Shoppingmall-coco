@@ -39,6 +39,8 @@ import PaymentPage from './pages/PaymentPage/PaymentPage';
 import OrderSuccessPage from './pages/OrderSuccessPage/OrderSuccessPage';
 import OrderFailPage from './pages/OrderFailPage/OrderFailPage';
 import { OrderProvider } from './pages/OrderContext';
+import CreateReviewwPage from "./features/CreateReviewPage.js";
+import CreateUpdatePage from "./features/CreateUpdatePage.js";
 
 function App() {
   const location = useLocation();
@@ -96,8 +98,8 @@ function App() {
           {/* COMATE 관련 - 다른 사용자 계정 */}
           <Route path="/comate/user/:memNo/:tab?" element={<Comate userType="user" />} />
           {/* 리뷰 관련 */}
-          <Route path="/reviews/:orderItemNo" element={<Review />} />
-          <Route path="/update-reviews/:reviewNo" element={<UpdateReview />} />
+          <Route path="/reviews/:orderItemNo" element={<CreateReviewwPage/>} />
+          <Route path="/update-reviews/:reviewNo" element={<CreateUpdatePage/>} />
           {/* 상품 관련 */}
           <Route path="/product" element={<ProductListPage />} />
           <Route path="/products/:productId" element={<ProductDetailPage />} />
@@ -106,8 +108,8 @@ function App() {
       </div>
     </OrderProvider>
     </ThemeProvider>
-  );
-}
+  ); 
+}   
 
 
 export default App;

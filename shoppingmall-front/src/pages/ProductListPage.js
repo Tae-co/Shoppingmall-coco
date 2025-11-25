@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import ProductCard from '../components/product/list/ProductCard';
 import ProductListSkeleton from '../components/product/list/ProductListSkeleton';
 import Pagination from '../components/product/list/Pagination';
 import ProductSidebar from '../components/product/list/ProductSidebar';
 import ProductListHeader from '../components/product/list/ProductListHeader';
+import { fetchWithAuth, getStoredMember, isLoggedIn  } from '../utils/api';
 
 // 스타일 컴포넌트 정의
 const PageContainer = styled.div`
@@ -42,6 +43,7 @@ function ProductListPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const closeButtonRef = useRef(null);
+  const navigate = useNavigate(); // navigate 훅 사용
 
   // URL에서 현재 상태 읽어오기
   const searchTerm = searchParams.get('q') || '';
@@ -56,7 +58,6 @@ function ProductListPage() {
   // 전체 상품 목록은 처음에 한 번만 불러오기
   useEffect(() => {
     const controller = new AbortController();
-
     const fetchProducts = async () => {
       setIsLoading(true); // 로딩 시작
 
@@ -161,9 +162,56 @@ function ProductListPage() {
     updateSearchParams({ page: pageNumber.toString() }, false);
   };
 
-  const handleAddToCart = (e) => {
-    e.preventDefault();
-    console.log('장바구니 담기 클릭!');
+  // 장바구니 담기 핸들러
+  const handleAddToCart = async (e, product) => {
+    // 상세 페이지 이동 방지
+    e.preventDefault(); 
+    e.stopPropagation();
+
+    // 로그인 확인
+    if (!isLoggedIn()) {
+      alert('로그인이 필요한 서비스입니다.');
+      navigate('/login');
+      return;
+    }
+
+    // 회원 정보 확인
+    const member = getStoredMember();
+    if (!member || !member.memNo) {
+        alert('회원 정보를 찾을 수 없습니다.');
+        return;
+    }
+
+    // 옵션 번호 확인
+    if (!product.defaultOptionNo) {
+        alert('옵션을 선택해야 하는 상품입니다. 상세 페이지에서 담아주세요.');
+        navigate(`/products/${product.prdNo}`);
+        return;
+    }
+
+    try {
+        // API 호출
+        const response = await fetchWithAuth('/coco/members/cart/items', {
+            method: 'POST',
+            body: JSON.stringify({
+                memNo: member.memNo,
+                optionNo: product.defaultOptionNo,
+                cartQty: 1 // 목록에서는 기본 1개 담기
+            })
+        });
+
+        if (response.ok) {
+             if(window.confirm(`${product.prdName}을(를) 장바구니에 담았습니다.\n장바구니로 이동하시겠습니까?`)) {
+                 navigate('/cart');
+             }
+        } else {
+            const errorData = await response.json();
+            alert(errorData.message || '장바구니 담기에 실패했습니다.');
+        }
+    } catch (error) {
+        console.error(error);
+        alert('오류가 발생했습니다.');
+    }
   };
 
   // 로딩이 끝나고 상품을 화면에 그리기
@@ -203,7 +251,7 @@ function ProductListPage() {
                 <ProductCard
                   key={product.prdNo}
                   product={product}
-                  onAddToCart={handleAddToCart}
+                  onAddToCart={(e) => handleAddToCart(e, product)}
                 />
               ))}
             </ProductListGrid>

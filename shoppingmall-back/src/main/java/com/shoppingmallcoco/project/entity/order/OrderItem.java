@@ -24,7 +24,6 @@ public class OrderItem {
     @JoinColumn(name = "prdNo", nullable = false) // DB 컬럼 'prdNo'와 연결
     private ProductEntity product;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OptionNo", nullable = false) // DB 컬럼 'OptionNo'와 연결
     private ProductOptionEntity productOption;

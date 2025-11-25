@@ -5,6 +5,8 @@ import ProductDetailSkeleton from '../components/product/detail/ProductDetailSke
 import ProductImageGallery from '../components/product/detail/ProductImageGallery';
 import ProductInfoBox from '../components/product/detail/ProductInfoBox';
 import ProductTabs from '../components/product/detail/ProductTabs';
+import { fetchWithAuth, getStoredMember, isLoggedIn } from '../utils/api';
+
 
 // --- 스타일 컴포넌트 정의 ---
 
@@ -97,7 +99,6 @@ function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
   const [toastMessage, setToastMessage] = useState('');
-
   // productId가 바뀔 때마다 실행
   useEffect(() => {
     const fetchProductDetail = async () => {
@@ -143,15 +144,63 @@ function ProductDetailPage() {
   };
 
   // 버튼 핸들러
-  const handleAddToCart = () => {
-    if (!selectedOption && product.options && product.options.length > 0) {
-      alert('옵션을 선택하세요.');
+  const handleAddToCart = async () => {
+
+    // 로그인 확인
+    if (!isLoggedIn()) {
+      alert('로그인이 필요한 서비스입니다.');
+      navigate('/login');
       return;
     }
-    // (토스트 메시지 설정)
-    setToastMessage('장바구니에 상품을 담았습니다.');
 
-    // (나중에 장바구니 로직 추가...)
+    // 회원 정보 가져오기 
+    const member = getStoredMember();
+    if (!member || !member.memNo) {
+      alert('회원 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    // 옵션 번호 결정
+    let optionNoToUse;
+
+    // 옵션 목록이 존재하는지 확인
+    const hasOptions = product.options && product.options.length > 0;
+
+    if (selectedOption) {
+      // 사용자가 옵션을 선택한 경우
+      optionNoToUse = Number(selectedOption);
+    } else if (hasOptions) {
+      // 옵션을 선택하지 않았지만, 상품에 옵션이 있는 경우
+      alert('옵션을 선택하세요.');
+      return;
+    } else {
+      alert('상품 옵션 정보가 없습니다. 관리자에게 문의하세요.');
+      return;
+    }
+
+    try {
+      // API 호출 (CartRequestDto 형식에 맞춤)
+      const response = await fetchWithAuth('/coco/members/cart/items', {
+        method: 'POST',
+        body: JSON.stringify({
+          memNo: member.memNo,
+          optionNo: optionNoToUse,
+          cartQty: quantity
+        })
+      });
+
+      if (response.ok) {
+        setToastMessage('장바구니에 상품을 담았습니다.');
+
+        if (window.confirm('장바구니로 이동하시겠습니까?')) { navigate('/cart'); }
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || '장바구니 담기에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('오류가 발생했습니다.');
+    }
   };
 
   const handleBuyNow = () => {
@@ -159,6 +208,9 @@ function ProductDetailPage() {
       alert('옵션을 선택하세요.');
       return;
     }
+    // 실제 기능 연결 대신 "준비 중" 알림 띄우기
+    alert("바로구매 기능은 현재 준비 중입니다.\n장바구니를 이용해 주세요.");
+
     console.log(`[주문 담당] ${product.prdName}, 옵션: ${selectedOption}, 수량: ${quantity} 바로구매`);
   };
 

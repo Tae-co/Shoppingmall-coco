@@ -17,6 +17,9 @@ const TableContainer = styled(Table)`
 `;
 
 function CategoryTable({ categories, onEdit, onDelete }) {
+
+  // 삭제가 불가능한 고정 카테고리 ID 목록
+  const PROTECTED_IDS = [1, 2, 3, 4];
   
   const renderCategoryRows = () => {
     // 대분류 필터링
@@ -29,6 +32,9 @@ function CategoryTable({ categories, onEdit, onDelete }) {
           return parentId === parent.categoryNo;
       });
 
+      // 현재 대분류가 보호 대상인지 확인
+      const isProtected = PROTECTED_IDS.includes(parent.categoryNo);
+
       return (
         <React.Fragment key={parent.categoryNo}>
           {/* 대분류 */}
@@ -36,8 +42,15 @@ function CategoryTable({ categories, onEdit, onDelete }) {
             <Td>{parent.categoryNo}</Td>
             <Td style={{ textAlign: 'left', paddingLeft: '20px' }}>{parent.categoryName}</Td>
             <Td>
-              <ActionButton onClick={() => onEdit(parent)}>수정</ActionButton>
-              <ActionButton $danger onClick={() => onDelete(parent)}>삭제</ActionButton>
+              {/* 보호 대상이 아닐 때만 수정과 삭제 버튼 모두 표시 */}
+              {!isProtected && (
+                <>
+                  <ActionButton onClick={() => onEdit(parent)}>수정</ActionButton>
+                  <ActionButton $danger onClick={() => onDelete(parent)}>삭제</ActionButton>
+                </>
+              )}
+              {/* 보호 대상이면 빈칸 표시 */}
+              {isProtected && <span style={{ fontSize: '12px', color: '#aaa' }}></span>}
             </Td>
           </tr>
 

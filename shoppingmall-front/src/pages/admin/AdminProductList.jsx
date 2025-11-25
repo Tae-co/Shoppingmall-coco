@@ -61,8 +61,16 @@ const StatusTag = styled.span`
   padding: 4px 8px;
   border-radius: 12px;
   color: white;
-  font-size: 12px;
-  background: ${props => (props.$status === '판매중' ? 'green' : 'red')};
+  font-weight: 600;
+  /* 상태 텍스트에 따라 배경색 변경 */
+  background-color: ${props => {
+    switch (props.$status) {
+      case '판매중': return '#28a745'; // 초록색
+      case '품절': return '#dc3545';   // 빨간색
+      case '판매중지': return '#fd7e14'; // 주황색
+      default: return '#333';
+    }
+  }};
 `;
 
 const EditLink = styled(Link)`
@@ -133,18 +141,41 @@ function AdminProductList() {
         if (!response.ok) throw new Error('네트워크 응답이 올바르지 않습니다.');
 
         const data = await response.json();
-
         setProducts(data.content);
         setTotalPages(data.totalPages);
         setTotalProducts(data.totalElements);
-
       } catch (error) {
         console.error("상품 목록 로드 실패:", error);
         toast.error("상품 목록을 불러오는 데 실패했습니다.");
       }
       setIsLoading(false);
     };
+
+    // 대시보드 통계용 데이터 로드 및 계산 함수
+    const loadStatistics = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/admin/stats');
+        
+        if (!response.ok) throw new Error('통계 로드 실패');
+
+        const data = await response.json();
+
+        // 백엔드에서 계산해준 값을 그대로 사용
+        setDashboardCounts({
+          inStock: data.inStockProducts,
+          outOfStock: data.outOfStockProducts,
+          totalStock: data.totalStock
+        });
+
+        setTotalProducts(data.totalProducts);
+
+      } catch (error) {
+        console.error("통계 로드 실패:", error);
+      }
+    };
+
     loadProducts();
+    loadStatistics();
   }, [currentPage, searchTerm, selectedCategory, selectedStatus]);
 
   const handleFilterChange = (setter) => (e) => {

@@ -4,84 +4,88 @@ import "../css/OrderDetail.css";
 
 function OrderDetail() {
   const navigate = useNavigate();
-  const { id } = useParams(); // 주문번호 URL에서 가져오기
+  const { id } = useParams(); // /order-detail/:id
 
-  // 실제로는 백엔드에서 주문번호로 상세 내역 불러올 예정
+  // URL id → "ORD-001" 형태로 변환
+  const orderKey = `ORD-${String(id).padStart(3, "0")}`;
+
+  // 더미데이터
   const orderData = {
-  "ORD-001": {
-    id: "ORD-001",
-    date: "2024.10.28",
-    status: "배송완료",
-    expected: "2024.10.30",
-    products: [
-      {
-        name: "히알루론산 인텐시브 세럼",
-        price: 45000,
-        qty: 1,
-        total: 45000,
-        img: "/images/serum.jpg",
+    "ORD-001": {
+      id: "ORD-001",
+      date: "2024.10.28",
+      status: "배송완료",
+      expected: "2024.10.30",
+      products: [
+        {
+          name: "히알루론산 인텐시브 세럼",
+          price: 45000,
+          qty: 1,
+          total: 45000,
+          img: "/images/serum.jpg",
+        },
+      ],
+      receiver: {
+        name: "김미영",
+        phone: "010-****-5678",
+        address: "서울특별시 강서구 화곡동 1234 코코아파트 101동 1004호",
+        zip: "45678",
       },
-    ],
-    receiver: {
-      name: "김미영",
-      phone: "010-****-5678",
-      address: "서울특별시 강서구 화곡동 1234 코코아파트 101동 1004호",
-      zip: "45678",
+      payment: {
+        orderTotal: 45000,
+        coupon: 0,
+        point: 0,
+        final: 45000,
+        method: "네이버페이(Npay)",
+      },
     },
-    payment: {
-      orderTotal: 45000,
-      coupon: 0,
-      point: 0,
-      final: 45000,
-      method: "네이버페이(Npay)",
-    },
-  },
 
-  "ORD-002": {
-    id: "ORD-002",
-    date: "2024.10.15",
-    status: "배송중",
-    expected: "2024.10.20",
-    products: [
-      {
-        name: "비타민C 브라이트닝 토너",
-        price: 32000,
-        qty: 1,
-        total: 32000,
-        img: "/images/toner.jpg",
+    "ORD-002": {
+      id: "ORD-002",
+      date: "2024.10.15",
+      status: "배송중",
+      expected: "2024.10.20",
+      products: [
+        {
+          name: "비타민C 브라이트닝 토너",
+          price: 32000,
+          qty: 1,
+          total: 32000,
+          img: "/images/toner.jpg",
+        },
+        {
+          name: "센텔라 진정 크림",
+          price: 28000,
+          qty: 2,
+          total: 56000,
+          img: "/images/cream.jpg",
+        },
+        {
+          name: "센텔라 마스크팩",
+          price: 1500,
+          qty: 2,
+          total: 3000,
+          img: "/images/mask.jpg",
+        },
+      ],
+      receiver: {
+        name: "김민수",
+        phone: "010-****-5789",
+        address: "부산광역시 해운대구 코코아파트 202동 1004호",
+        zip: "78945",
       },
-      {
-        name: "센텔라 진정 크림",
-        price: 28000,
-        qty: 2,
-        total: 56000,
-        img: "/images/cream.jpg",
+      payment: {
+        orderTotal: 91000,
+        point: 0,
+        final: 91000,
+        method: "신용카드",
       },
-      {
-        name: "센텔라 마스크팩",
-        price: 1500,
-        qty: 2,
-        total: 3000,
-        img: "/images/mask.jpg",
-      },
+    },
+  };
 
-    ],
-    receiver: {
-      name: "김민수",
-      phone: "010-****-5789",
-      address: "부산광역시 해운대구 코코아파트 202동 1004호",
-      zip: "78945",
-    },
-    payment: {
-      orderTotal: 91000,
-      point: 0,
-      final: 91000,
-      method: "신용카드",
-    },
-  },
-};
-  
-const order = orderData[id];
+  const order = orderData[orderKey];
+
+  if (!order) return <div>주문 정보를 찾을 수 없습니다.</div>;
 
   return (
     <div className="order-detail-container">

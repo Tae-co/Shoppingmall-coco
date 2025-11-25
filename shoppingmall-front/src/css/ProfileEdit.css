@@ -91,29 +91,6 @@
   width: 100%;
 }
 
-/* 수정 버튼 */
-.edit-btn {
-  padding: 10px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  color: #222;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap; 
-  transform: none;
-}
-
-.edit-btn:hover {
-  background-color: #fafafa;
-  border-color: #ccc;
-}
-
 /* 공통 input 색상 */
 input[type="checkbox"],
 input[type="radio"] {

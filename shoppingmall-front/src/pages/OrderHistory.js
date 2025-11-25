@@ -6,7 +6,6 @@ function OrderHistory() {
   const navigate = useNavigate();
 
   const orders = [
-    // 이후 백엔드 연동 시 Axios로 주문 내역 불러오기
     {
       id: "ORD-001",
       date: "2024.10.28",
@@ -17,7 +16,7 @@ function OrderHistory() {
           name: "히알루론산 인텐시브 세럼",
           price: 45000,
           qty: 1,
-          img: "/images/serum.jpg", 
+          img: "/images/serum.jpg",
         },
       ],
       extraItems: 0,
@@ -54,18 +53,20 @@ function OrderHistory() {
 
       {orders.map((order) => (
         <div key={order.id} className="order-card">
-          {/* 상단: 날짜 + 주문번호 + 상태 */}
+          {/* 상단 영역 */}
           <div className="order-top">
             <div>
               <span className="order-date">{order.date}</span>
               <span className="order-no">주문번호: {order.id}</span>
             </div>
-            <span className={`order-status ${order.status}`}>{order.status}</span>
+            <span className={`order-status ${order.status}`}>
+              {order.status}
+            </span>
           </div>
 
           <hr className="divider" />
 
-          {/* 상품 리스트 */}
+          {/* 상품 목록 */}
           <div className="order-items">
             {order.items.map((item, idx) => (
               <div key={idx} className="order-item">
@@ -85,17 +86,29 @@ function OrderHistory() {
 
           <hr className="divider" />
 
-          {/* 하단: 총 금액 */}
+          {/* 하단 영역: 총금액 + 버튼들 */}
           <div className="order-bottom">
             <div className="order-total">
               <span>총 주문금액</span>
               <strong>{order.total.toLocaleString()}원</strong>
-             <button
+
+              {/* 상세보기 버튼 */}
+              <button
                 className="detail-btn"
                 onClick={() => navigate(`/order-detail/${order.id}`)}
-             > 
-              상세보기 ›
+              >
+                상세보기 ›
               </button>
+
+              {/* 리뷰쓰기 버튼 (배송완료일 때만 표시) */}
+              {order.status === "배송완료" && (
+                <button
+                  className="review-btn"
+                  onClick={() => navigate(`/write-review/${order.id}`)}
+                >
+                  리뷰쓰기 ✎
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -5,7 +5,7 @@
 .comate_review_wrapper:last-child {
     border-bottom: none;
 }
-.comate_review_wrapper .product_info {
+.comate_review_wrapper .comate_product_info {
     display: flex;
     align-items: center;
     margin-bottom: 15px;

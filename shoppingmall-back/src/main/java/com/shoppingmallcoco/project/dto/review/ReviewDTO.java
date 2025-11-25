@@ -21,6 +21,7 @@ public class ReviewDTO {
     private Long reviewNo; // 리뷰 ID
     private Long orderItemNo; // 구매 내역
     private String userNickname;
+    private Long memNo; // 리뷰 작성자 회원번호
     private int rating; // 별점
     private String content; // 리뷰 텍스트
     private LocalDateTime createdAt; // 리뷰 작성 날짜
@@ -59,6 +60,7 @@ public class ReviewDTO {
             .orderItemNo(entity.getOrderItem().getOrderItemNo()).rating(entity.getRating()).content(
                 entity.getContent()).createdAt(entity.getCreatedAt())
             .userNickname(entity.getOrderItem().getOrder().getMember().getMemNickname())
+            .memNo(entity.getOrderItem().getOrder().getMember().getMemNo())
             .updatedAt(entity.getUpdatedAt()).likeCount(likeCount).prosTags(prosTagList)
             .consTags(consTagList).reviewImages(reviewImagesList).build();
     }

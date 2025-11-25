@@ -133,6 +133,10 @@ function AdminHome() {
           상품 관리
         </MenuLink>
 
+        <MenuLink to="/admin/categories">
+          카테고리 관리
+        </MenuLink>
+
         <MenuLink to="/admin/members">
           회원 관리
         </MenuLink>

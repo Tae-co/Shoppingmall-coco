@@ -19,7 +19,7 @@ export const storage = {
       return null;
     }
   },
-  
+
   set: (key, value) => {
     try {
       localStorage.setItem(key, value);
@@ -27,7 +27,7 @@ export const storage = {
       console.error(`localStorage set 오류 (${key}):`, error);
     }
   },
-  
+
   remove: (key) => {
     try {
       localStorage.removeItem(key);
@@ -35,7 +35,7 @@ export const storage = {
       console.error(`localStorage remove 오류 (${key}):`, error);
     }
   },
-  
+
   clear: () => {
     try {
       Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
@@ -51,18 +51,18 @@ export const getAuthHeaders = () => {
   const headers = {
     'Content-Type': 'application/json',
   };
-  
+
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
-  
+
   return headers;
 };
 
 // JWT 토큰을 포함한 인증 API 요청 처리
 export const fetchWithAuth = async (url, options = {}) => {
   const headers = getAuthHeaders();
-  
+
   const response = await fetch(`${API_BASE_URL}${url}`, {
     ...options,
     headers: {
@@ -70,13 +70,13 @@ export const fetchWithAuth = async (url, options = {}) => {
       ...options.headers,
     },
   });
-  
+
   if (response.status === 401) {
     logout();
     window.location.href = '/login';
     throw new Error('인증이 만료되었습니다.');
   }
-  
+
   return response;
 };
 
@@ -86,7 +86,7 @@ export const fetchWithoutAuth = async (url, options = {}) => {
     'Content-Type': 'application/json',
     ...options.headers,
   };
-  
+
   return fetch(`${API_BASE_URL}${url}`, {
     ...options,
     headers,
@@ -228,11 +228,11 @@ export const verifyEmailCode = async (email, code) => {
 export const checkIdDuplicate = async (memId) => {
   const response = await fetchWithoutAuth(`/member/check-id/${memId}`);
   const data = await response.json();
-  
+
   if (!response.ok) {
     throw new Error(data.message || '중복확인 중 오류가 발생했습니다.');
   }
-  
+
   return data;
 };
 
@@ -240,11 +240,11 @@ export const checkIdDuplicate = async (memId) => {
 export const checkNicknameDuplicate = async (memNickname) => {
   const response = await fetchWithoutAuth(`/member/check-nickname/${encodeURIComponent(memNickname)}`);
   const data = await response.json();
-  
+
   if (!response.ok) {
     throw new Error(data.message || '중복확인 중 오류가 발생했습니다.');
   }
-  
+
   return data;
 };
 
@@ -364,3 +364,51 @@ export const getCurrentMember = async () => {
 
   return data;
 };
+
+// memberId 조회
+export function getStoredMemberId() {
+  try {
+    const memberStr = localStorage.getItem('member');
+    if (!memberStr) return null;
+    const member = JSON.parse(memberStr);
+    return member.memNo; // 혹은 .memberId, .id 등 실제 DB pk 컬럼명에 맞추기!
+  } catch(e) {
+    return null;
+  }
+}
+
+// 비밀번호 변경
+export const changePassword = async (currentPassword, newPassword) => {
+  const response = await fetchWithAuth('/member/change-password', {
+    method: 'PUT',
+    body: JSON.stringify({
+      currentPassword,
+      newPassword,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || '비밀번호 변경에 실패했습니다.');
+  }
+
+  return data;
+};
+
+// 계정 삭제
+export const deleteAccount = async (currentPassword) => {
+  const response = await fetchWithAuth('/member/delete', {
+    method: 'DELETE',
+    body: JSON.stringify({ currentPassword }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || '계정 삭제에 실패했습니다.');
+  }
+
+  return data;
+};
+

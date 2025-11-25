@@ -1,4 +1,4 @@
-package com.shoppingmallcoco.project.service;
+package com.shoppingmallcoco.project.service.review;
 
 import com.shoppingmallcoco.project.entity.product.ProductEntity;
 

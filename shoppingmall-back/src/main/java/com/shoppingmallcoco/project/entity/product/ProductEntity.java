@@ -57,5 +57,14 @@ public class ProductEntity {
 	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC") // 이미지 순서(sortOrder)대로 정렬 1번이 썸네일
     private List<ProductImageEntity> images;
+	
+	// 논리적 삭제 여부 (Y: 삭제됨, N: 정상)
+    @Column(name = "IS_DELETED", length = 1)
+    private String isDeleted = "N"; 
+    
+    // 삭제 처리 메서드
+    public void delete() {
+        this.isDeleted = "Y";
+    }
 
 }

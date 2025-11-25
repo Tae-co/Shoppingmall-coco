@@ -23,12 +23,14 @@ public class ProductListDTO {
 	private List<String> skinConcerns;
 	private List<String> personalColors;
 	private String simpleReview;
+	private Long defaultOptionNo;
 	
 	// Entity -> DTO 변환 생성자
 	public ProductListDTO(ProductEntity product, int reviewCount, double averageRating) {
 		this.prdNo = product.getPrdNo();
 		this.prdName = product.getPrdName();
 		this.prdPrice = product.getPrdPrice();
+		this.status = product.getStatus();
 		
 		// 카테고리 이름 매핑
         if (product.getCategory() != null) {
@@ -44,9 +46,13 @@ public class ProductListDTO {
             this.stock = 0;
         }
         
-        // 👇 3. 상태(Status) 매핑 (화면용 텍스트로 변환)
-        if ("SOLD_OUT".equals(product.getStatus())) {
+        // 상태(Status) 매핑
+        String dbStatus = product.getStatus();
+        
+        if ("SOLD_OUT".equals(dbStatus)) {
             this.status = "품절";
+        } else if ("STOP".equals(dbStatus)) {
+            this.status = "판매중지"; // [추가] 판매중지 처리
         } else {
             this.status = "판매중";
         }
@@ -63,6 +69,11 @@ public class ProductListDTO {
         
         // 임시 로직
         this.simpleReview = "DB 리뷰 요약... (구현 필요)";
+        
+        // 상품의 첫 번째 옵션 번호를 가져옴
+        if (product.getOptions() != null && !product.getOptions().isEmpty()) {
+            this.defaultOptionNo = product.getOptions().get(0).getOptionNo();
+        }
 
         // 쉼표로 구분된 문자열을 List<String>으로 변환
         if (product.getSkinType() != null && !product.getSkinType().isEmpty()) {

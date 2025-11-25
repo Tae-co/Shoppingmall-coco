@@ -6,6 +6,8 @@ import com.shoppingmallcoco.project.dto.auth.MemberSignupDto;
 import com.shoppingmallcoco.project.dto.auth.MemberUpdateDto;
 import com.shoppingmallcoco.project.dto.auth.FindIdDto;
 import com.shoppingmallcoco.project.dto.auth.ResetPasswordDto;
+import com.shoppingmallcoco.project.dto.auth.ChangePasswordDto;
+import com.shoppingmallcoco.project.dto.auth.DeleteAccountDto;
 import com.shoppingmallcoco.project.entity.auth.Member;
 import com.shoppingmallcoco.project.repository.auth.MemberRepository;
 import com.shoppingmallcoco.project.util.JwtUtil;
@@ -192,6 +194,59 @@ public class MemberService {
 
         memberRepository.save(member);
     }
+
+    // 비밀번호 변경 처리 (로그인한 사용자용)
+    public void changePassword(String memId, ChangePasswordDto changePasswordDto) {
+        Optional<Member> memberOpt = memberRepository.findByMemId(memId);
+        if (memberOpt.isEmpty()) {
+            throw new RuntimeException("회원을 찾을 수 없습니다.");
+        }
+
+        Member member = memberOpt.get();
+
+        // 현재 비밀번호 확인
+        if (!passwordEncoder.matches(changePasswordDto.getCurrentPassword(), member.getMemPwd())) {
+            throw new RuntimeException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 새 비밀번호가 현재 비밀번호와 같은지 확인
+        if (passwordEncoder.matches(changePasswordDto.getNewPassword(), member.getMemPwd())) {
+            throw new RuntimeException("새 비밀번호는 현재 비밀번호와 달라야 합니다.");
+        }
+
+        // 새 비밀번호 길이 확인
+        if (changePasswordDto.getNewPassword() == null || changePasswordDto.getNewPassword().length() < 8) {
+            throw new RuntimeException("비밀번호는 8자 이상이어야 합니다.");
+        }
+
+        // 비밀번호 변경
+        String encodedPassword = passwordEncoder.encode(changePasswordDto.getNewPassword());
+        member = member.toBuilder()
+                .memPwd(encodedPassword)
+                .build();
+        memberRepository.save(member);
+    }
+
+    // 계정 삭제 (로그인한 사용자)
+    public void deleteAccount(String memId, DeleteAccountDto deleteAccountDto) {
+        Optional<Member> memberOpt = memberRepository.findByMemId(memId);
+        if (memberOpt.isEmpty()) {
+            throw new RuntimeException("회원을 찾을 수 없습니다.");
+        }
+
+        Member member = memberOpt.get();
+
+        if (deleteAccountDto.getCurrentPassword() == null || deleteAccountDto.getCurrentPassword().trim().isEmpty()) {
+            throw new RuntimeException("현재 비밀번호를 입력해주세요.");
+        }
+
+        if (!passwordEncoder.matches(deleteAccountDto.getCurrentPassword(), member.getMemPwd())) {
+            throw new RuntimeException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        memberRepository.delete(member);
+    }
+
     // 카카오 소셜 로그인 처리
     public MemberResponseDto kakaoLogin(String accessToken) {
         KakaoService.KakaoUserInfo kakaoUserInfo = kakaoService.getUserInfo(accessToken);

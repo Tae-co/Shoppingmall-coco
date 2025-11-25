@@ -16,11 +16,25 @@ const Home = () => {
 
     const navigate = useNavigate();
 
-    // 카테고리 클릭-> 카테고리 페이지로 이동 (임시 경로)
-    // 현재 path는 빈 문자열
-    const navigateToCategory = (category) => {
-        const path = '';
-        navigate(path);
+    const categoryMap = {
+        'skincare': 1,
+        'makeup': 2,
+        'bodycare': 3,
+        'homme': 4
+    };
+
+    // 카테고리 클릭 -> 상품 목록 페이지로 이동 (categoryNo 파라미터 전달)
+    const navigateToCategory = (categoryKey) => {
+        const categoryId = categoryMap[categoryKey];
+        
+        if (categoryId) {
+            // 상품 목록 페이지로 이동하면서 categoryNo를 쿼리 스트링으로 전달
+            navigate(`/product?categoryNo=${categoryId}`);
+        } else {
+            // 매핑된 ID가 없을 경우 전체 상품 페이지로 이동하거나 에러 처리
+            console.warn("알 수 없는 카테고리입니다.");
+            navigate('/product');
+        }
     };
 
     return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Button } from '../../styles/admincommon';
+import { Button, ButtonLink } from '../../styles/admincommon';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { logout } from '../../utils/api';
@@ -61,6 +61,25 @@ const NavItem = styled(Link)`
     background: #4a5568;
     color: white;
     transform: translateX(4px);
+  }
+`;
+
+// 비활성화된 메뉴 아이템 스타일
+const DisabledNavItem = styled.span`
+  display: block;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  
+  background: transparent;
+  color: #718096; /* 흐린 회색 */
+  cursor: not-allowed; /* 금지 커서 */
+  border-left: 4px solid transparent;
+
+  &:hover {
+    color: #718096;
+    transform: none; /* 움직임 효과 제거 */
   }
 `;
 
@@ -135,9 +154,9 @@ function AdminLayout() {
             </NavItem>
           </li>
           <li>
-            <NavItem to="/admin/orders" $active={isActive('/admin/orders')}>
+            <DisabledNavItem>
               주문 관리 (준비중)
-            </NavItem>
+            </DisabledNavItem>
           </li>
         </NavList>
       </Sidebar>
@@ -145,11 +164,14 @@ function AdminLayout() {
       {/* 우측 영역 (헤더 + 본문) */}
       <PageWrapper>
         <TopHeader>
+          <ButtonLink to="/" style={{ marginRight: '10px', fontSize: '13px', padding: '8px 16px', backgroundColor: '#fff', color: '#333', border: '1px solid #ddd' }}>
+            🏠 쇼핑몰 메인
+          </ButtonLink>
           <span style={{ marginRight: '15px', fontWeight: '500' }}>관리자(admin)님</span>
-          <Button 
-            as="button" 
-            onClick={handleLogout} 
-            $primary 
+          <Button
+            as="button"
+            onClick={handleLogout}
+            $primary
             style={{ fontSize: '13px', padding: '8px 16px' }}
           >
             로그아웃
@@ -157,10 +179,10 @@ function AdminLayout() {
         </TopHeader>
 
         <Content>
-          <Outlet /> 
+          <Outlet />
         </Content>
       </PageWrapper>
-      
+
       <ToastContainer autoClose={2000} position="bottom-right" />
     </AdminWrapper>
   );

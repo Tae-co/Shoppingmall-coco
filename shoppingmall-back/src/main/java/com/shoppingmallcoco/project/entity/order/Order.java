@@ -1,6 +1,7 @@
 package com.shoppingmallcoco.project.entity.order;
 
 import com.shoppingmallcoco.project.entity.auth.Member;
+import com.shoppingmallcoco.project.entity.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,8 +29,6 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memNo", nullable = false)
     private Member member;
-
-
 
     @Column(name = "orderDate")
     private LocalDate orderDate;

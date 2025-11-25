@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import ProductButton from '../ProductButton';
+import SimilarSkinReview from '../../../features/SimilarSkinReview';
 
 // 스타일
 const InfoBox = styled.div`
@@ -54,10 +55,6 @@ const SelectBox = styled.select`
   ${CommonFormStyle}
 `;
 
-const QuantityInput = styled.input`
-  ${CommonFormStyle}
-`;
-
 const ButtonGroup = styled.div`
   display: flex;
   gap: 10px;
@@ -78,6 +75,47 @@ const Tag = styled.span`
   color: #555;
   padding: 4px 8px;
   border-radius: 4px;
+`;
+
+// 수량 조절 컨테이너 스타일
+const QuantityControl = styled.div`
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 150px; /* 적절한 너비 설정 */
+  margin-bottom: 20px;
+`;
+
+const QuantityBtn = styled.button`
+  width: 40px;
+  height: 40px;
+  background: #f9f9f9;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  &:hover { background: #eee; }
+`;
+
+const QuantityValue = styled.input`
+  flex: 1;
+  text-align: center;
+  border: none;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  height: 40px;
+  font-size: 16px;
+  width: 100%;
+  &:focus { outline: none; }
+  /* Firefox 및 크롬 등에서 기본 화살표(스핀 버튼) 제거 */
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+    
+  /* Firefox 전용 설정 */
+  -moz-appearance: textfield;
 `;
 
 const skinTypeMap = { dry: '건성', oily: '지성', combination: '복합성', sensitive: '민감성' };
@@ -101,6 +139,12 @@ const ProductInfoBox = ({
   handleAddToCart,
   handleBuyNow
 }) => {
+
+  // 상태 확인 로직
+  const isSoldOut = product.status === '품절' || product.status === 'SOLD_OUT';
+  const isStop = product.status === '판매중지' || product.status === 'STOP';
+  const isUnavailable = isSoldOut || isStop;
+
   return (
     <InfoBox>
       <ProductName>{product.prdName}</ProductName>
@@ -141,22 +185,41 @@ const ProductInfoBox = ({
       {/* --- 수량 --- */}
       <div>
         <VisuallyHiddenLabel htmlFor="product-quantity">상품 수량</VisuallyHiddenLabel>
-        <QuantityInput
-          id="product-quantity"
-          type="number"
-          value={quantity}
-          onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
-          min="1"
-        />
+        <QuantityControl>
+          <QuantityBtn onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</QuantityBtn>
+          <QuantityValue
+            type="number"
+            value={quantity}
+            onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
+          />
+          <QuantityBtn onClick={() => setQuantity(quantity + 1)}>+</QuantityBtn>
+        </QuantityControl>
       </div>
 
+      <div>
+         <SimilarSkinReview productId={product.prdNo} />
+      </div>
+      {/* 장바구니 버튼 */}
+      
       <ButtonGroup>
-        <ProductButton onClick={handleAddToCart}>
-          장바구니
+        <ProductButton
+          onClick={handleAddToCart}
+          disabled={isUnavailable} // 비활성화
+          style={{ opacity: isUnavailable ? 0.5 : 1, flex: 1 }}
+        >
+          {isSoldOut ? '품절' : (isStop ? '판매 중지' : '장바구니')}
         </ProductButton>
-        <ProductButton primary onClick={handleBuyNow}>
-          바로구매
-        </ProductButton>
+
+        {/* 바로구매 버튼 */}
+        {!isUnavailable && ( // 품절/판매중지가 아닐 때만 표시
+          <ProductButton
+            primary // 검은색 배경 스타일 적용
+            onClick={handleBuyNow}
+            style={{ flex: 1 }} // 너비 반반 차지
+          >
+            바로구매
+          </ProductButton>
+        )}
       </ButtonGroup>
     </InfoBox>
   );

@@ -18,6 +18,7 @@ public class TagDTO {
     private String tagName; // 태그 이름
     private String tagStatus; // 태그 상태 (장점, 단점)
 
+    // Entity -> Dto
     public static TagDTO toDTO(Tag tag) {
         return TagDTO.builder().tagNo(tag.getTagNo()).tagName(tag.getTagName())
             .tagStatus(tag.getTagStatus()).build();

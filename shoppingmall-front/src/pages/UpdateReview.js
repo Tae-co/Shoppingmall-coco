@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import greyStar from '../images/greyStar.svg'
 import yellowStar from '../images/yellowStar.svg'
 import addImg from '../images/addImg.svg'
-//import axios from "axios";
+import axios from "axios";
 import UseStarRating from '../features/UseStarRating.js'
 import UseTag from '../features/UseTag.js'
 import usefile from '../features/UseFile.js'
@@ -110,7 +110,7 @@ function UpdateReview() {
             <div className="reviewMain">
                 <form className="reviewForm" onSubmit={handleSubmit}>
                     <div className="title">
-                        <h1>리뷰 수성</h1>
+                        <h1>리뷰 수정</h1>
                         <h4>제품을 사용해보신 경험을 공유해주세요</h4>
                     </div>
 

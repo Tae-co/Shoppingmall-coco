@@ -24,6 +24,7 @@ public class ProductDetailResponseDTO {
     private double averageRating; 
     private int reviewCount;
     private Long categoryNo;
+    private String status;
     
     // 옵션 목록
     private List<ProductOptionDTO> options;
@@ -40,6 +41,7 @@ public class ProductDetailResponseDTO {
         this.prdPrice = product.getPrdPrice();
         this.description = product.getDescription();
         this.howToUse = product.getHowToUse();
+        this.status = product.getStatus();
     	
     	// Entity의 List<ProductImageEntity>를 List<String> (URL 목록)으로 변환
         if (product.getImages() != null) {

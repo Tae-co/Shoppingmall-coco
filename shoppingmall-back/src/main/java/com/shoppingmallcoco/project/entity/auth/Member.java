@@ -1,5 +1,6 @@
 package com.shoppingmallcoco.project.entity.auth;
 
+import com.shoppingmallcoco.project.entity.mypage.SkinProfile;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -68,6 +69,9 @@ public class Member {
     @Column(name = "role", length = 20)
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private SkinProfile skin;
 
     @Column(name = "point")
     private Long point = 0L;

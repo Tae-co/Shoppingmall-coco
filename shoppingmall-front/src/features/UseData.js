@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 function useData(setContent, setRating, ptagsList, setPtagsClicked, ntagsList, setNtagsClicked, setPreviewFiles) {
     const [loading, setLoading] = useState(false);
@@ -11,7 +11,7 @@ function useData(setContent, setRating, ptagsList, setPtagsClicked, ntagsList, s
         setLoading(true);
 
         try {
-            const response = await axios.get(`http://localhost:8080/reviews/${reviewNo}`)
+            const response = await axios.get(`http://localhost:8080/api/reviews/${reviewNo}`);
             const data = response.data;
 
             setContent(data.content);
