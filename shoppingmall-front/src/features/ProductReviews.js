@@ -8,13 +8,17 @@ function ProductReviews({ productNo }) {
     const [loading, setLoading] = useState(true);
 
     const handleDeleteReview = async (reviewNo) => {
-
         try {
-            axios.delete(`http://localhost:8080/reviews/${reviewNo}`).then(response => {
-                setReviews(currentReviews =>
-                    currentReviews.filter(review => review.reviewNo !== reviewNo))
-            });
+            const token = localStorage.getItem('token');
+            const headers = {};
+  
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
 
+            await axios.delete(`http://localhost:8080/api/reviews/${reviewNo}`, { headers });
+            setReviews(currentReviews =>
+                currentReviews.filter(review => review.reviewNo !== reviewNo))
         } catch (error) {
             console.error("리뷰 삭제에 실패했습니다:", error);
             alert("리뷰 삭제 중 오류가 발생했습니다.");
@@ -25,10 +29,8 @@ function ProductReviews({ productNo }) {
         const fetchReviews = async () => {
             setLoading(true);
             try {
-
-                await axios.get(`http://localhost:8080/products/${productNo}/reviews`).then(response => {
-                    setReviews(response.data)
-                })
+                const response = await axios.get(`http://localhost:8080/api/products/${productNo}/reviews`);
+                setReviews(response.data);
             } catch (error) {
                 console.error("리뷰 목록을 불러오는데 실패했습니다:", error);
             }
