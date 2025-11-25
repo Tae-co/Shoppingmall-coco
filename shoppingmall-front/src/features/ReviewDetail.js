@@ -8,8 +8,8 @@ import yellowStar from '../images/yellowStar.svg'
 import detailIcon from '../images/detailIcon.svg'
 import love from '../images/love.png'
 import '../css/ReviewDetail.css'
+import { isLoggedIn, getStoredMember, storage, STORAGE_KEYS } from '../utils/api'
 import axios from 'axios'
-import { isLoggedIn } from '../utils/api'
 function ReviewDetail({ reviewData, onDelete }) {
     const navigate = useNavigate();
 
@@ -32,11 +32,19 @@ function ReviewDetail({ reviewData, onDelete }) {
         prosTags,
         consTags,
         reviewImages,
-        likeCount
+        likeCount,
+        memNo: reviewAuthorMemNo
     } = reviewData;
 
     const [like, setlike] = useState(likeCount || 0);
     const [isExpanded, setIsExpanded] = useState(false);
+    
+    // 현재 로그인한 사용자 정보
+    const currentMember = getStoredMember();
+    const currentMemNo = currentMember?.memNo;
+    
+    // 리뷰 작성자와 현재 로그인한 사용자가 일치하는지 확인
+    const isReviewAuthor = isLoggedIn() && currentMemNo && reviewAuthorMemNo && currentMemNo === reviewAuthorMemNo;
 
     const { starTotal, clicked, starArray, setRating } = UseStarRating(0);
 
@@ -54,12 +62,24 @@ function ReviewDetail({ reviewData, onDelete }) {
         navigate(`/update-reviews/${reviewNo}`);
     }
 
-    const deleteReview = () => {
+    const handleDeleteReview = async () => {
         const confirmDelete = window.confirm("정말 삭제하시겠습니까?");
         if (confirmDelete) {
-            axios.delete(`/reviews/${reviewNo}`).then(response => {
+            try {
+                // 리뷰 삭제 (인증 필요)
+                const token = storage.get(STORAGE_KEYS.TOKEN);
+                const headers = {};
+                
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                await axios.delete(`http://localhost:8080/api/reviews/${reviewNo}`, { headers });
                 onDelete(reviewNo);
-            })
+            } catch (error) {
+                console.error("리뷰 삭제에 실패했습니다:", error);
+                alert("리뷰 삭제 중 오류가 발생했습니다.");
+            }
         }
     }
 
@@ -70,7 +90,7 @@ function ReviewDetail({ reviewData, onDelete }) {
         }
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:8080/reviews/${reviewNo}/like`, {
+            const response = await fetch(`http://localhost:8080/api/reviews/${reviewNo}/like`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -107,8 +127,12 @@ function ReviewDetail({ reviewData, onDelete }) {
                 </div>
                 <div className="date-edit">
                     <span className='date'>{createdAt ? createdAt.split('T')[0] : ''}</span>
-                    <img className="icon-btn" src={edit} onClick={updateReview} />
-                    <img className="icon-btn" src={del} onClick={deleteReview} />
+                    {isReviewAuthor && (
+                        <>
+                            <img className="icon-btn" src={edit} onClick={updateReview} />
+                            <img className="icon-btn" src={del} onClick={handleDeleteReview} />
+                        </>
+                    )}
                 </div>
             </div>
             <div className='imgBox'>

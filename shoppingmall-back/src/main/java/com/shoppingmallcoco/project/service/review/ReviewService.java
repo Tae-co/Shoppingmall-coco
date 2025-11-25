@@ -45,11 +45,21 @@ public class ReviewService implements IReviewService {
 
 	// review 등록
 	@Transactional
-	public Long insertReview(ReviewDTO reviewDTO, List<MultipartFile> files) {
+	public Long insertReview(ReviewDTO reviewDTO, List<MultipartFile> files, Long memberNo) {
 
 		// 구매 내역 확인
 		OrderItem orderItem = orderItemRepository.findById(reviewDTO.getOrderItemNo())
 				.orElseThrow(() -> new IllegalArgumentException("구매내역이 없습니다."));
+
+		// 주문한 사용자와 로그인한 사용자가 일치하는지 확인
+		if (orderItem.getOrder() == null || orderItem.getOrder().getMember() == null) {
+			throw new IllegalArgumentException("주문 정보가 올바르지 않습니다.");
+		}
+		
+		Long orderMemberNo = orderItem.getOrder().getMember().getMemNo();
+		if (!orderMemberNo.equals(memberNo)) {
+			throw new IllegalArgumentException("본인의 주문 내역에만 리뷰를 작성할 수 있습니다.");
+		}
 
 		// Entity로 변경
 
@@ -88,10 +98,21 @@ public class ReviewService implements IReviewService {
 
 	// review 수정한 내용 Update
 	@Transactional
-	public void updateReview(Long reviewNo, ReviewDTO reviewDTO, List<MultipartFile> files) {
+	public void updateReview(Long reviewNo, ReviewDTO reviewDTO, List<MultipartFile> files, Long memNo) {
 
 		Review findReview = reviewRepository.findById(reviewNo)
 				.orElseThrow(() -> new IllegalArgumentException("작성된 리뷰가 없습니다."));
+
+		// 리뷰 작성자와 현재 로그인한 사용자가 일치하는지 확인
+		if (findReview.getOrderItem() == null || findReview.getOrderItem().getOrder() == null 
+				|| findReview.getOrderItem().getOrder().getMember() == null) {
+			throw new IllegalArgumentException("주문 정보가 올바르지 않습니다.");
+		}
+		
+		Long reviewAuthorNo = findReview.getOrderItem().getOrder().getMember().getMemNo();
+		if (!reviewAuthorNo.equals(memNo)) {
+			throw new IllegalArgumentException("본인이 작성한 리뷰만 수정할 수 있습니다.");
+		}
 
 		findReview.update(reviewDTO.getRating(), reviewDTO.getContent());
 
@@ -131,10 +152,21 @@ public class ReviewService implements IReviewService {
 
 	// review 삭제
 	@Transactional
-	public void delete(Long reviewNo) {
+	public void delete(Long reviewNo, Long memNo) {
 
 		Review findReview = reviewRepository.findById(reviewNo)
 				.orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 없습니다."));
+
+		// 리뷰 작성자와 현재 로그인한 사용자가 일치하는지 확인
+		if (findReview.getOrderItem() == null || findReview.getOrderItem().getOrder() == null 
+				|| findReview.getOrderItem().getOrder().getMember() == null) {
+			throw new IllegalArgumentException("주문 정보가 올바르지 않습니다.");
+		}
+		
+		Long reviewAuthorNo = findReview.getOrderItem().getOrder().getMember().getMemNo();
+		if (!reviewAuthorNo.equals(memNo)) {
+			throw new IllegalArgumentException("본인이 작성한 리뷰만 삭제할 수 있습니다.");
+		}
 
 		List<ReviewImage> findImage = reviewImageRepository.findByReview(findReview);
 
