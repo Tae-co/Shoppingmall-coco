@@ -3,11 +3,13 @@ import axios from "axios";
 import "../css/Cart.css";
 import OrderSteps from "../components/OrderSteps.js";
 import { getStoredMember } from "../utils/api";
+import { useNavigate } from "react-router-dom";
 
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
 
+  const navigate = useNavigate();
   const member = getStoredMember();
   const memNo = member ? member.memNo : null;
 
@@ -53,6 +55,18 @@ function Cart() {
     .filter((item) => selectedItems.includes(item.cartNo))
     .reduce((total, item) => total + item.productPrice * item.cartQty, 0);
 
+  // 총 상품 금액 계산
+  const totalPrice = cartItems.reduce(
+    (total, item) => total + item.productPrice * item.cartQty,
+    0
+  );
+
+  // 배송비 계산 (3만원 미만 = 3000원 / 이상 = 무료)
+  const shippingFee = totalPrice >= 30000 ? 0 : 3000;
+
+  // 총 구매 금액 (상품 금액 + 배송비)
+  const finalTotalPrice = totalPrice + shippingFee;
+
   // 수량 변경
   const updateQuantity = (cartNo, newQty) => {
     axios
@@ -80,6 +94,9 @@ function Cart() {
 
   // 단일 삭제
   const removeItem = (cartNo) => {
+    const ok = window.confirm("정말 삭제하시겠습니까?");
+    if (!ok) return;
+
     axios
       .delete(`http://localhost:8080/api/coco/members/cart/items/${cartNo}`)
       .then(() => {
@@ -96,7 +113,8 @@ function Cart() {
       alert("삭제할 상품을 선택해주세요.");
       return;
     }
-  const ok = window.confirm("상품을 삭제하시겠습니까?");
+
+    const ok = window.confirm("선택한 상품을 삭제하시겠습니까?");
     if (!ok) return;
 
     Promise.all(
@@ -116,17 +134,13 @@ function Cart() {
       .catch((err) => console.error("선택 삭제 실패:", err));
   };
 
-  // 주문하기
+  // 주문하기 → 배송 정보 페이지로 이동
   const handleCheckoutSelected = () => {
     if (selectedItems.length === 0) {
       alert("주문할 상품을 선택해주세요.");
       return;
     }
-
-    const selectedProducts = cartItems.filter((item) =>
-      selectedItems.includes(item.cartNo)
-    );
-    alert("선택된 상품 주문 로직 실행");
+    navigate("/order");
   };
 
   const handleCheckoutAll = () => {
@@ -134,14 +148,8 @@ function Cart() {
       alert("장바구니가 비어 있습니다.");
       return;
     }
-
-    alert("전체 주문 로직 실행");
+    navigate("/order");
   };
-
-  const totalPrice = cartItems.reduce(
-    (total, item) => total + item.productPrice * item.cartQty,
-    0
-  );
 
   return (
     <div className="order-page">
@@ -153,10 +161,7 @@ function Cart() {
         <div className="cart-grid">
           {/* 장바구니 */}
           <div className="cart-list">
-
-            <div className="cart-title-row">
-              <h3 className="section-title">장바구니 ({cartItems.length})</h3>
-            </div>
+            <h3 className="section-title">장바구니 ({cartItems.length})</h3>
 
             <div className="select-controls">
               <label className="select-label">
@@ -203,7 +208,7 @@ function Cart() {
                       <p className="price">
                         {item.productPrice.toLocaleString()}원
                       </p>
-                  
+
                       <div className="quantity-box">
                         <button
                           onClick={() =>
@@ -240,33 +245,43 @@ function Cart() {
             </div>
           </div>
 
-          {/* 주문 요약 */}
-          <div className="order-summary">
-            <h3>선택 상품</h3>
+              {/* 주문 요약 */}
+              <div className="order-summary">
+                <h3>구매 금액</h3>
 
-            <div className="summary-row">
-              <span>전체 상품 금액</span>
-              <span>{totalPrice.toLocaleString()}원</span>
-            </div>
+              {/* 선택된 상품 금액 */}
+              <div className="summary-row">
+                <span>상품 금액</span>
+                <span>{selectedTotalPrice.toLocaleString()}원</span>
+              </div>
 
-            <div className="summary-row">
-              <span>선택 상품 금액</span>
-              <strong>{selectedTotalPrice.toLocaleString()}원</strong>
-            </div>
+              {/* 선택된 금액 기준 배송비 산정 */}
+              <div className="summary-row">
+                <span>배송비</span>
+                <strong>{(selectedTotalPrice >= 30000 ? 0 : 3000).toLocaleString()}원
+                </strong>
+              </div>
 
-            <hr />
+              {/* 총 구매 금액 */}
+              <div className="summary-row total">
+                <span>총 구매 금액</span>
+                  <strong>{(selectedTotalPrice + (selectedTotalPrice >= 30000 ? 0 : 3000)).toLocaleString()}원
+                  </strong>
+              </div>
 
-            <button className="checkout-btn" onClick={handleCheckoutSelected}>
-              선택 주문하기 ({selectedItems.length})
-            </button>
+              <hr />
 
-            <button className="checkout-btn" onClick={handleCheckoutAll}>
-              전체 주문하기
-            </button>
+              <button className="checkout-btn" onClick={handleCheckoutSelected}>
+                선택 주문하기 ({selectedItems.length})
+              </button>
 
-            <p className="summary-note">
-              * 주문 전 재고 확인이 필요할 수 있습니다.<br />
-              * 배송은 영업일 기준 2~3일 소요됩니다.
+              <button className="checkout-btn" onClick={handleCheckoutAll}>
+                전체 주문하기
+              </button>
+
+              <p className="summary-note">
+                * 주문 전 재고 확인이 필요할 수 있습니다.<br />
+                * 배송은 영업일 기준 2~3일 소요됩니다.
             </p>
           </div>
         </div>

@@ -9,12 +9,11 @@
 .order-title {
   font-size: 28px;
   font-weight: 700;
-  margin: 40px 80px 20px;
+  margin: 40px 60px 20px;
 }
 
 .order-content-area {
   background-color: #ffffff;
-  border: 1px solid #000000;
   padding: 40px 80px;
   min-height: calc(100vh - 120px);
   border-radius: 10px;
