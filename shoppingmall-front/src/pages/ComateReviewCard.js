@@ -20,13 +20,13 @@ const ComateReviewCard = ({
     return (
         <div className="comate_review_wrapper">
             <Link to={`/products/${productNo}`}>
-            <div className="product_info">
-                <img src={sampleImg_product} alt={productName} className="product_img comate"/>
-                <div className="text_info">
-                    <div className="product_name">{productName}</div>
-                    <div className="product_option">{productOption}</div>
+                <div className="comate_product_info">
+                    <img src={sampleImg_product} alt={productName} className="product_img comate"/>
+                    <div className="text_info">
+                        <div className="product_name">{productName}</div>
+                        <div className="product_option">{productOption}</div>
+                    </div>
                 </div>
-            </div>
             </Link>
             <div className="review_info">
                 {authorNickname && (
