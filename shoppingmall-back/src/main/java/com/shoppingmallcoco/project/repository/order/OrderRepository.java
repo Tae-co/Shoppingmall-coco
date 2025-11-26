@@ -31,7 +31,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     FROM Order o
     LEFT JOIN FETCH o.orderItems oi
     LEFT JOIN FETCH oi.product p
-    LEFT JOIN FETCH p.images img
     WHERE o.orderNo = :orderNo AND o.member.memNo = :memNo
     """)
     Optional<Order> findDetailByOrderNo(
