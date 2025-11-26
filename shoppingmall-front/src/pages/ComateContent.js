@@ -61,7 +61,7 @@ const ComateContent = ({
         case 'review':
             title = "누적 리뷰";
             content = reviewList.map((item, index) => <ComateReviewCard 
-                                                        key={`review-${item.id}-${index}`}
+                                                        key={item.reviewNo}
                                                         {...item}
                                                         onToggleLike={async (reviewNo, likedByCurrentUser) => {
                                                             setReviewList(prev => prev.map(r =>
@@ -77,7 +77,7 @@ const ComateContent = ({
         case 'like':
             title = "좋아요";
             content = likeList.map((item, index) => <ComateReviewCard 
-                                                        key={`like-${item.id}-${index}`} 
+                                                        key={item.reviewNo} 
                                                         {...item} 
                                                         authorNo={item.authorNo}
                                                         authorNickname={item.authorNickname}
