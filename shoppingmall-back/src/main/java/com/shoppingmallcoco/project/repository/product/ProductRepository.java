@@ -10,4 +10,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, J
 	// JPA가 메소드 이름을 분석해서 쿼리를 자동 생성
 	
 	long countByStatus(String status);
+
+	ProductEntity findProductEntityByPrdNo(Long prdNo);
 }

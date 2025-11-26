@@ -126,6 +126,13 @@ public class ReviewController {
         }
     }
 
+    // 리뷰 작성 버튼 누를 때 orderItemNo 가져오기
+    @GetMapping("/reviews/{prdNo}/getOrderItemNo/{memNo}")
+    public Long getOrderItemNo(@PathVariable Long prdNo, @PathVariable Long memNo) {
+        Long orderItemNo = reviewService.getOrderItemNo(prdNo, memNo);
+        return orderItemNo;
+    }
+
     //reviewNo 유무 확인
     @GetMapping("/review/{reviewNo}/check")
     public ResponseEntity<?> checkReviewNo(@PathVariable Long reviewNo) {

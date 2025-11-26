@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.PathVariable;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
@@ -17,7 +18,17 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // review 모든 목록 조회 (하나의 상품에 등록된 리뷰 목록 조회)
     List<Review> findByOrderItemProductPrdNo(Long prdNo);
 
-    //
+    // reviewNo 조회 작성 확인
+    // 이미 리뷰 작성하면 리뷰 작성 못하게 -> reviewNo 조회 하고 -> orderItemNo 조회 -> memNo 조회 해서 리뷰 작성 되어 있는지 확인
+    @Query("SELECT r.reviewNo FROM Review r "
+        + "JOIN r.orderItem oi "
+        + "JOIN oi.order o "
+        + "JOIN o.member m "
+        + "WHERE oi.product.prdNo = :prdNo AND m.memNo = :memNo"
+    )
+    Long findReviewsNoByOrderItemMemberAndPrdNo(@Param("prdNo")Long prdNo, @Param("memNo") Long memNo);
+
+    // 회원 넘버 조회
     @Query("SELECT m.memNo FROM Review r "
         + "JOIN r.orderItem oi "
         + "JOIN oi.order o "
