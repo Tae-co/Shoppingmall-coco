@@ -1,6 +1,6 @@
 import React from "react"
 import './App.css';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import theme from './styles/admintheme';
 import Header from './components/Header';
@@ -28,7 +28,6 @@ import UpdateReview from './pages/UpdateReview.js';
 import ProductListPage from './pages/ProductListPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import AdminLayout from './components/admin/AdminLayout';
-import AdminHome from './pages/admin/AdminHome';
 import AdminProductList from './pages/admin/AdminProductList';
 import AdminProductNew from './pages/admin/AdminProductNew';
 import AdminProductEdit from './pages/admin/AdminProductEdit';
@@ -87,7 +86,7 @@ function App() {
           {/* 관리자 페이지 - 관리자 권한 필요 */}
           <Route element={<AdminProtectedRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminHome />} />
+              <Route index element={<Navigate to="products" replace />} />
               <Route path="products" element={<AdminProductList />} />
               <Route path="product/new" element={<AdminProductNew />} />
               <Route path="product/edit/:productId" element={<AdminProductEdit />} />

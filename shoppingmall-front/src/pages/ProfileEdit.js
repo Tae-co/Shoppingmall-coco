@@ -82,8 +82,21 @@ function ProfileEdit() {
     <div className="profile-edit-container">
       {/* 뒤로가기 */}
       <button className="back-btn" onClick={() => navigate("/mypage")}>
-        ← 마이페이지로 돌아가기
-      </button>
+        <svg
+          className="arrow-icon"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="19" y1="12" x2="5"  y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      <span>마이페이지로 돌아가기</span></button>
 
       <h2 className="page-title">프로필 설정</h2>
 
@@ -116,7 +129,7 @@ function ProfileEdit() {
         <div className="sub-section">
           <h4>피부 타입</h4>
           <div className="option-grid">
-            {["지성", "건성", "복합성", "민감성"].map((type) => (
+            {["건성", "지성", "복합성", "민감성"].map((type) => (
               <label key={type}>
                 <input
                   type="radio"
@@ -136,14 +149,16 @@ function ProfileEdit() {
           <h4>피부 고민 (복수 선택 가능)</h4>
           <div className="option-grid checkbox">
             {[
-              "모공",
-              "여드름",
-              "홍조",
+              "수분",
+              "보습",
+              "미백",
+              "피부톤",
+              "진정",
+              "민감",
+              "자외선차단",
               "주름",
-              "건조함",
-              "민감함",
-              "다크스팟",
-              "칙칙함",
+              "탄력",
+              "모공"
             ].map((item) => (
               <label key={item}>
                 <input
@@ -167,10 +182,9 @@ function ProfileEdit() {
             onChange={(e) => setPersonalColor(e.target.value)}
           >
             <option value="">선택하세요</option>
-            <option>봄 웜톤</option>
-            <option>여름 쿨톤</option>
-            <option>가을 웜톤</option>
-            <option>겨울 쿨톤</option>
+            <option>쿨톤</option>
+            <option>웜톤</option>
+            <option>뉴트럴톤</option>
           </select>
         </div>
       </div>

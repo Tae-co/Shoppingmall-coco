@@ -1,7 +1,11 @@
 package com.shoppingmallcoco.project.entity.product;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -12,6 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "CATEGORY")
+@EntityListeners(AuditingEntityListener.class)
 public class CategoryEntity {
 	
 	@Id
@@ -26,6 +31,11 @@ public class CategoryEntity {
 	
 	@Column(name = "CATEGORYNAME")
 	private String categoryName;
+	
+	// 수정일 컬럼 (수정 시 자동 업데이트)
+    @LastModifiedDate
+    @Column(name = "MOD_DATE")
+    private LocalDateTime modDate;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "PARENT_CATEGORY_NO")

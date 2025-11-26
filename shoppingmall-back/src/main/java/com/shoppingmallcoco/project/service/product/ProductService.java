@@ -45,18 +45,24 @@ public class ProductService {
 		Sort sortObj;
 
 		switch (sort) {
-		case "newest":
-			sortObj = Sort.by("regDate").descending();
+		case "idAsc": // 등록순 (ID 오름차순)
+			sortObj = Sort.by("prdNo").ascending();
 			break;
-		case "priceAsc":
+		case "newest": // 최신순 (ID 내림차순)
+			sortObj = Sort.by("prdNo").descending();
+			break;
+		case "priceAsc": // 낮은 가격순
 			sortObj = Sort.by("prdPrice").ascending();
 			break;
-		case "priceDesc":
+		case "priceDesc": // 높은 가격순
 			sortObj = Sort.by("prdPrice").descending();
 			break;
-		case "popularity":
-		default:
-			sortObj = Sort.by("regDate").descending();
+		case "popularity": // 인기순
+			//sortObj = Sort.by("salesCount").descending();
+			sortObj = Sort.by("prdNo").descending();
+			break;
+		default: // 기본값
+			sortObj = Sort.by("prdNo").ascending();
 			break;
 		}
 

@@ -1,18 +1,24 @@
+/* 컨테이너 */
 .order-steps {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 40px;
-  margin: 40px 0 60px;
+  width: 100%;
+  max-width: 1200px;      
+  margin: 40px auto 60px; 
+  gap: 0;                 
 }
 
+/* 각 스텝 */
 .step {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  min-width: 90px;       
 }
 
+/* 동그라미 */
 .circle {
   width: 36px;
   height: 36px;
@@ -36,18 +42,19 @@
 
 /* 완료된 단계 */
 .circle.completed {
-  background-color: #4CAF50; /* 초록색 */
+  background-color: #4CAF50;
   border-color: #4CAF50;
   color: white;
   font-size: 16px;
 }
 
-/* 선 */
+/* 연결 선 */
 .line {
-  width: 80px;
+  flex-grow: 1;           
   height: 2px;
   background-color: #ccc;
   border-radius: 1px;
+  margin: 0 35px;         
 }
 
 /* 완료된 선 */

@@ -43,9 +43,23 @@ function MyCoMate() {
     <div className="mycomate-container">
       {/* Header */}
       <div className="mycomate-header">
-        <button className="back-btn" onClick={() => navigate("/mypage")}>
-          ← 마이페이지로 돌아가기
-        </button>
+        {/* 뒤로가기 */}
+      <button className="back-btn" onClick={() => navigate("/mypage")}>
+        <svg
+          className="arrow-icon"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="19" y1="12" x2="5"  y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      <span>마이페이지로 돌아가기</span></button>
         <h1>My Co-mate</h1>
         <p>내 피부 타입에 맞는 Co-mate를 찾아보세요</p>
       </div>

@@ -2,27 +2,88 @@
   max-width: 1200px;
   margin: 80px auto;
   padding: 20px;
+  background-color: white;
+  min-height: 100vh;
 }
 
 .order-title {
-  font-size: 1.8em !important;
+  font-size: 28px;
   font-weight: 700;
-  margin-bottom: 30px;
+  margin: 40px 60px 20px;
 }
 
+.order-content-area {
+  background-color: #ffffff;
+  padding: 40px 80px;
+  min-height: calc(100vh - 120px);
+  border-radius: 10px;
+  box-sizing: border-box;
+  margin-top: 20px;
+}
+
+/* 장바구니 + 요약 레이아웃 */
 .cart-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
+  display: flex;
   gap: 40px;
+  justify-content: space-between;
+}
+
+.cart-list {
+  flex: 2;
+}
+
+.order-summary {
+  flex: 1;
+  background: white;
+  border-radius: 10px;
+  padding: 20px 30px;
+  border: 1px solid #000000;
 }
 
 .section-title {
   font-size: 1.2rem;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
-/* 장바구니 카드 */
+.cart-title-row {
+  margin-bottom: 10px;
+}
+
+.select-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+  font-weight: 600;
+}
+
+.select-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.select-label input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+/* 선택 삭제 버튼 */
+.delete-selected-btn {
+  padding: 8px 16px;
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.delete-selected-btn:hover {
+  background: #f2f2f2;
+}
+
 .cart-card {
   display: flex;
   align-items: center;
@@ -32,6 +93,7 @@
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 20px;
+  gap: 16px;
 }
 
 .cart-image {
@@ -43,18 +105,7 @@
 
 .cart-info {
   flex: 1;
-  margin-left: 20px;
-}
-
-.brand {
-  color: #777;
-  font-size: 0.9rem;
-}
-
-.product-name {
-  font-weight: 600;
-  font-size: 1rem;
-  margin: 6px 0;
+  margin-left: 15px;
 }
 
 .price {
@@ -79,19 +130,12 @@
   cursor: pointer;
 }
 
-.quantity-box span {
-  min-width: 20px;
-  text-align: center;
-  font-weight: 600;
-}
-
 .cart-summary-item {
   text-align: right;
 }
 
 .subtotal {
   font-weight: 700;
-  color: #222;
   margin-bottom: 6px;
 }
 
@@ -102,13 +146,21 @@
   font-size: 1.2rem;
 }
 
-/* 주문 요약 */
-.order-summary {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 24px;
-  height: fit-content;
+.cart-scroll-area {
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.cart-scroll-area::-webkit-scrollbar {
+  width: 6px;
+}
+.cart-scroll-area::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+.cart-scroll-area::-webkit-scrollbar-track {
+  background: #f2f2f2;
 }
 
 .order-summary h3 {
@@ -121,14 +173,9 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 12px;
-  color: #333;
 }
 
-.summary-row.total {
-  font-size: 1.1rem;
-  font-weight: 700;
-}
-
+/* 주문하기 버튼 */
 .checkout-btn {
   width: 100%;
   background: #111;
@@ -146,58 +193,27 @@
   background: #333;
 }
 
+.checkout-btn + .summary-note {
+  margin-top: 16px !important; 
+}
+
 .summary-note {
   font-size: 0.85rem;
   color: #888;
-  margin-top: 10px;
   line-height: 1.4;
-}
-/* 주문하기 페이지 전체 */
-.order-page {
-  background-color: white; 
-  min-height: 100vh;
-}
-
-/* 주문하기 제목 */
-.order-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 40px 80px 20px;
+  text-align: left;        
+  width: 100%;             
+  padding-left: 2px;
+  margin-top: 6px;
 }
 
-/* 주문하기 아래 영역 배경 */
-.order-content-area {
-  background-color: #ffffff; 
-  border: 1px solid #000000;
-  padding: 40px 80px;
-  min-height: calc(100vh - 120px);
-  box-sizing: border-box;
-  border-radius: 10px;
-}
-
-/* 장바구니 및 주문 요약 레이아웃 */
-.cart-grid {
-  display: flex;
-  gap: 40px;
-  justify-content: space-between;
-}
-
-.cart-list {
-  flex: 2;
-}
-.order-summary {
-  flex: 1;
-  background: white;
-  border-radius: 10px;
-  padding: 20px 30px;
-  border: 1px solid #000000;
-}
+/* 빈 장바구니 */
 .empty-cart {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 300px; 
+  height: 300px;
   color: #333;
   font-size: 1.2rem;
   font-weight: 500;

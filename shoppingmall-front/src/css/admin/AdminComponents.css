@@ -1,0 +1,89 @@
+/* --- Spinner --- */
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  min-height: 300px;
+}
+
+.spinner-wheel {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #333; /* Primary Color */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* --- Pagination --- */
+.pagination-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 20px;
+}
+
+.page-btn {
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #333;
+  padding: 8px 12px;
+  margin: 0 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.page-btn.active {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.page-btn:disabled {
+  background: #eee;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+/* --- TagCheckboxGroup --- */
+.tag-group {
+  margin-bottom: 15px;
+}
+
+.tag-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.checkbox-item input {
+  margin-right: 8px;
+  transform: scale(1.2);
+}
