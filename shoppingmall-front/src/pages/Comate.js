@@ -154,7 +154,7 @@ const Comate = () => {
         <div className="comate_wrapper">
             <ComateFullProfile
                 nickname={member.memNickname}
-                // skinTypes={member.skinTypes}
+                skinTags={member.skinTags}
                 likes={member.likedCount || 0}
                 followers={member.followerCount || 0}
                 following={member.followingCount || 0}

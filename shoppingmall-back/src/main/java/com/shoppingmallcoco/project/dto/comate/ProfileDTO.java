@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shoppingmallcoco.project.entity.auth.Member;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -14,6 +15,9 @@ public class ProfileDTO {
     private Long memNo;
     private String memName;
     private String memNickname;
+
+    @Builder.Default
+    private List<String> skinTags = new ArrayList<>();
     
     // 좋아요 누른 리뷰 개수
     private int likedCount;

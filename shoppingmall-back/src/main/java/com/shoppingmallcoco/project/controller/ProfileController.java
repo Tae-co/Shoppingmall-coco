@@ -16,7 +16,7 @@ public class ProfileController {
 
     @PutMapping("/{memNo}")
     public ResponseEntity<?> updateProfile(
-            @PathVariable Long memNo,
+            @PathVariable("memNo") Long memNo,
             @RequestBody ProfileUpdateRequestDto dto) {
 
         profileService.updateProfile(memNo, dto);
@@ -24,7 +24,7 @@ public class ProfileController {
     }
 
     @GetMapping("/{memNo}")
-    public SkinProfileResponseDto getProfile(@PathVariable Long memNo) {
+    public SkinProfileResponseDto getProfile(@PathVariable("memNo") Long memNo) {
         return profileService.getProfile(memNo);
     }
 }

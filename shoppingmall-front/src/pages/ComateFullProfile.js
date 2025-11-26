@@ -3,7 +3,7 @@ import React from "react";
 import '../css/ComateProfile.css';
 import sampleImg_profile from '../images/sampleImg_profile.png'; // 임시 프로필 이미지
 
-const ComateFullProfile = ({ nickname, skinTypes, likes, followers, following, 
+const ComateFullProfile = ({ nickname, skinTags, likes, followers, following, 
                             onFollowClick, onClick, isMine, isFollowing, onTabClick }) => {
     return (
         <div className="comate_card_wrapper" onClick={onClick}>
@@ -13,7 +13,7 @@ const ComateFullProfile = ({ nickname, skinTypes, likes, followers, following,
                 onClick={(e) => { e.stopPropagation(); onTabClick('review'); }} />
                 <div className="nickname full" onClick={(e) => { e.stopPropagation(); onTabClick('review'); }}>{nickname}</div>
                 <div className="skin_types full">
-                    {skinTypes?.map((type, index) => (
+                    {skinTags?.map((type, index) => (
                         <span key={index}>{type}</span>
                     ))}
                 </div>
