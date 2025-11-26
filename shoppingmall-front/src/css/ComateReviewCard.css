@@ -68,3 +68,19 @@
     color: #999;
     gap: 3px;
 }
+.author_info {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    color: #999;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.author_info img {
+    border-radius: 50%;
+    width: 30px;
+}
+a {
+    text-decoration: none;
+    color: black;
+}

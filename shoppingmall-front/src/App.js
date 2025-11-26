@@ -95,7 +95,7 @@ function App() {
             </Route>
           </Route>
           {/* COMATE 관련 - 다른 사용자 계정 */}
-          <Route path="/comate/user/:userId/:tab?" element={<Comate userType="user"/>} />
+          <Route path="/comate/user/:memNo/:tab?" element={<Comate userType="user" />} />
           {/* 리뷰 관련 */}
           <Route path="/reviews/:orderItemNo" element={<CreateReviewwPage/>} />
           <Route path="/update-reviews/:reviewNo" element={<CreateUpdatePage/>} />

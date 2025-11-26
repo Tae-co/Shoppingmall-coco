@@ -1,5 +1,6 @@
 package com.shoppingmallcoco.project.dto.comate;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shoppingmallcoco.project.entity.auth.Member;
 import lombok.*;
 
@@ -14,18 +15,16 @@ public class ProfileDTO {
     private String memName;
     private String memNickname;
     
+    // 좋아요 누른 리뷰 개수
+    private int likedCount;
+    
     // 팔로잉 관련 정보
     private int followerCount;
     private int followingCount;
-    private List<FollowInfoDTO> followers;
-    private List<FollowInfoDTO> followings;
+    // 팔로잉 여부 확인
+    private boolean isFollowing;
 
     // 현재 사용자 확인
-    private boolean isMyProfile;
-    
-    // 작성한 리뷰 목록
-    private List<MyReviewDTO> myReviews;
-    // 좋아요 누른 리뷰 목록
-    private List<LikedReviewDTO> likedReviews;
+    private boolean isMine;
 
 }

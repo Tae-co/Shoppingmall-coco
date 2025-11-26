@@ -37,10 +37,14 @@
     padding: 7px 20px;
     color: #fff;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 500;
 }
 .uc_follow_btn.active {
     background-color: #fff;
-    border: 1px solid #000;
+    border: 1px solid #aaa;
     color: #000;
+}
+a {
+    text-decoration: none;
+    color: black;
 }

@@ -27,10 +27,17 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // review 삭제
     //void deleteById(Long reviewNo);
-
-    // CO-MATE 기능 구현
-    // 특정 사용자가 작성한 리뷰 조회 (기본값:최신순)
-    //List<Review> findByOrderItem_Member_MemNo(Long memNo);
-    List<Review> findByOrderItem_Order_Member_MemNoOrderByCreatedAtDesc(Long memNo);
+    
+	/* CO-MATE 기능 구현 */
+    /* 특정 사용자가 작성한 리뷰 개수 */
+ 	int countByOrderItem_Order_Member_MemNo(Long memNo);
+    
+ 	/* 특정 사용자가 작성한 리뷰 조회 */
+ 	// 최신순
+	List<Review> findByOrderItem_Order_Member_MemNoOrderByCreatedAtDesc(Long memNo);
+	// 별점 높은순
+	List<Review> findByOrderItem_Order_Member_MemNoOrderByRatingDesc(Long memNo);
+	// 별점 낮은순
+	List<Review> findByOrderItem_Order_Member_MemNoOrderByRatingAsc(Long memNo);
 
 }

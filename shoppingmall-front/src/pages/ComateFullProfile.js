@@ -4,7 +4,7 @@ import '../css/ComateProfile.css';
 import sampleImg_profile from '../images/sampleImg_profile.png'; // 임시 프로필 이미지
 
 const ComateFullProfile = ({ nickname, skinTypes, likes, followers, following, 
-                            onFollowClick, onClick, isFollowing, onTabClick, userType}) => {
+                            onFollowClick, onClick, isMine, isFollowing, onTabClick }) => {
     return (
         <div className="comate_card_wrapper" onClick={onClick}>
             <div className="comate_card full">
@@ -36,8 +36,8 @@ const ComateFullProfile = ({ nickname, skinTypes, likes, followers, following,
                 </div>
             </div>
             </div>
-            {/* userType이 'me'이면 팔로우 버튼 숨기기 */}
-            {userType !== 'me' && (
+            {/* 내 프로필이면 팔로우 버튼 숨기기 */}
+            {!isMine && (
                 <button
                     className={`follow_btn full ${isFollowing ? "active" : ""}`}
                     onClick={(e) => {
