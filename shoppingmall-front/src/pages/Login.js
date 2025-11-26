@@ -6,11 +6,15 @@ import NaverIcon from '../images/naver.svg';
 import KakaoIcon from '../images/kakao.svg';
 import LoginIcon from '../images/login.svg';
 import { login as memberLogin, kakaoLogin, naverLogin, googleLogin } from '../utils/api';
+import SkinProfilePopup from '../components/SkinProfilePopup';
+
+const isAdminUser = (member) => (member?.role || '').toUpperCase() === 'ADMIN';
 
 const Login = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
+  const [showSkinProfilePopup, setShowSkinProfilePopup] = useState(false);
 
   // 컴포넌트 마운트 시 소셜 로그인 SDK 초기화
   useEffect(() => {
@@ -34,13 +38,21 @@ const Login = () => {
     }
 
     try {
-      await memberLogin({
+      const data = await memberLogin({
         memId: userId,
         memPwd: password
       });
 
       alert('로그인되었습니다.');
-      navigate('/');
+      
+      const isAdmin = isAdminUser(data);
+
+      // 스킨 프로필이 없으면 팝업 표시 (관리자는 제외)
+      if (!data.hasSkinProfile && !isAdmin) {
+        setShowSkinProfilePopup(true);
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       console.error('로그인 오류:', error);
       alert(error.message || '로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
@@ -78,7 +90,15 @@ const Login = () => {
                   navigate('/kakao/additional-info');
                 } else {
                   alert('카카오 로그인되었습니다.');
-                  navigate('/');
+                  
+                  const isAdmin = isAdminUser(data);
+
+                  // 스킨 프로필이 없으면 팝업 표시 (관리자는 제외)
+                  if (!data.hasSkinProfile && !isAdmin) {
+                    setShowSkinProfilePopup(true);
+                  } else {
+                    navigate('/');
+                  }
                 }
               } catch (error) {
                 console.error('카카오 로그인 오류:', error);
@@ -134,7 +154,15 @@ const Login = () => {
                   navigate('/kakao/additional-info');
                 } else {
                   alert('구글 로그인되었습니다.');
-                  navigate('/');
+                  
+                  const isAdmin = isAdminUser(data);
+
+                  // 스킨 프로필이 없으면 팝업 표시 (관리자는 제외)
+                  if (!data.hasSkinProfile && !isAdmin) {
+                    setShowSkinProfilePopup(true);
+                  } else {
+                    navigate('/');
+                  }
                 }
               } catch (error) {
                 console.error('구글 로그인 오류:', error);
@@ -219,6 +247,13 @@ const Login = () => {
           </div>
         </div>
       </div>
+      
+      {showSkinProfilePopup && (
+        <SkinProfilePopup
+          onClose={() => setShowSkinProfilePopup(false)}
+          onLater={() => navigate('/')}
+        />
+      )}
     </div>
   );
 };

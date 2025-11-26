@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/KakaoAdditionalInfo.css';
-import { updateMember, isLoggedIn, validateEmail, storage, STORAGE_KEYS } from '../utils/api';
+import { updateMember, isLoggedIn, validateEmail, storage, STORAGE_KEYS, checkSkinProfile, getStoredMember } from '../utils/api';
+import SkinProfilePopup from '../components/SkinProfilePopup';
 
 const KakaoAdditionalInfo = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const KakaoAdditionalInfo = () => {
     memAddress2: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSkinProfilePopup, setShowSkinProfilePopup] = useState(false);
 
   // 입력 필드 변경 처리
   const handleInputChange = (e) => {
@@ -76,7 +78,21 @@ const KakaoAdditionalInfo = () => {
       storage.set(STORAGE_KEYS.MEMBER, JSON.stringify(data));
       alert('추가 정보가 입력되었습니다.');
       window.dispatchEvent(new Event('loginStatusChanged'));
-      navigate('/');
+      
+      // 스킨 프로필 확인
+      const member = getStoredMember();
+      const isAdmin = (member?.role || '').toUpperCase() === 'ADMIN';
+
+      if (member?.memNo && !isAdmin) {
+        const hasProfile = await checkSkinProfile(member.memNo);
+        if (!hasProfile) {
+          setShowSkinProfilePopup(true);
+        } else {
+          navigate('/');
+        }
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       console.error('정보 입력 오류:', error);
       alert(error.message || '정보 입력 중 오류가 발생했습니다.');
@@ -189,6 +205,13 @@ const KakaoAdditionalInfo = () => {
           </button>
         </form>
       </div>
+      
+      {showSkinProfilePopup && (
+        <SkinProfilePopup
+          onClose={() => setShowSkinProfilePopup(false)}
+          onLater={() => navigate('/')}
+        />
+      )}
     </div>
   );
 };
