@@ -182,9 +182,10 @@ function ProfileEdit() {
             onChange={(e) => setPersonalColor(e.target.value)}
           >
             <option value="">선택하세요</option>
-            <option>쿨톤</option>
-            <option>웜톤</option>
-            <option>뉴트럴톤</option>
+            <option>봄 웜톤</option>
+            <option>여름 쿨톤</option>
+            <option>가을 웜톤</option>
+            <option>겨울 쿨톤</option>
           </select>
         </div>
       </div>
