@@ -26,6 +26,9 @@
     gap: 4px;
     margin-bottom: 12px;
 }
+.skin_types.full {
+    width: 200px;
+}
 .skin_types span {
     background-color: #f5f5f5;
     padding: 4px 8px;
