@@ -1,5 +1,6 @@
 .reviewBox {
     display: flex;
+    position: relative;
     width: 1246px;
     padding: 16px 16px 24px 16px;
     flex-direction: column;
@@ -35,6 +36,12 @@
     color: #222;
 }
 
+.resale {
+    display: flex;
+    font-size: 10px;
+    color: #555;
+}
+
 .stars {
     display: flex;
     align-items: center;
@@ -47,23 +54,23 @@
 }
 
 .date-edit {
+    position: absolute;
     display: flex;
+    top: 16px;
+    right: 16px;
     align-items: center;
     gap: 8px;
-    margin-left: auto;
-    justify-content: flex-end;
 }
 
 .date {
-    display: flex;
     padding-bottom: 2px;
     justify-content: center;
     align-items: center;
-    flex: 1 0 0;
+    color: #666;
+    font-size: 10px;
 }
 
 .icon-btn {
-    display: flex;
     width: 32px;
     height: 32px;
     justify-content: center;
@@ -76,7 +83,7 @@
 }
 
 .imgBox {
-    margin-top: 10px;
+    margin-top: 25px;
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
@@ -161,7 +168,7 @@
     height: 30px;
 }
 
-.like span{
+.like span {
     background-color: #f4f4f4;
     border-radius: 20px;
     padding: 6px 13px;

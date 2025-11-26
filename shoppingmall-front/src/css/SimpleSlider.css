@@ -1,6 +1,13 @@
+.slider_container {
+    /* 기존 스타일 유지 */
+    position: relative; /* 화살표 위치 기준 */
+}
 .slide {    
     height: 450px;
     margin: 20px 0;
+    /* 이미지 등이 들어갈 때 꽉 차게 */
+    background-size: cover;
+    background-position: center;
 }
 .page1 {
     background-color: orange;
@@ -13,4 +20,37 @@
 }
 .page4 {
     background-color: greenyellow;
+}
+
+/* --- 화살표 스타일 추가 --- */
+
+/* 화살표 아이콘 */
+.slider_container .slick-prev:before,
+.slider_container .slick-next:before {
+    font-size: 40px;
+    color: #fff;          /* 흰색 */
+    opacity: 0.6;         /* 약간 투명하게 */
+    transition: opacity 0.2s;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3); /* 잘 보이도록 그림자 */
+}
+
+/* 호버 시 불투명하게 */
+.slider_container .slick-prev:hover:before,
+.slider_container .slick-next:hover:before {
+    opacity: 1;
+}
+
+/* 위치 및 크기 */
+.slider_container .slick-prev {
+    left: 30px;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+}
+
+.slider_container .slick-next {
+    right: 30px;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
 }

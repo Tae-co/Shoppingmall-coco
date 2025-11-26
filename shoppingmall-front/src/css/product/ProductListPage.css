@@ -1,0 +1,23 @@
+.page-container {
+  display: flex;
+  padding: 20px 40px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.main-content {
+  flex: 1;
+}
+
+.product-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 10px;
+  }
+}

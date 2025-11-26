@@ -14,14 +14,16 @@ import lombok.*;
 public class Follow {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "follow_seq_gen")
+    @SequenceGenerator(name = "follow_seq_gen", sequenceName = "FOLLOW_SEQ", allocationSize = 1)
     @Column(name = "FOLLOWNO")
     private Long followNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FOLLOWERNO")  // ← Oracle 컬럼명 그대로 사용!
+    @JoinColumn(name = "FOLLOWERNO")
     private Member follower;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FOLLOWINGNO") // ← Oracle 컬럼명 그대로 사용!
+    @JoinColumn(name = "FOLLOWINGNO")
     private Member following;
 }

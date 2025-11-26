@@ -1,0 +1,39 @@
+.product-btn {
+  /* 공통 스타일 */
+  display: inline-block;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
+  border: 1px solid #333;
+  
+  /* 기본 상태 (primary=false) */
+  background: white;
+  color: #333;
+}
+
+.product-btn:hover {
+  background: #f9f9f9;
+}
+
+/* Primary 스타일 (검은 배경) */
+.product-btn.primary {
+  background: #333;
+  color: white;
+}
+
+.product-btn.primary:hover {
+  background: #555;
+}
+
+/* Disabled 스타일 */
+.product-btn:disabled {
+  background: #aaa;
+  color: #eee;
+  border-color: #aaa;
+  cursor: not-allowed;
+}

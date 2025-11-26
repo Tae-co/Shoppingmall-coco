@@ -13,10 +13,13 @@ public class MyReviewDTO {
     private Long productNo;
     private String productName;
     private String productOption;
+    private String productImg;
     
-    private int rating;
+    private Integer rating;
     private String content;
     private LocalDateTime createdAt;
     private List<String> tags;
+    
+    private boolean likedByCurrentUser;
     private int likeCount;
 }

@@ -1,0 +1,50 @@
+.uc_wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #bbb;
+}
+.uc_wrapper:last-child {
+    border-bottom: none;
+}
+.uc_info_wrapper {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+.uc_info_wrapper .profile_img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 0;
+}
+.uc_info {
+    align-items: center;
+}
+.uc_info .nickname {
+    margin-left: 3px;
+    margin-bottom: 5px;
+}
+.uc_info .skin_types {
+    margin-bottom: 0;
+}
+.uc_info .skin_types span {
+    border-radius: 10px;
+}
+.uc_follow_btn {
+    background-color: #000;
+    border-radius: 25px;
+    padding: 7px 20px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+}
+.uc_follow_btn.active {
+    background-color: #fff;
+    border: 1px solid #aaa;
+    color: #000;
+}
+a {
+    text-decoration: none;
+    color: black;
+}

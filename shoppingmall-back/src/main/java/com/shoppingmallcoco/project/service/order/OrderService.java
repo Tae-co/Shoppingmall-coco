@@ -1,7 +1,6 @@
 package com.shoppingmallcoco.project.service.order;
 
-import com.shoppingmallcoco.project.dto.order.OrderRequestDto;
-import com.shoppingmallcoco.project.dto.order.OrderResponseDto;
+import com.shoppingmallcoco.project.dto.order.*;
 import com.shoppingmallcoco.project.entity.auth.Member;
 import com.shoppingmallcoco.project.entity.order.Order;
 import com.shoppingmallcoco.project.entity.order.OrderItem;
@@ -11,12 +10,13 @@ import com.shoppingmallcoco.project.repository.auth.MemberRepository;
 import com.shoppingmallcoco.project.repository.product.ProductOptionRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,23 +32,33 @@ public class OrderService {
     private static final long FREE_SHIPPING_THRESHOLD = 30000L;
 
     /**
-     * 주문 생성 (보안 적용: memId 사용)
+     * 로그인한 회원 번호 가져오기
+     */
+    private Long getLoginMemberNo() {
+        String memId = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        Member member = memberRepository.findByMemId(memId)
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+
+        return member.getMemNo();
+    }
+
+    /**
+     * 주문 생성
      */
     @Transactional
-    //  Long memNo -> String memId (컨트롤러가 아이디를 줍니다)
     public Long createOrder(OrderRequestDto requestDto, String memId) {
 
-        //  findById -> findByMemId (아이디로 진짜 회원 찾기)
         Member member = memberRepository.findByMemId(memId)
-                .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다. ID: " + memId));
-
+                .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
 
         List<OrderItem> orderItems = new ArrayList<>();
         long totalOrderPrice = 0;
 
         for (OrderRequestDto.OrderItemDto itemDto : requestDto.getOrderItems()) {
-            Long optionNo = itemDto.getOptionNo();
-            ProductOptionEntity option = productOptionRepository.findById(optionNo)
+            ProductOptionEntity option = productOptionRepository.findById(itemDto.getOptionNo())
                     .orElseThrow(() -> new RuntimeException("상품 옵션을 찾을 수 없습니다."));
 
             option.removeStock(itemDto.getOrderQty().intValue());
@@ -62,16 +72,16 @@ public class OrderService {
             orderItem.setOrderPrice(realPrice);
 
             orderItems.add(orderItem);
-            totalOrderPrice += (realPrice * itemDto.getOrderQty());
+            totalOrderPrice += realPrice * itemDto.getOrderQty();
         }
 
         long shippingFee = (totalOrderPrice >= FREE_SHIPPING_THRESHOLD) ? 0 : SHIPPING_FEE;
 
-        // 포인트 로직
         long pointsToUse = requestDto.getPointsUsed();
         if (pointsToUse > 0) {
             if (member.getPoint() < pointsToUse) throw new RuntimeException("포인트 부족");
-            if (pointsToUse > (totalOrderPrice + shippingFee)) throw new RuntimeException("결제 금액 초과 사용 불가");
+            if (pointsToUse > (totalOrderPrice + shippingFee))
+                throw new RuntimeException("결제 금액 초과 사용 불가");
             member.usePoints(pointsToUse);
         }
 
@@ -99,19 +109,16 @@ public class OrderService {
     }
 
     /**
-     * 주문 내역 조회
+     * 주문 내역 조회 (전체 리스트 방식)
      */
-
     public List<OrderResponseDto> getOrderHistory(String memId) {
-        // 1. 아이디로 회원을 먼저 찾습니다.
         Member member = memberRepository.findByMemId(memId)
                 .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
 
-        // 2. 찾은 회원의 번호(memNo)로 주문 내역을 조회합니다.
         List<Order> orders = orderRepository.findAllByMemberMemNoOrderByOrderNoDesc(member.getMemNo());
 
         return orders.stream()
-                .map(OrderResponseDto::new)
+                .map(OrderResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
@@ -119,17 +126,17 @@ public class OrderService {
      * 주문 취소
      */
     @Transactional
-
     public void cancelOrder(Long orderNo, String memId) {
+
         Order order = orderRepository.findById(orderNo)
                 .orElseThrow(() -> new RuntimeException("주문 없음"));
 
-        //  권한 확인 (문자열 아이디 비교)
         if (!order.getMember().getMemId().equals(memId)) {
-            throw new RuntimeException("권한 없음: 본인의 주문만 취소할 수 있습니다.");
+            throw new RuntimeException("권한 없음");
         }
 
-        if ("SHIPPED".equals(order.getStatus())) throw new RuntimeException("취소 불가");
+        if ("SHIPPED".equals(order.getStatus()))
+            throw new RuntimeException("취소 불가");
 
         for (OrderItem item : order.getOrderItems()) {
             item.getProductOption().addStock(item.getOrderQty().intValue());
@@ -140,5 +147,55 @@ public class OrderService {
         }
 
         order.setStatus("CANCELLED");
+    }
+
+    /**
+     * 페이징 기반 주문 조회 (기간 필터 포함)
+     */
+    public Page<OrderResponseDto> getOrders(int page, int size, String period) {
+
+        Long memNo = getLoginMemberNo();
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "orderNo"));
+
+        LocalDate fromDate = switch (period) {
+            case "3m" -> LocalDate.now().minusMonths(3);
+            case "6m" -> LocalDate.now().minusMonths(6);
+            case "1y" -> LocalDate.now().minusYears(1);
+            default -> null;
+        };
+
+        Page<Order> orderPage = (fromDate != null)
+                ? orderRepository.findOrdersAfterDate(memNo, fromDate, pageable)
+                : orderRepository.findByMember_MemNo(memNo, pageable);
+
+        return orderPage.map(OrderResponseDto::fromEntity);
+    }
+
+    /**
+     * 주문 상세 조회
+     */
+    public OrderDetailResponseDto getOrderDetail(Long orderNo) {
+
+        Long memNo = getLoginMemberNo();
+
+        Order order = orderRepository.findDetailByOrderNo(orderNo, memNo)
+                .orElseThrow(() -> new SecurityException("주문 조회 권한 없음"));
+
+        List<OrderItemDto> items = order.getOrderItems().stream()
+                .map(OrderItemDto::fromEntity)
+                .toList();
+
+        return OrderDetailResponseDto.builder()
+                .orderNo(order.getOrderNo())
+                .orderDate(order.getOrderDate().toString())
+                .status(order.getStatus())
+                .totalPrice(order.getTotalPrice())
+                .recipientName(order.getRecipientName())
+                .recipientPhone(order.getRecipientPhone())
+                .orderZipcode(order.getOrderZipcode())
+                .orderAddress1(order.getOrderAddress1())
+                .orderAddress2(order.getOrderAddress2())
+                .items(items)
+                .build();
     }
 }

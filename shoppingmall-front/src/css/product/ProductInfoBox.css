@@ -1,0 +1,171 @@
+/* src/css/product/ProductInfoBox.css */
+
+.info-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 상품명 */
+.product-name {
+  font-size: 28px;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* 별점 */
+.product-rating {
+  font-size: 16px;
+  color: #555;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 태그 컨테이너 */
+.tag-container {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag-badge {
+  font-size: 12px;
+  background: #fff;
+  color: #666;
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tag-badge:hover {
+  border-color: #333;
+  color: #333;
+}
+
+/* 가격 */
+.product-price {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111;
+  padding-top: 20px;
+  border-top: 1px solid #f4f4f4;
+  margin: 0;
+}
+
+/* 셀렉트 박스 (옵션) */
+.product-select {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #fff;
+  outline: none;
+  cursor: pointer;
+}
+
+.product-select:focus {
+  border-color: #333;
+}
+
+/* --- [수정] 수량 조절 컨트롤 --- */
+.qty-control {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 150px; /* 너비 약간 늘림 */
+  height: 45px; /* [핵심] 전체 높이 45px로 고정 (그림 2처럼 큼직하게) */
+  background-color: #fff;
+  overflow: hidden; /* 자식 요소가 둥근 모서리 넘치지 않게 */
+}
+
+.qty-btn {
+  width: 45px; /* 버튼 너비 = 높이 (정사각형 느낌) */
+  height: 100%; /* 부모 높이(45px) 꽉 채움 */
+  background-color: #f8f8f8; /* 버튼 배경색 구분 */
+  border: none;
+  font-size: 20px; /* +/- 글자 크기 키움 */
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.qty-btn:hover {
+  background-color: #eee;
+}
+
+.qty-input {
+  flex: 1; /* 남은 공간 차지 */
+  height: 100%; /* 부모 높이 꽉 채움 */
+  text-align: center;
+  border: none;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
+  font-size: 16px; /* 숫자 크기 */
+  font-weight: 600;
+  width: 100%;
+  outline: none;
+  -moz-appearance: textfield; /* Firefox 구버전 */
+  appearance: textfield;      /* 표준 속성 */
+}
+
+/* Chrome, Safari, Edge, Opera에서 화살표(Spin Button) 제거 */
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* 총 상품 금액 */
+.total-price-box {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 20px;
+  border-top: 2px solid #333;
+  gap: 12px;
+}
+
+.total-price-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #555;
+}
+
+.total-price-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #111;
+}
+
+/* 버튼 그룹 */
+.btn-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* 접근성 숨김 */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

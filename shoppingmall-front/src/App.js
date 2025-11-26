@@ -1,6 +1,6 @@
 import React from "react"
 import './App.css';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import theme from './styles/admintheme';
 import Header from './components/Header';
@@ -25,10 +25,9 @@ import MyCoMate from './pages/MyCoMate';
 import OrderDetail from "./pages/OrderDetail";
 import Review from './pages/Review.js';
 import UpdateReview from './pages/UpdateReview.js';
-import ProductListPage from './pages/ProductListPage';
-import ProductDetailPage from './pages/ProductDetailPage';
+import ProductListPage from './pages/product/ProductListPage';
+import ProductDetailPage from './pages/product/ProductDetailPage';
 import AdminLayout from './components/admin/AdminLayout';
-import AdminHome from './pages/admin/AdminHome';
 import AdminProductList from './pages/admin/AdminProductList';
 import AdminProductNew from './pages/admin/AdminProductNew';
 import AdminProductEdit from './pages/admin/AdminProductEdit';
@@ -71,8 +70,9 @@ function App() {
             <Route path="/my-activity" element={<MyActivity />} />
             <Route path="/account-settings" element={<AccountSettings />} />
             <Route path="/my-comate" element={<MyCoMate />} />
-            <Route path="/order-detail/:id" element={<OrderDetail />} />
+            <Route path="/order-detail/:orderNo" element={<OrderDetail />} />
             <Route path="/update-reviews/:reviewNo" element={<UpdateReview />} />
+            <Route path="/write-review/:orderItemNo" element={<Review />} />
             {/* 장바구니 관련 */}
             <Route path="/cart" element={<Cart />} />
             {/* 주문 관련 */}
@@ -87,7 +87,7 @@ function App() {
           {/* 관리자 페이지 - 관리자 권한 필요 */}
           <Route element={<AdminProtectedRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminHome />} />
+              <Route index element={<Navigate to="products" replace />} />
               <Route path="products" element={<AdminProductList />} />
               <Route path="product/new" element={<AdminProductNew />} />
               <Route path="product/edit/:productId" element={<AdminProductEdit />} />
@@ -96,10 +96,10 @@ function App() {
             </Route>
           </Route>
           {/* COMATE 관련 - 다른 사용자 계정 */}
-          <Route path="/comate/user/:userId/:tab?" element={<Comate userType="user"/>} />
+          <Route path="/comate/user/:memNo/:tab?" element={<Comate userType="user" />} />
           {/* 리뷰 관련 */}
-          <Route path="/reviews/:orderItemNo" element={<CreateReviewwPage/>} />
-          <Route path="/update-reviews/:reviewNo" element={<CreateUpdatePage/>} />
+          <Route path="/reviews/:orderItemNo" element={<Review/>} />
+          <Route path="/update-reviews/:reviewNo" element={<UpdateReview/>} />
           {/* 상품 관련 */}
           <Route path="/product" element={<ProductListPage />} />
           <Route path="/products/:productId" element={<ProductDetailPage />} />

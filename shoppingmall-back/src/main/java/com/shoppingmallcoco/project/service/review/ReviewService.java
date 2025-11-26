@@ -14,6 +14,8 @@ import com.shoppingmallcoco.project.entity.review.Tag;
 import com.shoppingmallcoco.project.repository.auth.MemberRepository;
 import com.shoppingmallcoco.project.repository.mypage.SkinRepository;
 import com.shoppingmallcoco.project.repository.order.OrderItemRepository;
+import com.shoppingmallcoco.project.repository.order.OrderRepository;
+import com.shoppingmallcoco.project.repository.product.ProductRepository;
 import com.shoppingmallcoco.project.repository.review.LikeRepository;
 import com.shoppingmallcoco.project.repository.review.ReviewImageRepository;
 import com.shoppingmallcoco.project.repository.review.ReviewRepository;
@@ -42,6 +44,7 @@ public class ReviewService implements IReviewService {
     private final FileUploadService fileUploadService;
     private final SkinRepository skinRepository;
     private final MemberRepository memberRepository;
+    private final ProductRepository productRepository;
 
     // review 등록
     @Transactional
@@ -200,6 +203,39 @@ public class ReviewService implements IReviewService {
         }).collect(Collectors.toList());
 
         return reviewDtoList;
+    }
+
+    // review 재구매 횟수
+    public int getBuyCount(Long prdNo, Long reviewNo) {
+        Long reviewerMemNo = reviewRepository.getMemberNoByReviewNoAndOrderItemOrderNo(reviewNo);
+        int orderItemCounts = orderItemRepository.countOrderItemsByOrderAndOrderItem(prdNo,
+            reviewerMemNo);
+        return orderItemCounts;
+    }
+
+    // review orderItemNo 가져오기
+    public Long getOrderItemNo(Long prdNo, Long memNo) {
+        Long reviewNo = reviewRepository.findReviewsNoByOrderItemMemberAndPrdNo(
+            prdNo, memNo);
+        // 리뷰 작성 여부 확인
+        if (reviewNo != null && reviewNo > 0) {
+            throw new IllegalArgumentException("이미 리뷰를 작성한 상품입니다.");
+        }
+
+        ProductEntity product = productRepository.findProductEntityByPrdNo(prdNo);
+        if (product == null) {
+            throw new IllegalArgumentException("등록되지 않은 상품입니다.");
+        }
+        Long productNo = product.getPrdNo();
+
+        Pageable topOne = PageRequest.of(0, 1);
+        List<Long> orderItemNoTop = orderItemRepository.getOrderItemNoByProductNo(productNo, memNo,
+            topOne);
+        if(orderItemNoTop == null || orderItemNoTop.isEmpty()){
+            throw new IllegalArgumentException("주문한 이력이 없는 상품입니다.");
+        }
+        Long lastOrderItemNo = orderItemNoTop.isEmpty() ? null : orderItemNoTop.get(0);
+        return lastOrderItemNo;
     }
 
     // 특정 상품의 리뷰 개수 조회

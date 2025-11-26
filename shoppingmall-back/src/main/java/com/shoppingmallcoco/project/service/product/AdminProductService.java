@@ -99,12 +99,108 @@ public class AdminProductService {
 		// 옵션 수정 (기존 옵션 삭제 후 재생성)
 		updateOptions(product, dto.getOptions());
 
-		// 이미지 추가 저장
-		if (files != null && !files.isEmpty()) {
-			saveImages(product, files);
-		}
+		// 이미지 처리 로직 (기존 이미지 정리 + 새 이미지 추가)
+		processImages(product, dto.getKeptImageUrls(), files);
 
 		return product;
+	}
+
+	// 이미지 동기화 및 순서 재정렬 메서드
+	private void processImages(ProductEntity product, List<String> imageOrderList, List<MultipartFile> newFiles)
+			throws IOException {
+		List<ProductImageEntity> currentImages = product.getImages();
+
+		// 삭제 처리: 요청된 순서 리스트(imageOrderList)에 없는 기존 이미지는 삭제
+		if (currentImages != null && !currentImages.isEmpty()) {
+			List<ProductImageEntity> toDelete = new ArrayList<>();
+			for (ProductImageEntity img : currentImages) {
+				boolean isKept = false;
+				if (imageOrderList != null) {
+					for (String item : imageOrderList) {
+						if (img.getImageUrl().equals(item)) {
+							isKept = true;
+							break;
+						}
+					}
+				}
+				if (!isKept)
+					toDelete.add(img);
+			}
+
+			// 리스트와 DB에서 삭제
+			currentImages.removeAll(toDelete);
+			prdImgRepo.deleteAll(toDelete);
+
+			// 로컬 파일 삭제 로직
+			for (ProductImageEntity img : toDelete) {
+				String fileName = img.getImageUrl().substring(img.getImageUrl().lastIndexOf("/") + 1);
+				new File(uploadDir + fileName).delete();
+			}
+		}
+
+		// 순서대로 저장 및 정렬
+		if (imageOrderList != null) {
+			int sortOrder = 1;
+			int newFileIndex = 0;
+
+			for (String item : imageOrderList) {
+				if ("NEW_FILE".equals(item)) {
+					// "NEW_FILE" 자리에는 새 파일 리스트에서 하나 꺼내와서 저장
+					if (newFiles != null && newFileIndex < newFiles.size()) {
+						MultipartFile file = newFiles.get(newFileIndex++);
+						saveSingleImage(product, file, sortOrder++);
+					}
+				} else {
+					// URL인 경우: 기존 이미지 찾아서 sortOrder 업데이트
+					if (currentImages != null) {
+						for (ProductImageEntity img : currentImages) {
+							if (img.getImageUrl().equals(item)) {
+								img.setSortOrder(sortOrder++);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// 단일 파일 저장 메서드
+	private void saveSingleImage(ProductEntity product, MultipartFile file, int sortOrder) throws IOException {
+		if (file.isEmpty())	return;
+
+		File dir = new File(uploadDir);
+		if (!dir.exists())	dir.mkdirs();
+
+		String originalFilename = file.getOriginalFilename();
+		String uuid = UUID.randomUUID().toString();
+		String savedFileName = uuid + "_" + originalFilename;
+
+		File dest = new File(uploadDir + savedFileName);
+		file.transferTo(dest);
+
+		ProductImageEntity image = new ProductImageEntity();
+		image.setProduct(product);
+		image.setImageUrl("http://localhost:8080/images/uploads/" + savedFileName);
+		image.setSortOrder(sortOrder);
+
+		prdImgRepo.save(image);
+	}
+
+	// 단순 리스트 저장
+	private void saveImages(ProductEntity product, List<MultipartFile> files) throws IOException {
+		if (files == null || files.isEmpty())	return;
+		
+		int sortOrder = 1;
+		
+		// 혹시 모를 기존 이미지가 있다면 그 뒤로 순서 배정
+		if (product.getImages() != null) {
+            sortOrder = product.getImages().size() + 1;
+        }
+
+        for (MultipartFile file : files) {
+            saveSingleImage(product, file, sortOrder++);
+        }
 	}
 
 	/**
@@ -119,22 +215,23 @@ public class AdminProductService {
 		// 상태를 '판매중지' 등으로 같이 변경할 수도 있음
 		product.setStatus("STOP");
 	}
-	
-	// 리뷰 수 조회
-    public int getReviewCount(ProductEntity product) {
-        return reviewService.getReviewCount(product);
-    }
 
-    // 평균 평점 조회
-    public double getAverageRating(ProductEntity product) {
-        return reviewService.getAverageRating(product);
-    }
+	// 리뷰 수 조회
+	public int getReviewCount(ProductEntity product) {
+		return reviewService.getReviewCount(product);
+	}
+
+	// 평균 평점 조회
+	public double getAverageRating(ProductEntity product) {
+		return reviewService.getAverageRating(product);
+	}
 
 	// ================= 내부 헬퍼 메서드 =================
 
 	// 옵션 저장
 	private void saveOptions(ProductEntity product, List<ProductSaveDTO.OptionDTO> optionDtos) {
-		if (optionDtos == null)	return;
+		if (optionDtos == null)
+			return;
 
 		for (ProductSaveDTO.OptionDTO optDto : optionDtos) {
 			// 정적 생성 메서드 호출
@@ -146,85 +243,37 @@ public class AdminProductService {
 
 	// 옵션 수정
 	private void updateOptions(ProductEntity product, List<ProductSaveDTO.OptionDTO> optionDtos) {
-		if (optionDtos == null) return;
-		
+		if (optionDtos == null)
+			return;
+
 		List<ProductOptionEntity> managedOptions = product.getOptions();
-		
+
 		// 요청된 옵션 ID 목록 추출 (삭제 대상 식별용)
-        List<Long> keepOptionIds = new ArrayList<>();
+		List<Long> keepOptionIds = new ArrayList<>();
 
-        for (ProductSaveDTO.OptionDTO dto : optionDtos) {
-            if (dto.getOptionNo() != null) {
-                // 기존 리스트에서 해당 옵션을 찾아 값 변경
-                managedOptions.stream()
-                    .filter(o -> o.getOptionNo().equals(dto.getOptionNo()))
-                    .findFirst()
-                    .ifPresent(o -> {
-                        o.setOptionName(dto.getOptionName());
-                        o.setOptionValue(dto.getOptionValue());
-                        o.setAddPrice(dto.getAddPrice());
-                        o.setStock(dto.getStock());
-                        keepOptionIds.add(o.getOptionNo());
-                    });
-            } else {
-                // ID가 없으면 새 옵션 생성하여 기존 리스트에 add
-                ProductOptionEntity newOption = ProductOptionEntity.create(
-                        product, 
-                        dto.getOptionName(), 
-                        dto.getOptionValue(), 
-                        dto.getAddPrice(), 
-                        dto.getStock()
-                );
-                managedOptions.add(newOption);
-            }
-        }
+		for (ProductSaveDTO.OptionDTO dto : optionDtos) {
+			if (dto.getOptionNo() != null) {
+				// 기존 리스트에서 해당 옵션을 찾아 값 변경
+				managedOptions.stream().filter(o -> o.getOptionNo().equals(dto.getOptionNo())).findFirst()
+						.ifPresent(o -> {
+							o.setOptionName(dto.getOptionName());
+							o.setOptionValue(dto.getOptionValue());
+							o.setAddPrice(dto.getAddPrice());
+							o.setStock(dto.getStock());
+							keepOptionIds.add(o.getOptionNo());
+						});
+			} else {
+				// ID가 없으면 새 옵션 생성하여 기존 리스트에 add
+				ProductOptionEntity newOption = ProductOptionEntity.create(product, dto.getOptionName(),
+						dto.getOptionValue(), dto.getAddPrice(), dto.getStock());
+				managedOptions.add(newOption);
+			}
+		}
 
-        // 요청 DTO에 없는 기존 옵션은 리스트에서 제거
-        managedOptions.removeIf(option -> 
-            option.getOptionNo() != null && !keepOptionIds.contains(option.getOptionNo())
-        );
-    }
-	
-	// 이미지 저장 로직
-    private void saveImages(ProductEntity product, List<MultipartFile> files) throws IOException {
-        if (files == null || files.isEmpty()) return;
-
-        // 저장할 디렉토리 생성 (C:/coco/uploads/)
-        File dir = new File(uploadDir);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        // 기존 이미지가 있다면 그 다음 순서부터 저장 (sortOrder)
-        int sortOrder = 1;
-        if (product.getImages() != null) {
-            sortOrder = product.getImages().size() + 1;
-        }
-
-        for (MultipartFile file : files) {
-            if (file.isEmpty()) continue;
-
-            // 파일명 중복 방지를 위한 UUID 생성
-            String originalFilename = file.getOriginalFilename();
-            String uuid = UUID.randomUUID().toString();
-            String savedFileName = uuid + "_" + originalFilename;
-
-            // 서버 디스크에 파일 저장
-            File dest = new File(uploadDir + savedFileName);
-            file.transferTo(dest);
-
-            // DB에 이미지 정보 저장
-            ProductImageEntity image = new ProductImageEntity();
-            image.setProduct(product);
-            
-            // 웹에서 접근 가능한 URL로 저장 (WebMvcConfig 설정에 맞춤)
-            // http://localhost:8080/images/uploads/파일명
-            image.setImageUrl("http://localhost:8080/images/uploads/" + savedFileName);
-            image.setSortOrder(sortOrder++);
-
-            prdImgRepo.save(image);
-        }
-    }
+		// 요청 DTO에 없는 기존 옵션은 리스트에서 제거
+		managedOptions
+				.removeIf(option -> option.getOptionNo() != null && !keepOptionIds.contains(option.getOptionNo()));
+	}
 
 	/**
 	 * API: 관리자 대시보드 통계 조회

@@ -12,8 +12,10 @@ public interface LikeRepository extends JpaRepository<ReviewLike,Long> {
     boolean existsByReviewAndMember_MemNo(Review review, Long memNo);
     
     // CO-MATE 기능 구현
-    // 리뷰 목록 조회용 좋아요 개수 확인
+    // 리뷰에 달린 좋아요 개수
     int countByReview_ReviewNo(Long reviewNo);
+    // 특정 회원이 좋아요 누른 리뷰 개수
+    int countByMember_MemNo(Long memNo);
     // 특정 회원이 좋아요 누른 모든 리뷰 조회
     List<ReviewLike> findByMember_MemNo(Long memNo);
     // 특정 회원이 특정 리뷰에 좋아요 눌렀는지 확인

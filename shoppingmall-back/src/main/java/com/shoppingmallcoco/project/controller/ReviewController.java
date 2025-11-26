@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,11 +43,11 @@ public class ReviewController {
     public Long insertReview(@RequestPart("reviewDTO") ReviewDTO reviewDTO,
         @RequestPart(value = "files", required = false) List<MultipartFile> files,
         Authentication authentication) {
-        
+
         if (authentication == null || authentication.getName() == null) {
             throw new RuntimeException("인증이 필요합니다.");
         }
-        
+
         Member member = memberRepository.findByMemId(authentication.getName())
             .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
 
@@ -68,14 +69,14 @@ public class ReviewController {
         @RequestPart("reviewDTO") ReviewDTO reviewDTO,
         @RequestPart(value = "files", required = false) List<MultipartFile> files,
         Authentication authentication) {
-        
+
         if (authentication == null || authentication.getName() == null) {
             throw new RuntimeException("인증이 필요합니다.");
         }
-        
+
         Member member = memberRepository.findByMemId(authentication.getName())
             .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
-        
+
         reviewService.updateReview(reviewNo, reviewDTO, files, member.getMemNo());
     }
 
@@ -85,10 +86,10 @@ public class ReviewController {
         if (authentication == null || authentication.getName() == null) {
             throw new RuntimeException("인증이 필요합니다.");
         }
-        
+
         Member member = memberRepository.findByMemId(authentication.getName())
             .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
-        
+
         reviewService.delete(reviewNo, member.getMemNo());
     }
 
@@ -96,6 +97,14 @@ public class ReviewController {
     @GetMapping("/products/{productNo}/reviews")
     public List<ReviewDTO> getReviews(@PathVariable("productNo") long productNo) {
         return reviewService.getReviewList(productNo);
+    }
+
+    // 리뷰 재구매 횟수 조회
+    @GetMapping("/products/{productNo}/countReviews/{reviewNo}")
+    public int getReviewsCount(@PathVariable Long productNo,
+        @PathVariable Long reviewNo) {
+        int count = reviewService.getBuyCount(productNo, reviewNo);
+        return count;
     }
 
     // 태그 목록 조회
@@ -117,6 +126,13 @@ public class ReviewController {
         }
     }
 
+    // 리뷰 작성 버튼 누를 때 orderItemNo 가져오기
+    @GetMapping("/reviews/{prdNo}/getOrderItemNo/{memNo}")
+    public Long getOrderItemNo(@PathVariable Long prdNo, @PathVariable Long memNo) {
+        Long orderItemNo = reviewService.getOrderItemNo(prdNo, memNo);
+        return orderItemNo;
+    }
+
     //reviewNo 유무 확인
     @GetMapping("/review/{reviewNo}/check")
     public ResponseEntity<?> checkReviewNo(@PathVariable Long reviewNo) {
@@ -127,6 +143,7 @@ public class ReviewController {
             return ResponseEntity.notFound().build();
         }
     }
+
     // 좋아요 추가/삭제 (토글)
     @PostMapping("/reviews/{reviewNo}/like")
     public int toggleLike(@PathVariable("reviewNo") Long reviewNo, Authentication authentication) {

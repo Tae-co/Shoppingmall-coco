@@ -11,4 +11,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, J
 
 	long countByStatus(String status);
 
+
+	ProductEntity findProductEntityByPrdNo(Long prdNo);
 }

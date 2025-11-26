@@ -10,9 +10,9 @@ import love from '../images/love.png'
 import '../css/ReviewDetail.css'
 import { isLoggedIn, getStoredMember, storage, STORAGE_KEYS } from '../utils/api'
 import axios from 'axios'
-function ReviewDetail({ reviewData, onDelete }) {
+function ReviewDetail({ reviewData, onDelete, productNo }) {
     const navigate = useNavigate();
-
+    
     const {
         reviewNo,
         userNickname,
@@ -28,15 +28,17 @@ function ReviewDetail({ reviewData, onDelete }) {
 
     const [like, setlike] = useState(likeCount || 0);
     const [isExpanded, setIsExpanded] = useState(false);
-    
+
     // 현재 로그인한 사용자 정보
     const currentMember = getStoredMember();
     const currentMemNo = currentMember?.memNo;
-    
+
     // 리뷰 작성자와 현재 로그인한 사용자가 일치하는지 확인
     const isReviewAuthor = isLoggedIn() && currentMemNo && reviewAuthorMemNo && currentMemNo === reviewAuthorMemNo;
 
     const { starTotal, clicked, starArray, setRating } = UseStarRating(0);
+
+    const [buyCount, setBuyCount] = useState(0);
 
     // 자신이 리뷰한 내용에만 수정 삭제 아이콘 보이기 
     const toggleExpand = () => {
@@ -59,7 +61,7 @@ function ReviewDetail({ reviewData, onDelete }) {
                 // 리뷰 삭제 (인증 필요)
                 const token = storage.get(STORAGE_KEYS.TOKEN);
                 const headers = {};
-                
+
                 if (token) {
                     headers['Authorization'] = `Bearer ${token}`;
                 }
@@ -86,7 +88,7 @@ function ReviewDetail({ reviewData, onDelete }) {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
-            });
+            });         
             if (response.ok) {
                 const updatedLikeCount = await response.json();
                 setlike(updatedLikeCount);
@@ -100,12 +102,29 @@ function ReviewDetail({ reviewData, onDelete }) {
         }
     }
 
+    useEffect(() => {
+        const getBuyCount = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/products/${productNo}/countReviews/${reviewNo}`);
+                setBuyCount(response.data);
+            } catch (error) {
+                console.log("재구매 횟수 불러오기 실패", error);
+            }
+        }
+        getBuyCount();
+        console.log("buyCount", buyCount);
+        
+    }, [productNo])
+
+
+
     return (
 
         <div className="reviewBox">
             <div className="headBox">
                 <div className="name-star">
                     <span className='username'>{userNickname}</span>
+                    <div className='resale'>{buyCount}번째 구매 </div>
                     <div className='stars'>
                         {starArray.map((stars, i) => (
                             <img

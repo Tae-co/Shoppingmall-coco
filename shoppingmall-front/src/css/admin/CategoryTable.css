@@ -1,0 +1,77 @@
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  min-width: 600px;
+  font-size: 14px;
+}
+
+.admin-table th {
+  padding: 12px;
+  border-bottom: 2px solid #eee;
+  background: #f9f9f9;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+  text-align: center;
+}
+
+/* 대분류 행 스타일 */
+.category-row.parent {
+  font-weight: bold;
+  background-color: #f9f9f9;
+}
+
+/* 소분류 행 스타일 */
+.category-row.child td {
+  color: #555;
+}
+
+.id-cell-child {
+  color: #888;
+}
+
+.category-name-cell {
+  text-align: left !important; 
+  padding-left: 30px;
+}
+
+.category-name-cell.child {
+  padding-left: 60px;
+  color: #555;
+}
+
+/* 관리 버튼 스타일 */
+.action-btn {
+  padding: 5px 10px;
+  font-size: 12px;
+  margin-right: 5px;
+  background-color: #eee;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn:hover {
+  opacity: 0.8;
+}
+
+.action-btn.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
