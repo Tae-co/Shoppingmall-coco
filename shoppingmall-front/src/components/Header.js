@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {NavLink, Link, Routes, Route, useNavigate, useLocation} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 
 import Logo from '../images/logo.png';
 
@@ -60,23 +60,23 @@ const Header = () => {
                 setUserRole('');
             }
         };
-    // 장바구니 개수 동기화 함수
-    const syncCartCount = async () => {
-        try {
-            const member = getStoredMember();
-            if (!member || !member.memNo) {
-                setCartCount(0);
-                return;
-            }
+        // 장바구니 개수 동기화 함수
+        const syncCartCount = async () => {
+            try {
+                const member = getStoredMember();
+                if (!member || !member.memNo) {
+                    setCartCount(0);
+                    return;
+                }
 
-            const res = await axios.get(
-                `http://localhost:8080/api/coco/members/cart/items/${member.memNo}`
-            );
-            setCartCount(res.data.length);  // 장바구니 아이템 개수
-        } catch (err) {
-            console.error("장바구니 개수 조회 실패:", err);
-        }
-    };
+                const res = await axios.get(
+                    `http://localhost:8080/api/coco/members/cart/items/${member.memNo}`
+                );
+                setCartCount(res.data.length);  // 장바구니 아이템 개수
+            } catch (err) {
+                console.error("장바구니 개수 조회 실패:", err);
+            }
+        };
 
         // 초기 로드 시 먼저 localStorage에서 상태 확인
         syncLoginStatus();
@@ -99,7 +99,7 @@ const Header = () => {
         };
 
         loadMemberInfo();
-        
+
         // 로그인 상태 변경 이벤트 리스너 (로그인/로그아웃 시에만 발생)
         window.addEventListener('loginStatusChanged', syncLoginStatus);
         window.addEventListener("cartUpdated", syncCartCount);
@@ -127,8 +127,8 @@ const Header = () => {
     const location = useLocation(); // 현재 페이지 확인용
 
     // 검색어 상태 관리
-    const [searchTerm, setSearchTerm] = useState(''); 
-    
+    const [searchTerm, setSearchTerm] = useState('');
+
     // 디바운싱을 위한 타이머 상태
     const [timer, setTimer] = useState(null);
 
@@ -165,20 +165,6 @@ const Header = () => {
         }
     };
 
-    // 엔터키/버튼 클릭 핸들러 (기존 유지)
-    const handleSearchSubmit = (e) => {
-        e.preventDefault();
-        // 엔터를 쳤을 때는 타이머 취소하고 즉시 이동
-        if (timer) clearTimeout(timer);
-        
-        if (searchTerm.trim() === "") {
-            alert("검색어를 입력하세요");
-            return;
-        }
-        navigate(`/product?q=${encodeURIComponent(searchTerm)}`);
-    };
-
-
     // 검색 핸들러 함수
     const handleSearch = (e) => {
         e.preventDefault();
@@ -192,10 +178,65 @@ const Header = () => {
         // 상품 목록 페이지로 이동하며 쿼리 스트링 전달
         // 예: /product?q=립스틱
         navigate(`/product?q=${encodeURIComponent(searchValue)}`);
-        
+
         // 검색 후 입력창 비우기
         e.target.search.value = '';
     };
+
+    // 카테고리 데이터를 저장할 상태
+    const [dynamicCategories, setDynamicCategories] = useState([]);
+
+    // DB에서 카테고리 불러오기 및 구조화
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                // 모든 카테고리 조회
+                const response = await axios.get('http://localhost:8080/api/categories');
+                const allCategories = response.data;
+
+                // 대분류(부모)와 소분류(자식) 분리
+                const parents = allCategories.filter(cat => !cat.parentCategory && !cat.parentCategoryNo);
+
+                // 메뉴 구조로 변환
+                const structuredMenu = parents.map(parent => {
+                    // 현재 부모에 속한 자식들 찾기
+                    const children = allCategories.filter(cat => {
+                        const parentId = cat.parentCategory ? cat.parentCategory.categoryNo : cat.parentCategoryNo;
+                        return parentId === parent.categoryNo;
+                    });
+
+                    return {
+                        id: parent.categoryNo,
+                        title: parent.categoryName, // 예: SKIN CARE
+                        // 자식 카테고리 리스트 (이름과 ID 모두 포함)
+                        items: children.map(child => ({
+                            id: child.categoryNo,
+                            name: child.categoryName // 예: 토너/로션
+                        }))
+                    };
+                });
+
+                setDynamicCategories(structuredMenu);
+
+            } catch (error) {
+                console.error("카테고리 로딩 실패:", error);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+
+    // --- 메가 메뉴 상태 관리 ---
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
+
+    // 경로 변경 시 메뉴 닫기 (선택 사항)
+    useEffect(() => {
+        setIsMenuOpen(false);
+    }, [location.pathname]);
 
     return (
         <div>
@@ -205,7 +246,7 @@ const Header = () => {
                     <div className="top_inner">
                         <ul className="top_list">
                             {/* 로그인 시 사용자 이름 표시 */}
-                                {loggedIn && (
+                            {loggedIn && (
                                 <li className="top_item greet">
                                     <b>{userName}</b>님 환영합니다!
                                 </li>
@@ -236,31 +277,32 @@ const Header = () => {
                         {/* 로고 */}
                         <h1>
                             <NavLink to="/">
-                                <img src={Logo} alt="logo.png" className="logo"/>
+                                <img src={Logo} alt="logo.png" className="logo" />
                             </NavLink>
                         </h1>
                         {/* 네비게이션 메뉴 */}
                         <div className="header_center">
                             <nav id="gnb_container" className="gnb">
                                 <ul id="gnb_list" className="gnb_list">
-                                    <li className="gnb_item"><NavLink 
-                                                            to="/" 
-                                                            className={({isActive}) => 
-                                                                isActive ? 'gnb_link active' : 'gnb_link'}>HOME</NavLink></li>
-                                    <li className="gnb_item"><NavLink 
-                                                            to="/product" 
-                                                            className={({isActive}) => 
-                                                                isActive ? 'gnb_link active' : 'gnb_link'}>SHOP</NavLink></li>
-                                    <li className="gnb_item"><NavLink 
-                                                            to="/comate/me/review" 
-                                                            className={({isActive}) => {
-                                                                return window.location.pathname.startsWith('/comate') ? 'gnb_link active' : 'gnb_link'}}>CO-MATE</NavLink></li>
+                                    <li className="gnb_item"><NavLink
+                                        to="/"
+                                        className={({ isActive }) =>
+                                            isActive ? 'gnb_link active' : 'gnb_link'}>HOME</NavLink></li>
+                                    <li className="gnb_item"><NavLink
+                                        to="/product"
+                                        className={({ isActive }) =>
+                                            isActive ? 'gnb_link active' : 'gnb_link'}>SHOP</NavLink></li>
+                                    <li className="gnb_item"><NavLink
+                                        to="/comate/me/review"
+                                        className={({ isActive }) => {
+                                            return window.location.pathname.startsWith('/comate') ? 'gnb_link active' : 'gnb_link'
+                                        }}>CO-MATE</NavLink></li>
                                     <li className="gnb_item"><div className="gnb_link">EVENT</div></li>
                                 </ul>
                             </nav>
                         </div>
                         {/* 우측 기능 버튼 */}
-                        <div className="header_right">  
+                        <div className="header_right">
                             {/* 검색 폼 수정*/}
                             <div className="search_container">
                                 <form onSubmit={handleSearch}>
@@ -280,15 +322,48 @@ const Header = () => {
                                 {cartCount > 0 && (<span className="cart-badge">{cartCount}</span>)}
                             </Link>
                             {/* 카테고리 버튼 */}
-                            <a className="btn_category">
+                            <button type="button" className="btn_category" onClick={toggleMenu}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="24" height="24">
                                     <path fill="#222" d="M3 5.61h18v1.8H3v-1.8ZM3 11.1h18v1.8H3v-1.8ZM21 16.595H3v1.8h18v-1.8Z"></path>
                                 </svg>
-                            </a>
-                        </div> 
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+                {/* --- 메가 메뉴 영역 --- */}
+                <nav className={`mega-menu ${isMenuOpen ? 'active' : ''}`}>
+                    <div className="menu-inner">
+                        {/* dynamicCategories 상태를 사용하여 렌더링 */}
+                        {dynamicCategories.map((category) => (
+                            <div key={category.id} className="menu-column">
+                                {/* 대분류 제목 클릭 시 해당 대분류 전체 상품 보기 */}
+                                <h3>
+                                    <Link to={`/product?categoryNo=${category.id}`} onClick={() => setIsMenuOpen(false)}>
+                                        {category.title}
+                                    </Link>
+                                </h3>
+                                <ul>
+                                    {category.items.map((item) => (
+                                <li key={item.id}>
+                                    {/* 텍스트 검색(?q=) 대신 카테고리 번호(?categoryNo=)로 이동 */}
+                                    <Link 
+                                        to={`/product?categoryNo=${item.id}`} 
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        {item.name}
+                                    </Link>
+                                </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </nav>
             </header>
+
+            {/* 메뉴 열렸을 때 뒷배경 어둡게 처리 (오버레이) */}
+            {isMenuOpen && <div className="menu-overlay" onClick={() => setIsMenuOpen(false)}></div>}
         </div>
     );
 }
