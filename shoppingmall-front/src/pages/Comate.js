@@ -43,6 +43,7 @@ const Comate = () => {
                 const current = await getCurrentMember();
                 setLoginUser(current);
 
+                // 사용자 본인이 로그인 한 경우
                 if (!memNo || memNo === current.memNo.toString()) {
                     if (window.location.pathname !== `/comate/me/`) {
                         navigate('/comate/me/review', {replace: true});
@@ -50,11 +51,17 @@ const Comate = () => {
                     setUserType('me');
                     setTargetMemNo(current.memNo);
                 } else {
+                    // 타 사용자 프로필 조회 or 로그인 하지 않은 사용자 
                     setUserType('user');
-                    setTargetMemNo(memNo);
+                    setTargetMemNo(memNo || null);
                 }
             } catch (error) {
-                console.error('로그인 유저 정보 불러오기 실패: ', error);
+                console.error('로그인 유저 정보 불러오기 실패 (비로그인 상태/토큰 만료) ', error);
+
+                // 비로그인-> userType='user' targetMemNo 는 URL 에서 가져옴
+                setLoginUser(null);
+                setUserType("user");
+                setTargetMemNo(memNo);
             }
         }
 
@@ -90,10 +97,15 @@ const Comate = () => {
             try {
                 switch (activeTab) {
                     case 'review' :
-                        setReviewList(await getReviewList(targetMemNo));
+                        const data = await getReviewList(targetMemNo);
+                        setReviewList(data);
+                        console.log("리뷰: ", data);
+                        console.log("targetMemNo:::", targetMemNo);
                         break;
                     case 'like' :
-                        setLikeList(await getLikedList(targetMemNo));
+                        const like = await getLikedList(targetMemNo);
+                        setLikeList(like);
+                        console.log("좋아요", like);
                         break;
                     case 'follower' :
                         setFollowerList(await getFollowerList(targetMemNo));
@@ -130,7 +142,13 @@ const Comate = () => {
 
     /* Full Profile 팔로우/언팔로우 클릭 */
     const handleFollowClick = async () => {
-        if (!member || !loginUser) return;
+        if (!loginUser) {
+            alert('로그인이 필요한 기능입니다.');
+            navigate('/login');
+            return;
+        }
+
+        if (!member) return;
 
         try {
             if (following) {

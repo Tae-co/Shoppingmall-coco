@@ -4,7 +4,7 @@ const API_BASE_URL = '/comate';
 
 /* 메인 화면용 - 전체 회원 목록 조회 */
 export const getAllComates = async() => {
-    const response = await fetchWithAuth(`${API_BASE_URL}/users`, {
+    const response = await fetch('http://localhost:8080/api/comate/users', {
         method : "GET"
     });
 
