@@ -1,12 +1,3 @@
-/**
- * [ProductDetailPage] 상품 상세 페이지 컴포넌트
- * 역할:
- * 1. 상품의 상세 정보(이미지, 가격, 설명 등) 조회 및 표시
- * 2. 옵션 선택 및 수량 조절 기능 제공
- * 3. 장바구니 담기 및 바로 구매 프로세스 처리
- * 4. 하위 컴포넌트(갤러리, 정보박스, 탭 등) 조합 및 데이터 전달
- */
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -14,19 +5,31 @@ import ProductDetailSkeleton from '../../components/product/detail/ProductDetail
 import ProductImageGallery from '../../components/product/detail/ProductImageGallery';
 import ProductInfoBox from '../../components/product/detail/ProductInfoBox';
 import ProductTabs from '../../components/product/detail/ProductTabs';
+import RecentProductSidebar from '../../components/product/detail/RecentProductSidebar';
 import { getStoredMember, isLoggedIn, STORAGE_KEYS } from '../../utils/api';
 import { useOrder } from '../OrderContext';
 import '../../css/product/ProductDetailPage.css';
 
+/**
+ * [ProductDetailPage] 상품 상세 페이지 컴포넌트
+ * 역할:
+ * 1. 상품의 상세 정보(이미지, 가격, 설명 등) 조회 및 표시
+ * 2. 하위 컴포넌트(갤러리, 정보박스, 탭, 사이드바)들을 레이아웃에 맞게 배치
+ * 3. 구매 관련 핵심 비즈니스 로직(장바구니, 바로구매) 처리
+ * 4. 최근 본 상품 사이드바로 배치
+ */
+
 function ProductDetailPage() {
   const { productId } = useParams();
+  const navigate = useNavigate();
+  const { setOrderSubtotal } = useOrder(); // 전역 주문 금액 설정 함수
+
+  // 상태 관리
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedOption, setSelectedOption] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const navigate = useNavigate();
   const [toastMessage, setToastMessage] = useState('');
-  const { setOrderSubtotal } = useOrder(); // 전역 주문 금액 설정 함수
 
   // 상품 상세 데이터 조회 (페이지 진입 시 1회 실행)
   useEffect(() => {
@@ -45,12 +48,10 @@ function ProductDetailPage() {
     fetchProductDetail();
   }, [productId]);
 
-  // --- 토스트 메시지 로직 ---
+  // 토스트 메시지 타이머
   useEffect(() => {
     if (toastMessage) {
-      const timer = setTimeout(() => {
-        setToastMessage('');
-      }, 2000);
+      const timer = setTimeout(() => setToastMessage(''), 2000);
       return () => clearTimeout(timer);
     }
   }, [toastMessage]);
@@ -174,48 +175,51 @@ function ProductDetailPage() {
   if (!product) {
     return (
       <div className="detail-container">
-        <div className="back-btn-container">
-          <button className="back-btn" onClick={handleBack}>&lt; 뒤로가기</button>
-        </div>
         <div className="error-message-box">
           <h3>상품을 찾을 수 없습니다</h3>
-          <p>URL을 다시 확인해주세요.</p>
+          <button className="back-btn" onClick={handleBack}>목록으로 돌아가기</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="detail-container">
-      {/* 토스트 알림 */}
-      <div className={`toast ${toastMessage ? 'show' : 'hide'}`}>
-        {toastMessage}
-      </div>
+    <div className="detail-page-wrapper">
+      <div className="detail-container">
+        {/* 토스트 알림 */}
+        <div className={`toast ${toastMessage ? 'show' : 'hide'}`}>
+          {toastMessage}
+        </div>
 
-      <div className="back-btn-container">
-        <button className="back-btn" onClick={handleBack}>&lt; 뒤로가기</button>
-      </div>
+        <div className="back-btn-container">
+          <button className="back-btn" onClick={handleBack}>&lt; 뒤로가기</button>
+        </div>
 
-      <div className="top-section">
-        {/* 상품 이미지 갤러리 */}
-        <ProductImageGallery
-          productName={product.prdName}
-          imageUrls={product.imageUrls}
-        />
+        <div className="top-section">
+          {/* 상품 이미지 갤러리 */}
+          <ProductImageGallery
+            productName={product.prdName}
+            imageUrls={product.imageUrls}
+          />
 
-        {/* 상품 핵심 정보 및 구매 액션 (우측 영역) */}
-        <ProductInfoBox
-          product={product}
-          selectedOption={selectedOption}
-          setSelectedOption={setSelectedOption}
-          quantity={quantity}
-          setQuantity={setQuantity}
-          handleAddToCart={handleAddToCart}
-          handleBuyNow={handleBuyNow}
-        />
-      </div>
-      {/* 상세정보/리뷰/배송안내 탭 영역 */}
-      <ProductTabs product={product} />
+          {/* 상품 핵심 정보 및 구매 액션 (우측 영역) */}
+          <ProductInfoBox
+            product={product}
+            selectedOption={selectedOption}
+            setSelectedOption={setSelectedOption}
+            quantity={quantity}
+            setQuantity={setQuantity}
+            handleAddToCart={handleAddToCart}
+            handleBuyNow={handleBuyNow}
+          />
+        </div>
+
+        {/* 상세정보/리뷰/배송안내 탭 영역 */}
+        <ProductTabs product={product} />
+        </div>
+
+      {/* 최근 본 상품 (페이지 우측) */}
+      <RecentProductSidebar currentProduct={product} />
     </div>
   );
 }
