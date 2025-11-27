@@ -60,17 +60,22 @@ const Header = () => {
                 setUserRole('');
             }
         };
-        // 장바구니 개수 동기화 함수
+         // 장바구니 개수 동기화 함수
         const syncCartCount = async () => {
-            try {
-                const member = getStoredMember();
-                if (!member || !member.memNo) {
+              try {
+                const token = localStorage.getItem("token"); 
+
+                if (!token) {
                     setCartCount(0);
                     return;
                 }
 
-                const res = await axios.get(
-                    `http://localhost:8080/api/coco/members/cart/items/${member.memNo}`
+                const res = await axios.get("http://localhost:8080/api/coco/members/cart/items",
+                    {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // JWT 인증 필요
+                            },
+                    }
                 );
                 setCartCount(res.data.length);  // 장바구니 아이템 개수
             } catch (err) {

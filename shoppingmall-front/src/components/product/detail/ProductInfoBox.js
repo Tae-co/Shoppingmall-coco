@@ -2,11 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductButton from '../ProductButton';
 import SimilarSkinReview from '../../../features/SimilarSkinReview';
+import ProductOptionSelector from './ProductOptionSelector';
 import '../../../css/product/ProductInfoBox.css';
-
-/**
- * [상품 상세] 우측 정보 및 구매 액션 영역 컴포넌트
- */
 
 const skinTypeMap = { all: '모든피부', dry: '건성', oily: '지성', combination: '복합성', sensitive: '민감성' };
 const skinConcernMap = {
@@ -17,6 +14,10 @@ const skinConcernMap = {
 const personalColorMap = {
   spring: '봄 웜톤', summer: '여름 쿨톤', autumn: '가을 웜톤', winter: '겨울 쿨톤'
 };
+
+/**
+ * [상품 상세] 우측 정보 및 구매 액션 영역 컴포넌트
+ */
 
 const ProductInfoBox = ({
   product,
@@ -38,11 +39,7 @@ const ProductInfoBox = ({
   const totalPrice = unitPrice * quantity;
 
   const navigate = useNavigate();
-
-  // 태그 클릭 시 해당 키워드로 검색 페이지 이동
-  const handleTagClick = (keyword) => {
-    navigate(`/product?q=${encodeURIComponent(keyword)}`);
-  };
+  const handleTagClick = (keyword) => navigate(`/product?q=${encodeURIComponent(keyword)}`);
 
   return (
     <div className="info-box">
@@ -69,26 +66,12 @@ const ProductInfoBox = ({
       {/* 가격 렌더링 영역 */}
       <p className="product-price"> {unitPrice.toLocaleString()}원 </p>
 
-      {/* 옵션 선택 셀렉트 박스 (옵션이 있을 경우에만 표시) */}
-      {product.options && product.options.length > 0 && (
-        <div>
-          <label htmlFor="product-option" className="visually-hidden">상품 옵션 선택</label>
-          <select
-            id="product-option"
-            className="product-select"
-            value={selectedOption}
-            onChange={(e) => setSelectedOption(e.target.value)}>
-            <option value="">옵션을 선택하세요</option>
-            {product.options.map((opt) => (
-              <option key={opt.optionNo} value={opt.optionNo}>
-                {opt.optionValue}
-                {opt.addPrice > 0 ? ` (+${opt.addPrice.toLocaleString()}원)` : ''}
-                (재고: {opt.stock})
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+      {/* 옵션 선택 및 품절 임박 알림 */}
+      <ProductOptionSelector 
+        options={product.options} 
+        selectedOption={selectedOption} 
+        onSelect={setSelectedOption} 
+      />
 
       {/* 상품 수량 조절 및 총 가격 */}
       <div>

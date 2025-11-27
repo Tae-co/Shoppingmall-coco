@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import '../../css/OrderPage.css'; 
 import { useOrder } from '../OrderContext'; 
+import axios from 'axios'; 
 
 // 주문자가 배송 정보를 입력하는 페이지 컴포넌트 (주문 프로세스 2단계)
 function OrderPage() {
@@ -48,25 +49,52 @@ function OrderPage() {
     }
   };
 
-  // '내 정보 불러오기' 기능: Mock 데이터를 Context state에 설정
-  const handleLoadMyInfo = () => {
-    // 실제 서비스에서는 DB에서 사용자 정보를 Fetch하여 사용합니다.
-    const mockUserData = {
-      lastName: "홍",
-      firstName: "길동",
-      phone: "010-8888-9999",
-      postcode: "54321",
-      address: "서울특별시",
-      addressDetail: "101동 101호"
-    };
+  
+  const handleLoadMyInfo = async () => {
+    
+    // 1. 로컬 스토리지에서 토큰 확인
+    const token = localStorage.getItem('token');//나중에 수정해야 할 수도
+    if (!token) {
+      alert("로그인이 필요한 기능입니다.");
+      // (필요 시) navigate('/login'); 
+      return;
+    }
 
-    // 전역 Context state 업데이트
-    setLastName(mockUserData.lastName);
-    setFirstName(mockUserData.firstName);
-    setPhone(mockUserData.phone);
-    setPostcode(mockUserData.postcode);
-    setAddress(mockUserData.address);
-    setAddressDetail(mockUserData.addressDetail);
+    try {
+      // 2. 백엔드 API 호출 (내 정보 조회)
+      // Authorization 헤더에 토큰을 실어서 보냅니다.
+      const response = await axios.get('http://localhost:8080/api/member/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const member = response.data; // 백엔드에서 받은 회원 정보 (Entity)
+      console.log("불러온 회원 정보:", member);
+
+      // 3. 받아온 정보로 입력창 채우기 (Context 상태 업데이트)
+      
+      // 이름 처리: DB에는 전체 이름(memName)만 있으므로, 임의로 성/이름을 나눕니다.
+      if (member.memName && member.memName.length > 1) {
+          setLastName(member.memName.substring(0, 1)); // 첫 글자를 성으로
+          setFirstName(member.memName.substring(1));   // 나머지를 이름으로
+      } else {
+          setLastName(member.memName || "");
+          setFirstName("");
+      }
+      
+      // 나머지 정보 매핑 (값이 없을 경우 빈 문자열 처리)
+      setPhone(member.memHp || "");
+      setPostcode(member.memZipcode || "");
+      setAddress(member.memAddress1 || "");
+      setAddressDetail(member.memAddress2 || "");
+
+      
+
+    } catch (error) {
+      console.error("내 정보 불러오기 실패:", error);
+      alert("정보를 불러오는데 실패했습니다. (로그인 상태를 확인해주세요)");
+    }
   };
 
   
@@ -86,28 +114,7 @@ function OrderPage() {
 
   return (
     <div className="order-page">
-      {/* --- 1. 상단 주문 진행 단계 표시 --- */}
-      <div className="checkout-progress">
-        <div className="step-item complete">
-          <span className="step-icon">✔</span>
-          <span className="step-label">장바구니</span>
-        </div>
-        <div className="step-connector"></div>
-        <div className="step-item active">
-          <span className="step-icon">2</span>
-          <span className="step-label">배송 정보</span>
-        </div>
-        <div className="step-connector"></div>
-        <div className="step-item">
-          <span className="step-icon">3</span>
-          <span className="step-label">결제</span>
-        </div>
-        <div className="step-connector"></div>
-        <div className="step-item">
-          <span className="step-icon">4</span>
-          <span className="step-label">주문 완료</span>
-        </div>
-      </div>
+      
 
       <h1>주문하기</h1>
 
@@ -121,7 +128,7 @@ function OrderPage() {
             <button 
               type="button" 
               className="btn-load-info" 
-              onClick={handleLoadMyInfo} // 내 정보 불러오기 기능 실행
+              onClick={handleLoadMyInfo} // [연결] 수정된 핸들러 실행
             >
               내 정보 불러오기
             </button>
