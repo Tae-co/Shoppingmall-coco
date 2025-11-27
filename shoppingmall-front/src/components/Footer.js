@@ -1,15 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '../images/logo.png';
 import '../css/Footer.css';
+import SignupTermsPopup from './SignupTermsPopup';
 
 const Footer = () => {
     const navigate = useNavigate(); // 훅 선언
+    const [showTermsPopup, setShowTermsPopup] = useState(false);
+    const [termsType, setTermsType] = useState(null);
 
     // 카테고리 이동 핸들러
     const handleCategoryClick = (categoryNo) => {
         navigate(`/product?categoryNo=${categoryNo}`);
         window.scrollTo(0, 0);
+    };
+
+    // 약관 팝업 열기
+    const handleViewTerms = (type) => {
+        setTermsType(type);
+        setShowTermsPopup(true);
+    };
+
+    // 약관 팝업 닫기
+    const handleCloseTermsPopup = () => {
+        setShowTermsPopup(false);
+        setTermsType(null);
     };
 
     return (
@@ -45,8 +60,12 @@ const Footer = () => {
                                 <strong className="menu_title">고객지원</strong>
                                 <ul className="menu_list">
                                     <li className="menu_item"><div>공지사항</div></li>
-                                    <li className="menu_item"><div>이용약관</div></li>
-                                    <li className="menu_item"><div>개인정보처리방침</div></li>
+                                    <li className="menu_item" onClick={() => handleViewTerms('service')}>
+                                        <div>이용약관</div>
+                                    </li>
+                                    <li className="menu_item" onClick={() => handleViewTerms('privacy')}>
+                                        <div>개인정보처리방침</div>
+                                    </li>
                                     <li className="menu_item"><div>배송/반품/교환 안내</div></li>
                                 </ul>
                             </div>
@@ -70,6 +89,13 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
+
+            {showTermsPopup && (
+                <SignupTermsPopup
+                    type={termsType}
+                    onClose={handleCloseTermsPopup}
+                />
+            )}
         </div>
     );
 }
