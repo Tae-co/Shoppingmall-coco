@@ -114,28 +114,7 @@ function OrderPage() {
 
   return (
     <div className="order-page">
-      {/* --- 1. 상단 주문 진행 단계 표시 --- */}
-      <div className="checkout-progress">
-        <div className="step-item complete">
-          <span className="step-icon">✔</span>
-          <span className="step-label">장바구니</span>
-        </div>
-        <div className="step-connector"></div>
-        <div className="step-item active">
-          <span className="step-icon">2</span>
-          <span className="step-label">배송 정보</span>
-        </div>
-        <div className="step-connector"></div>
-        <div className="step-item">
-          <span className="step-icon">3</span>
-          <span className="step-label">결제</span>
-        </div>
-        <div className="step-connector"></div>
-        <div className="step-item">
-          <span className="step-icon">4</span>
-          <span className="step-label">주문 완료</span>
-        </div>
-      </div>
+      
 
       <h1>주문하기</h1>
 
