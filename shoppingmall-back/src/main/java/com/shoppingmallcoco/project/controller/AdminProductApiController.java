@@ -23,6 +23,10 @@ import com.shoppingmallcoco.project.dto.product.ProductDetailResponseDTO;
 import com.shoppingmallcoco.project.entity.product.ProductEntity;
 import com.shoppingmallcoco.project.service.product.AdminProductService;
 
+/**
+ * 관리자 전용 상품 관리 REST API 컨트롤러
+ * 경로: /api/admin/**
+ */
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/admin")
@@ -33,7 +37,7 @@ public class AdminProductApiController {
 	
 	/**
      * API: 관리자 상품 등록
-     * POST /api/admin/products
+     * [POST] /api/admin/products
      */
 	@PostMapping(value = "/products", consumes = { "multipart/form-data" })
 	public ResponseEntity<ProductDetailResponseDTO> createProduct(
@@ -53,7 +57,8 @@ public class AdminProductApiController {
 	
 	/**
      * API: 관리자 상품 수정
-     * PUT /api/admin/products/{prdNo}
+     * [PUT] /api/admin/products/{prdNo}
+     * - 이미지 파일이 포함될 수 있으므로 multipart/form-data로 전송받음
      */
 	@PutMapping(value = "/products/{prdNo}", consumes = { "multipart/form-data" })
     public ResponseEntity<ProductDetailResponseDTO> updateProduct(
@@ -74,8 +79,8 @@ public class AdminProductApiController {
     }
 
     /**
-     * API: 관리자 상품 삭제
-     * DELETE /api/admin/products/{prdNo}
+     * API: 관리자 상품 삭제 (논리적 삭제)
+     * [DELETE] /api/admin/products/{prdNo}
      */
     @DeleteMapping("/products/{prdNo}")
     public ResponseEntity<String> deleteProduct(
@@ -87,7 +92,7 @@ public class AdminProductApiController {
     
     /**
      * API: 대시보드 통계 데이터 조회
-     * GET /api/admin/stats
+     * [GET] /api/admin/stats
      */
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Long>> getDashboardStats() {

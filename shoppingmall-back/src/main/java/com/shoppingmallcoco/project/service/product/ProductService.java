@@ -18,6 +18,9 @@ import com.shoppingmallcoco.project.entity.product.ProductEntity;
 import com.shoppingmallcoco.project.repository.product.ProductRepository;
 import com.shoppingmallcoco.project.service.review.IReviewService;
 
+/**
+ * 일반 사용자용 상품 조회 및 검색 기능을 담당하는 서비스 클래스
+ */
 @Service
 public class ProductService {
 
@@ -27,18 +30,18 @@ public class ProductService {
 	@Autowired
 	private IReviewService reviewService;
 	
-	// 검색어 매핑 테이블 (한글 -> DB 영어 값)
+	// 검색어 매핑 테이블 (한글 검색어 -> DB에 저장된 영문 태그 값 매핑)
     private static final Map<String, String> SEARCH_KEYWORD_MAP = new HashMap<>();
     
     static {
-        // 피부 타입
+        // 피부 타입 매핑
         SEARCH_KEYWORD_MAP.put("건성", "dry");
         SEARCH_KEYWORD_MAP.put("지성", "oily");
         SEARCH_KEYWORD_MAP.put("복합성", "combination");
         SEARCH_KEYWORD_MAP.put("민감성", "sensitive");
         SEARCH_KEYWORD_MAP.put("모든 피부", "all");
 
-        // 피부 고민
+        // 피부 고민 매핑
         SEARCH_KEYWORD_MAP.put("수분", "hydration");
         SEARCH_KEYWORD_MAP.put("보습", "moisture");
         SEARCH_KEYWORD_MAP.put("미백", "brightening");
@@ -50,23 +53,22 @@ public class ProductService {
         SEARCH_KEYWORD_MAP.put("주름", "wrinkle");
         SEARCH_KEYWORD_MAP.put("탄력", "elasticity");
         SEARCH_KEYWORD_MAP.put("모공", "pores");
-        SEARCH_KEYWORD_MAP.put("여드름", "soothing"); // 여드름 -> 진정으로 매핑
-        SEARCH_KEYWORD_MAP.put("홍조", "soothing");   // 홍조 -> 진정
-        SEARCH_KEYWORD_MAP.put("다크스팟", "brightening"); // 다크스팟 -> 미백
-        SEARCH_KEYWORD_MAP.put("칙칙함", "tone"); // 칙칙함 -> 피부톤
 
-        // 퍼스널 컬러
+        // 퍼스널 컬러 매핑
         SEARCH_KEYWORD_MAP.put("봄 웜톤", "spring");
         SEARCH_KEYWORD_MAP.put("여름 쿨톤", "summer");
         SEARCH_KEYWORD_MAP.put("가을 웜톤", "autumn");
         SEARCH_KEYWORD_MAP.put("겨울 쿨톤", "winter");
     }
 
-	// 상품 상세 조회
+    /**
+	 * 상품 상세 정보를 조회
+	 */
 	@Transactional(readOnly = true)
 	public ProductEntity getProductDetail(Long prdNo) {
 		ProductEntity product = prdRepo.findById(prdNo).orElse(null);
 
+		// 연관 데이터(옵션, 이미지) 강제 초기화
 		if (product != null) {
 			product.getOptions().size();
 			product.getImages().size();
@@ -75,10 +77,13 @@ public class ProductService {
 		return product;
 	}
 
+	/**
+	 * 다양한 필터 조건으로 상품 목록을 검색/조회하는 메소드 (동적 쿼리)
+	 */
 	public Page<ProductEntity> getProductList(String q, List<String> skinType, List<String> skinConcern,
 			List<String> personalColor, Long categoryNo, String status, String sort, int page, int size) {
 
-		// 정렬
+		// 정렬 기준 설정 (Sort 객체 생성)
 		Sort sortObj;
 
 		switch (sort) {
@@ -103,14 +108,13 @@ public class ProductService {
 			break;
 		}
 
-		// 페이지네이션 로직
 		Pageable pageable = PageRequest.of(page - 1, size, sortObj);
 
-		// 동적 쿼리
+		// JPA를 이용한 동적 쿼리 생성
 		Specification<ProductEntity> spec = (root, query, cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
 
-			// 검색어(q) 필터 강화 (한글 -> 영어 자동 변환 적용)
+			// 검색어(q) 필터: 상품명, 설명, 각종 태그 컬럼을 OR 조건으로 검색
 			if (q != null && !q.isEmpty()) {
 				String originalPattern = "%" + q + "%";
 				
@@ -123,7 +127,7 @@ public class ProductService {
                 Predicate concernMatch = cb.like(root.get("skinConcern"), originalPattern);
                 Predicate colorMatch = cb.like(root.get("personalColor"), originalPattern);
 
-                // 한글 검색어("건성")를 영어("dry")로 변환해서 태그 컬럼 추가 검색
+                // 한글 검색어를 영문 코드로 변환하여 태그 컬럼 추가 검색 (예: '건성' 검색 시 'dry' 포함 여부 확인)
                 String mappedKeyword = SEARCH_KEYWORD_MAP.get(q.trim()); // 공백 제거 후 매핑 확인
                 
                 if (mappedKeyword != null) {
@@ -134,7 +138,7 @@ public class ProductService {
                     Predicate mappedConcernMatch = cb.like(root.get("skinConcern"), mappedPattern);
                     Predicate mappedColorMatch = cb.like(root.get("personalColor"), mappedPattern);
                     
-                    // 모든 조건을 OR로 묶음
+                    // 모든 조건을 OR로 결합
                     predicates.add(cb.or(
                         nameMatch, descMatch, 
                         typeMatch, concernMatch, colorMatch,
@@ -176,7 +180,7 @@ public class ProductService {
 				predicates.add(cb.or(colorPredicates.toArray(new Predicate[0])));
 			}
 
-			// 카테고리 필터
+			// 카테고리 필터 (하위 카테고리 포함)
 			if (categoryNo != null && categoryNo > 0) {
 				// 직속 카테고리인 경우 (예: 크림(5) 선택 -> 크림 상품 조회)
                 Predicate directMatch = cb.equal(root.get("category").get("categoryNo"), categoryNo);
@@ -188,17 +192,16 @@ public class ProductService {
                 predicates.add(cb.or(directMatch, parentMatch));
             }
 
-			// 상태 필터 로직 개선 (판매중지 미노출)
+			// 상태 필터 및 삭제 여부 체크
 			if (status != null && !status.isEmpty() && !status.equals("ALL")) {
-                // 특정 상태("SALE", "SOLD_OUT", "STOP")가 명시된 경우 해당 상태만 조회
                 predicates.add(cb.equal(root.get("status"), status));
             } else if (!"ALL".equals(status)) {
-                // status가 없거나(사용자), "ALL"이 아닌 경우 -> 기본적으로 '판매중지(STOP)' 상품은 숨김
+                // 관리자가 아니면 기본적으로 판매중지(STOP) 상품은 숨김
                 predicates.add(cb.notEqual(root.get("status"), "STOP"));
             }
 
-			if (true) { // 항상 적용
-			    predicates.add(cb.equal(root.get("isDeleted"), "N"));
+			if (true) {
+			    predicates.add(cb.equal(root.get("isDeleted"), "N")); // 논리 삭제된 상품 제외
 			}
 
 			return cb.and(predicates.toArray(new Predicate[0]));

@@ -7,7 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shoppingmallcoco.project.entity.product.CategoryEntity;
 import com.shoppingmallcoco.project.repository.product.CategoryRepository;
 
-
+/**
+ * 카테고리 관리 비즈니스 로직 서비스
+ * - 카테고리 생성, 수정(부모-자식 관계 변경 포함), 삭제 기능 제공
+ */
 @Service
 public class CategoryService {
 	
@@ -29,7 +32,11 @@ public class CategoryService {
         return catRepo.save(category);
     }
 	
-	// 카테고리 수정
+    /**
+	 * 카테고리 정보 수정
+	 * - 이름 변경 및 상위 카테고리 이동 기능 포함
+	 * - 자기 자신을 상위 카테고리로 설정하는 순환 참조 방지 로직 포함
+	 */
 	@Transactional
 	public CategoryEntity updateCategory(Long categoryNo, String categoryName, Long parentCategoryNo) {
 	    CategoryEntity category = catRepo.findById(categoryNo)
@@ -54,7 +61,10 @@ public class CategoryService {
 	    return catRepo.save(category);
 	}
 	
-	// 카테고리 삭제
+	/**
+	 * 카테고리 삭제
+	 * - 하위 카테고리나 상품이 연결된 경우 제약조건에 따라 처리가 달라질 수 있음
+	 */
 	@Transactional
 	public void deleteCategory(Long categoryNo) {
 		catRepo.deleteById(categoryNo);
