@@ -223,13 +223,13 @@ const Login = () => {
           </div>
 
           <div className="social-buttons">
-            <button type="button" className="social-button" onClick={handleKakaoLogin}>
+            <button type="button" className="social-button social-button-kakao" onClick={handleKakaoLogin}>
               <img src={KakaoIcon} alt="Kakao" />
             </button>
-            <button type="button" className="social-button" onClick={handleNaverLogin}>
+            <button type="button" className="social-button social-button-naver" onClick={handleNaverLogin}>
               <img src={NaverIcon} alt="Naver" />
             </button>
-            <button type="button" className="social-button" onClick={handleGoogleLogin}>
+            <button type="button" className="social-button social-button-google" onClick={handleGoogleLogin}>
               <img src={GoogleIcon} alt="Google" />
             </button>
           </div>

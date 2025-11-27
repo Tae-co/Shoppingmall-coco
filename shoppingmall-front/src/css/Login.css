@@ -182,8 +182,24 @@
 }
 
 .social-button img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.social-button-kakao img {
+  width: 23px;
+  height: 23px;
+}
+
+.social-button-naver img {
   width: 16px;
   height: 16px;
+}
+
+.social-button-google img {
+  width: 20px;
+  height: 20px;
 }
 
 .find-account {
