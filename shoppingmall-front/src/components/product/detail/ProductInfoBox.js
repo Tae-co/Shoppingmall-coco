@@ -4,6 +4,10 @@ import ProductButton from '../ProductButton';
 import SimilarSkinReview from '../../../features/SimilarSkinReview';
 import '../../../css/product/ProductInfoBox.css';
 
+/**
+ * [상품 상세] 우측 정보 및 구매 액션 영역 컴포넌트
+ */
+
 const skinTypeMap = { all: '모든피부', dry: '건성', oily: '지성', combination: '복합성', sensitive: '민감성' };
 const skinConcernMap = {
   hydration: '수분', moisture: '보습', brightening: '미백', tone: '피부톤',
@@ -23,16 +27,19 @@ const ProductInfoBox = ({
   handleAddToCart,
   handleBuyNow
 }) => {
+  // 판매 상태 체크 (품절/판매중지 여부)
   const isSoldOut = product.status === '품절' || product.status === 'SOLD_OUT';
   const isStop = product.status === '판매중지' || product.status === 'STOP';
-  const isUnavailable = isSoldOut || isStop;
+  const isUnavailable = isSoldOut || isStop; // 구매 불가 상태 통합
 
+  // 선택된 옵션에 따른 추가금 계산
   const selectedOpt = product.options?.find(opt => opt.optionNo === Number(selectedOption));
   const unitPrice = product.prdPrice + (selectedOpt?.addPrice || 0);
   const totalPrice = unitPrice * quantity;
 
   const navigate = useNavigate();
 
+  // 태그 클릭 시 해당 키워드로 검색 페이지 이동
   const handleTagClick = (keyword) => {
     navigate(`/product?q=${encodeURIComponent(keyword)}`);
   };
@@ -40,8 +47,10 @@ const ProductInfoBox = ({
   return (
     <div className="info-box">
       <h2 className="product-name">{product.prdName}</h2>
+      {/* 별점 및 리뷰 수 */}
       <p className="product-rating">⭐ {product.averageRating} ({product.reviewCount})</p>
       
+      {/* 태그 렌더링 영역 */}
       <div className="tag-container">
         {product.skinTypes?.map(type => {
             const label = skinTypeMap[type] || type;
@@ -57,8 +66,10 @@ const ProductInfoBox = ({
         })}
       </div>
 
+      {/* 가격 렌더링 영역 */}
       <p className="product-price"> {unitPrice.toLocaleString()}원 </p>
 
+      {/* 옵션 선택 셀렉트 박스 (옵션이 있을 경우에만 표시) */}
       {product.options && product.options.length > 0 && (
         <div>
           <label htmlFor="product-option" className="visually-hidden">상품 옵션 선택</label>
@@ -79,6 +90,7 @@ const ProductInfoBox = ({
         </div>
       )}
 
+      {/* 상품 수량 조절 및 총 가격 */}
       <div>
         <label htmlFor="product-quantity" className="visually-hidden">상품 수량</label>
         <div className="qty-control">
@@ -98,10 +110,12 @@ const ProductInfoBox = ({
         <span className="total-price-value">{totalPrice.toLocaleString()}원</span>
       </div>
 
+      {/* 구매 통계 (유사 피부 타입 리뷰 요약) */}
       <div>
          <SimilarSkinReview productId={product.prdNo} />
       </div>
       
+      {/* 액션 버튼 그룹 (장바구니 / 바로구매) */}
       <div className="btn-group">
         <ProductButton
           onClick={handleAddToCart}

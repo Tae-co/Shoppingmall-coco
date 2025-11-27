@@ -4,6 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 상품 옵션 정보를 담는 엔티티 (PRODUCTOPTION 테이블)
+ * - 예: 용량(50ml, 100ml), 색상(Red, Blue) 등
+ * - 각 옵션별로 재고(Stock)와 추가 금액(AddPrice)을 독립적으로 관리함
+ */
 @Entity
 @Getter
 @Setter
@@ -17,14 +22,20 @@ public class ProductOptionEntity {
 	private Long optionNo;
 
 	@Column(name = "OPTIONNAME")
-	private String optionName;
+	private String optionName; // 옵션 명 (예: 용량, 사이즈)
 
 	@Column(name = "OPTIONVALUE")
-	private String optionValue;
+	private String optionValue; // 옵션 값 (예: 50ml, L)
 
+	/**
+	 * 옵션별 재고 수량
+	 * 주문 발생 시 이 필드의 값이 차감됨
+	 * 0이 되면 품절 처리
+	 */
 	@Column(name = "STOCK")
 	private int stock;
 
+	// 기본 상품 가격에 더해지는 추가 금액 (0원이면 추가금 없음)
 	@Column(name = "ADDPRICE")
 	private int addPrice;
 
@@ -32,6 +43,10 @@ public class ProductOptionEntity {
 	@JoinColumn(name = "PRDNO", nullable = false)
 	private ProductEntity product;
 
+	/**
+	 * 옵션 생성 편의 메소드 (정적 팩토리 메소드 패턴)
+	 * 엔티티 생성과 값 설정을 한 번에 처리하여 가독성을 높임
+	 */
 	public static ProductOptionEntity create(ProductEntity product, String optionName, String optionValue, int addPrice,
 			int stock) {
 		ProductOptionEntity option = new ProductOptionEntity();

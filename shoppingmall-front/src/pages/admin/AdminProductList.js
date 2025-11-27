@@ -6,6 +6,14 @@ import Pagination from '../../components/admin/Pagination';
 import Spinner from '../../components/admin/Spinner';
 import '../../css/admin/AdminProductList.css';
 
+/**
+ * [AdminProductList] 관리자용 상품 관리 페이지
+ * 역할:
+ * 1. 전체 상품 목록 조회 (페이징, 검색, 카테고리/상태 필터)
+ * 2. 상품 대시보드 통계 표시 (전체, 판매중, 품절, 재고 현황)
+ * 3. 상품 삭제(논리적 삭제) 및 수정 페이지 이동 기능 제공
+ */
+
 const LIMIT = 6;
 
 function AdminProductList() {
@@ -32,14 +40,14 @@ function AdminProductList() {
     totalStock: 0
   });
 
-  // 카테고리 로드 (Axios)
+  // 카테고리 로드
   useEffect(() => {
     axios.get('http://localhost:8080/api/categories')
       .then(res => setCategories(res.data))
       .catch(err => console.error("카테고리 로드 실패:", err));
   }, []);
 
-  // 상품 목록 및 통계 로드 (Axios)
+  // 대시보드 통계 및 상품 목록 로드
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
@@ -79,6 +87,11 @@ function AdminProductList() {
     loadData();
   }, [currentPage, debouncedSearchTerm, selectedCategory, selectedStatus, sortOrder]);
 
+  /**
+   * 상품 삭제 핸들러
+   * - 관리자가 삭제 확인 시 서버에 삭제 요청(Soft Delete)을 보냄
+   * - 성공 시 UI 목록에서 즉시 제거하여 빠른 반응성 제공
+   */
   const handleDelete = async (product) => {
     if (window.confirm(`정말 삭제하시겠습니까?\n상품명: ${product.prdName}`)) {
       try {
