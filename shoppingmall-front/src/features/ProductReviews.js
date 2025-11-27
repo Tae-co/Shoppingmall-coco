@@ -12,6 +12,11 @@ function ProductReviews({ productNo }) {
     const [orderItemNo, setOrderItemNo] = useState(0);
     const navigate = useNavigate();
 
+    const [page, setPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [filtered, setFiltered] = useState("latest");
+    const pageSize = 10;
+
     const handleDeleteReview = async (reviewNo) => {
         try {
             const token = localStorage.getItem('token');
@@ -34,24 +39,49 @@ function ProductReviews({ productNo }) {
         const fetchReviews = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:8080/api/products/${productNo}/reviews`);
-                setReviews(response.data);
+                const token = localStorage.getItem('token');
+                const headers = {};
+                if (filtered === "co-mate") {
+                    if (!token) {
+                        alert("Co-mate 필터는 로그인이 필요합니다.");
+                        setLoading(false);
+                        return;
+                    }
+                    headers["Authorization"] = `Bearer ${token}`;
+                }
+                const response = await axios.get(`http://localhost:8080/api/products/${productNo}/reviewPages`, {
+                    params: {
+                        page,
+                        size: pageSize,
+                        filterType: filtered, // latest / oldest / co-mate
+                    },
+                    headers,
+                });
+                setReviews(response.data.content);
+                setTotalPages(response.data.totalPages);
             } catch (error) {
                 console.error("리뷰 목록을 불러오는데 실패했습니다:", error);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
+
         };
 
         fetchReviews();
-    }, [productNo]);
+    }, [productNo, page, filtered]);
 
     const getOrerItemNo = async () => {
         setLoading(true);
         try {
-            const memberId = await getStoredMemberId();
-            const response = await axios.get(`http://localhost:8080/api/reviews/${productNo}/getOrderItemNo/${memberId}`);
-            setOrderItemNo(response.data);
-            return navigate(`/reviews/:orderItemNo`);
+            const token = localStorage.getItem("token");
+            if (!token) {
+                alert("로그인이 필요합니다.");
+                return;
+            }
+            const response = await axios.get(`http://localhost:8080/api/reviews/${productNo}/getOrderItemNo`, { headers: { Authorization: `Bearer ${token}` } });
+            const orderItemNoFromApi = response.data;
+            setOrderItemNo(orderItemNoFromApi);
+            return navigate(`/reviews/${orderItemNoFromApi}`);
         } catch (error) {
             console.log("orderItemNo를 불러오지 못 했습니다.", error);
             const msg = error.response?.data?.message
@@ -74,14 +104,28 @@ function ProductReviews({ productNo }) {
         <div className="review-list-container" style={{ maxWidth: '1100px', margin: '0 auto' }}>
             <div className="review-header">
                 <h2 className="review-title">리뷰 (총 {reviews.length}개)</h2>
+                <div className="filter-container">
+                    <button type="button" className="filter-latest" onClick={() => {
+                        setFiltered("latest");
+                        setPage(0);
+                    }}>최신순</button>
+                    <p className="filter-bar"> | </p>
+                    <button type="button" className="filter-oldest" onClick={() => {
+                        setFiltered("oldest");
+                        setPage(0);
+                    }}>오래된 순</button>
+                    <p className="filter-bar"> | </p>
+                    <button type="button" className="filter-co-mate" onClick={() => {
+                        setFiltered("co-mate");
+                        setPage(0);
+                    }}>Co-mate</button>
+                </div>
                 <button
                     className="review-btn"
                     onClick={() => getOrerItemNo()}
                 >리뷰쓰기 ✎</button>
             </div>
             {reviews.map((review) => (
-                // 4. 각 리뷰 데이터를 'reviewData'라는 prop으로 전달
-                // 'key'는 React가 각 항목을 구별하기 위해 필수입니다.
                 <ReviewDetail
                     key={review.reviewNo}
                     reviewData={review}
@@ -89,6 +133,23 @@ function ProductReviews({ productNo }) {
                     productNo={productNo}
                 />
             ))}
+            <div className="pagination" style={{ textAlign: "center", margin: "20px 0" }}>
+                <button
+                    disabled={page === 0}
+                    onClick={() => setPage((p) => p - 1)}
+                >
+                    이전
+                </button>
+                <span style={{ margin: "0 10px" }}>
+                    {page + 1} / {totalPages || 1}
+                </span>
+                <button
+                    disabled={page + 1 >= totalPages}
+                    onClick={() => setPage((p) => p + 1)}
+                >
+                    다음
+                </button>
+            </div>
         </div>
     );
 }

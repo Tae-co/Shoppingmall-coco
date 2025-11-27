@@ -37,14 +37,11 @@ import PaymentPage from './pages/PaymentPage/PaymentPage';
 import OrderSuccessPage from './pages/OrderSuccessPage/OrderSuccessPage';
 import OrderFailPage from './pages/OrderFailPage/OrderFailPage';
 import { OrderProvider } from './pages/OrderContext';
-import CreateReviewwPage from "./features/CreateReviewPage.js";
-import CreateUpdatePage from "./features/CreateUpdatePage.js";
 
 function App() {
   const location = useLocation();
   const hideHeaderFooter = ['/login', '/login/naver/callback', '/signup/terms', '/signup/info', '/find-account', '/kakao/additional-info'].includes(location.pathname) 
     || location.pathname.startsWith('/admin');
-
 
   return (
     <ThemeProvider theme={theme}>
@@ -108,6 +105,5 @@ function App() {
     </ThemeProvider>
   ); 
 }   
-
 
 export default App;

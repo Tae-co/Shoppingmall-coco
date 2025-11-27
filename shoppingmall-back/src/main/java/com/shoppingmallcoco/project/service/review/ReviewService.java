@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -231,7 +233,7 @@ public class ReviewService implements IReviewService {
         Pageable topOne = PageRequest.of(0, 1);
         List<Long> orderItemNoTop = orderItemRepository.getOrderItemNoByProductNo(productNo, memNo,
             topOne);
-        if(orderItemNoTop == null || orderItemNoTop.isEmpty()){
+        if (orderItemNoTop == null || orderItemNoTop.isEmpty()) {
             throw new IllegalArgumentException("주문한 이력이 없는 상품입니다.");
         }
         Long lastOrderItemNo = orderItemNoTop.isEmpty() ? null : orderItemNoTop.get(0);
@@ -322,4 +324,36 @@ public class ReviewService implements IReviewService {
         // 업데이트된 좋아요 개수 반환
         return likeRepository.countByReview(review);
     }
+
+    // Review 페이징
+    @Transactional(readOnly = true)
+    public Page<ReviewDTO> getReviewPage(Long productNo, Long memNo, int page, int size,
+        String filterType) {
+        Sort sort = switch (filterType) {
+            case "oldest" -> Sort.by(Sort.Direction.ASC, "createdAt");
+            default -> Sort.by(Sort.Direction.DESC, "createdAt");
+        };
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Review> reviewPage;
+
+        if ("co-mate".equals(filterType)) {
+            SkinProfile skin = skinRepository.findByMember_MemNo(memNo)
+                .orElseThrow(() -> new IllegalArgumentException("피부 타입 설정이 되지 않았습니다."));
+
+            String skinType = skin.getSkinType();
+
+            reviewPage = reviewRepository.findPageByProductAndSkinType(productNo, skinType,
+                pageable);
+        } else {
+            reviewPage = reviewRepository.findByOrderItemProductPrdNo(productNo, pageable);
+        }
+
+        return reviewPage.map(review -> {
+            int likeCount = likeRepository.countByReview_ReviewNo(review.getReviewNo());
+            return ReviewDTO.toDto(review, likeCount);
+        });
+    }
+
 }

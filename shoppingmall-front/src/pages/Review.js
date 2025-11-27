@@ -14,8 +14,6 @@ function Review() {
 
     const navigate = useNavigate();
     const { orderItemNo } = useParams();
-    
-
     const reviewGuide = `1. 제품의 '첫인상'과 '사용감'을 자세히 알려주세요
 
     제형/질감: 묽은 물 토너, 쫀쫀한 콧물 제형, 꾸덕한 크림, 가벼운 젤 타입 등
@@ -58,10 +56,7 @@ function Review() {
 
     `;
 
-
-
-
-    const [content, setContent] = useState(textGuide); // 리뷰 텍스트를 위한 state
+    const [content, setContent] = useState(textGuide);
     const [tags, setTags] = useState([]);
     const [loadingTags, setLoadingTags] = useState(true);
     const { starTotal, clicked, starScore, starArray, setRating } = UseStarRating(0);
