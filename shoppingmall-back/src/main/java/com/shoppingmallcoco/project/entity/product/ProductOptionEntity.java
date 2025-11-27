@@ -57,4 +57,19 @@ public class ProductOptionEntity {
 		option.setStock(stock);
 		return option;
 	}
+
+
+    // 재고 차감 (주문 시)
+    public void removeStock(int quantity) {
+        int restStock = this.stock - quantity;
+        if (restStock < 0) {
+            throw new RuntimeException("재고가 부족합니다. (현재 재고: " + this.stock + ")");
+        }
+        this.stock = restStock;
+    }
+
+    // 재고 복구 (주문 취소 시)
+    public void addStock(int quantity) {
+        this.stock += quantity;
+    }
 }

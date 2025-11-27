@@ -30,6 +30,8 @@ public class Order {
     @JoinColumn(name = "memNo", nullable = false)
     private Member member;
 
+
+
     @Column(name = "orderDate")
     private LocalDate orderDate;
 

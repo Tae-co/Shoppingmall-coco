@@ -28,7 +28,7 @@ public class CategoryEntity {
 	@Column(name = "CATEGORYNO")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_seq_gen")
 	@SequenceGenerator(
-        name = "category_seq_gen", 
+        name = "category_seq_gen",
         sequenceName = "CATEGORY_SEQ",
         allocationSize = 1
         )
