@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CartRequestDto {
-    private Long memNo;
     private Long optionNo;
     private Integer cartQty;
 }
