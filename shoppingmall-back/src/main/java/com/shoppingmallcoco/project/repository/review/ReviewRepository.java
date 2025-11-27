@@ -38,6 +38,18 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // review 삭제
     //void deleteById(Long reviewNo);
+
+    // Co-Mate 순
+    @Query("SELECT r FROM Review r " +
+        "JOIN r.orderItem oi " +
+        "JOIN oi.order o " +
+        "JOIN o.member m " +
+        "JOIN m.skin s " +
+        "WHERE oi.product.prdNo = :prdNo " +
+        "AND s.skinType = :skinType " +
+        "ORDER BY r.createdAt DESC")
+    List<Review> findReviewsByProductAndSkinType(@Param("prdNo") Long prdNo,
+        @Param("skinType") String skinType);
     
 	/* CO-MATE 기능 구현 */
     /* 특정 사용자가 작성한 리뷰 개수 */
@@ -50,5 +62,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 	List<Review> findByOrderItem_Order_Member_MemNoOrderByRatingDesc(Long memNo);
 	// 별점 낮은순
 	List<Review> findByOrderItem_Order_Member_MemNoOrderByRatingAsc(Long memNo);
+
 
 }

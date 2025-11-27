@@ -231,7 +231,7 @@ public class ReviewService implements IReviewService {
         Pageable topOne = PageRequest.of(0, 1);
         List<Long> orderItemNoTop = orderItemRepository.getOrderItemNoByProductNo(productNo, memNo,
             topOne);
-        if(orderItemNoTop == null || orderItemNoTop.isEmpty()){
+        if (orderItemNoTop == null || orderItemNoTop.isEmpty()) {
             throw new IllegalArgumentException("주문한 이력이 없는 상품입니다.");
         }
         Long lastOrderItemNo = orderItemNoTop.isEmpty() ? null : orderItemNoTop.get(0);
@@ -322,4 +322,20 @@ public class ReviewService implements IReviewService {
         // 업데이트된 좋아요 개수 반환
         return likeRepository.countByReview(review);
     }
+
+    // co-mate 필터 기능
+    public List<ReviewDTO> getCoMateReviews(Long prdNo, Long currentMemberNo) {
+        SkinProfile skin = skinRepository.findByMember_MemNo(currentMemberNo)
+            .orElseThrow(() -> new IllegalArgumentException("피부 타입 설정이 되지 않았습니다."));
+
+        String skinType = skin.getSkinType();
+        List<Review> reviews = reviewRepository.findReviewsByProductAndSkinType(prdNo, skinType);
+
+        return reviews.stream().map(review -> {
+            int likeCount = likeRepository.countByReview_ReviewNo(review.getReviewNo());
+            return ReviewDTO.toDto(review, likeCount);
+        }).toList();
+    }
+
+
 }
