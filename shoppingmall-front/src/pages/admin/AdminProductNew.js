@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from 'axios'; // Axios Import
+import axios from 'axios';
 import ProductForm from '../../components/admin/ProductForm';
 
 function AdminProductNew() {

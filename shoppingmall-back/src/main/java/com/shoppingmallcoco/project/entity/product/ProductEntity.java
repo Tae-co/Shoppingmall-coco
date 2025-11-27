@@ -9,6 +9,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 상품 정보를 담는 엔티티 클래스 (PRODUCT 테이블 매핑)
+ * - 상품의 기본 정보, 카테고리, 옵션, 이미지와의 연관관계를 관리함
+ */
 @Entity
 @Getter
 @Setter
@@ -64,7 +68,10 @@ public class ProductEntity {
 	@Column(name = "IS_DELETED", length = 1)
 	private String isDeleted = "N";
 
-	// 삭제 처리 메서드
+	/**
+	 * 상품 삭제 처리를 위한 메소드
+	 * - isDeleted 상태를 'Y'로 변경하여 논리적으로 삭제함
+	 */
 	public void delete() {
 		this.isDeleted = "Y";
 	}
@@ -74,12 +81,19 @@ public class ProductEntity {
 	@ColumnDefault("0") // 기본값 0
 	private long salesCount;
 
-	// 판매량 증가 메서드 (주문 시 호출)
+	/**
+	 * 판매량 증가 메소드
+	 * - 주문 완료 시 호출되어 해당 상품의 인기 지수(판매량)를 높임
+	 */
 	public void addSalesCount(int count) {
 		this.salesCount += count;
 	}
 
-	// 판매량 감소 메서드 (주문 취소 시 호출)
+	/**
+	 * 판매량 감소 메소드
+	 * - 주문 취소/반품 시 호출됨
+	 * - 0 미만으로 떨어지지 않도록 방어 로직 포함
+	 */
 	public void removeSalesCount(int count) {
 		this.salesCount -= count;
 		if (this.salesCount < 0)

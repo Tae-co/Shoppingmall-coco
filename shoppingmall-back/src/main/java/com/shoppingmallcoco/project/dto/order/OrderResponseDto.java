@@ -17,6 +17,16 @@ public class OrderResponseDto {
     private String status;
     private Long totalPrice;
 
+    // 배송지 및 주문자 정보
+    private String recipientName;
+    private String recipientPhone;
+    private String orderZipcode;
+    private String orderAddress1;
+    private String orderAddress2;
+    private String deliveryMessage;
+    private Long pointsUsed;
+
+    // 주문 상품 목록
     private List<OrderItemDto> items;
 
     public static OrderResponseDto fromEntity(Order order) {
@@ -25,6 +35,13 @@ public class OrderResponseDto {
                 order.getOrderDate().toString(),
                 order.getStatus(),
                 order.getTotalPrice(),
+                order.getRecipientName(),
+                order.getRecipientPhone(),
+                order.getOrderZipcode(),
+                order.getOrderAddress1(),
+                order.getOrderAddress2(),
+                order.getDeliveryMessage(),
+                order.getPointsUsed(),
                 order.getOrderItems().stream()
                         .map(OrderItemDto::fromEntity)
                         .toList()

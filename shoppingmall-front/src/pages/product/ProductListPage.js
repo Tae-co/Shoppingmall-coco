@@ -1,3 +1,12 @@
+/**
+ * [ProductListPage] 상품 목록 페이지 컴포넌트
+ * 역할:
+ * 1. 필터링(검색어, 카테고리, 피부타입 등)된 상품 목록 조회 및 표시
+ * 2. 내 피부 맞춤 기능 제공 (회원 프로필 기반 자동 필터 설정)
+ * 3. 장바구니 담기 기능 연동
+ * 4. 페이지네이션 및 정렬 기능 처리
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -14,8 +23,9 @@ const reverseSkinMap = {
   '건성': 'dry', '지성': 'oily', '복합성': 'combination', '민감성': 'sensitive'
 };
 const reverseConcernMap = {
-  '모공': 'pores', '주름': 'wrinkle', '건조함': 'moisture', '민감함': 'sensitive',
-  '여드름': 'soothing', '홍조': 'soothing', '다크스팟': 'brightening', '칙칙함': 'tone'
+  '수분': 'hydration',  '보습': 'moisture',  '미백': 'brightening',  '피부톤': 'tone',
+  '진정': 'soothing',  '민감': 'sensitive',  '자외선차단': 'uv',  '주름': 'wrinkle',
+  '탄력': 'elasticity',  '모공': 'pores'
 };
 const reverseColorMap = {
   '봄 웜톤': 'spring', '여름 쿨톤': 'summer', '가을 웜톤': 'autumn', '겨울 쿨톤': 'winter'
@@ -56,10 +66,6 @@ function ProductListPage() {
         const response = await axios.get(`http://localhost:8080/api/coco/members/profile/${member.memNo}`);
         setUserProfile(response.data);
         
-        const hasAnyFilter = searchParams.toString().length > 0;
-        if (!hasAnyFilter && response.data) {
-           applyProfileFilters(response.data);
-        }
       } catch (error) {
         console.error("프로필 로드 실패:", error);
       }
@@ -68,7 +74,9 @@ function ProductListPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // 의도적으로 빈 배열 유지
 
-  // --- 필터 로직 ---
+  /**
+   * 사용자 피부 프로필 정보를 기반으로 필터(쿼리 파라미터)를 자동 설정하는 함수
+   */
   const applyProfileFilters = (profileData) => {
     if (!profileData) return;
     const newParams = new URLSearchParams(searchParams);
@@ -127,12 +135,11 @@ function ProductListPage() {
   useEffect(() => {
     if (searchParams.get('q')) setIsProfileMode(false);
 
-    const controller = new AbortController(); // Axios signal 연동
+    const controller = new AbortController();
     const fetchProducts = async () => {
       setIsLoading(true); 
       try {
         const queryString = searchParams.toString();
-        // fetch -> axios.get 변경
         const response = await axios.get(`http://localhost:8080/api/products?${queryString}`, {
           signal: controller.signal
         });
@@ -164,7 +171,6 @@ function ProductListPage() {
     }
   }, [isFilterOpen]);
 
-  // --- 이벤트 핸들러 ---
   const updateSearchParams = (newParams, resetPage = true) => {
     const params = new URLSearchParams(searchParams);
     for (const [key, value] of Object.entries(newParams)) {
@@ -176,6 +182,11 @@ function ProductListPage() {
     setIsProfileMode(false);
   };
 
+  /**
+   * 개별 필터 변경 시 호출되는 핸들러
+   * - 필터가 변경되면 페이지를 1페이지로 초기화하고 URL 파라미터를 업데이트함.
+   * - 사용자가 직접 필터를 조작하면 내 피부 맞춤 모드는 자동으로 해제됨.
+   */
   const handleFilterChange = (category, value) => {
     const currentValues = searchParams.getAll(category);
     let newValues;
@@ -250,6 +261,7 @@ function ProductListPage() {
 
   return (
     <div className="page-container">
+      {/* 사이드바 (필터 옵션) */}
       <ProductSidebar
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
@@ -262,6 +274,7 @@ function ProductListPage() {
       />
 
       <main className="main-content">
+        {/* 상단 헤더 (총 개수, 정렬, 필터 버튼) */}
         <ProductListHeader
           searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
@@ -271,6 +284,7 @@ function ProductListPage() {
           onFilterToggle={() => setIsFilterOpen(true)}
         />
 
+        {/* 상품 그리드 및 페이지네이션 */}
         {isLoading ? (
           <ProductListSkeleton />
         ) : products.length === 0 ? (

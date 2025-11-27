@@ -5,16 +5,24 @@ import Spinner from '../../components/admin/Spinner';
 import CategoryTable from '../../components/admin/CategoryTable';
 import '../../css/admin/AdminCategoryList.css'; // CSS 파일 임포트
 
+/**
+ * [AdminCategoryList] 관리자 카테고리 관리 페이지
+ * 역할:
+ * 1. 카테고리 목록 조회 (대분류/소분류 계층 구조 시각화)
+ * 2. 신규 카테고리 생성 (상위 카테고리 선택 기능 포함)
+ * 3. 카테고리 수정 및 삭제 기능
+ */
+
 function AdminCategoryList() {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // 입력 폼 상태
+  // 입력 폼 상태 (신규 추가 및 수정 공용)
   const [newCategoryName, setNewCategoryName] = useState('');
   const [parentCategoryNo, setParentCategoryNo] = useState('');
-  const [editId, setEditId] = useState(null);
+  const [editId, setEditId] = useState(null); // 수정 중인 카테고리 ID (null이면 추가 모드)
 
-  // 목록 조회 (Axios)
+  // 목록 조회
   const loadCategories = async () => {
     try {
       const response = await axios.get('http://localhost:8080/api/categories');
@@ -53,10 +61,14 @@ function AdminCategoryList() {
     }
   };
 
-  // 폼 제출 (추가/수정)
+  /**
+   * 카테고리 폼 제출 핸들러 (추가/수정 분기 처리)
+   * - editId 존재 여부에 따라 POST(생성) 또는 PUT(수정) 요청을 보냄
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // 유효성 검사
     if (!newCategoryName.trim()) {
       toast.warn('카테고리 이름을 입력하세요.');
       return;
@@ -68,6 +80,7 @@ function AdminCategoryList() {
         return;
     }
 
+    // 대분류/소분류 로직: 부모 ID가 없으면 대분류, 있으면 소분류로 처리
     const categoryData = {
       categoryName: newCategoryName,
       parentCategoryNo: parentCategoryNo || null
@@ -84,8 +97,8 @@ function AdminCategoryList() {
         toast.success('추가되었습니다.');
       }
       
-      resetForm();
-      loadCategories(); // 목록 갱신
+      resetForm(); // 폼 초기화
+      loadCategories(); // 목록 갱신 (최신 데이터 반영)
     } catch (error) {
       console.error(error);
       toast.error('작업에 실패했습니다.');
@@ -129,7 +142,7 @@ function AdminCategoryList() {
     <div className="admin-page-container">
       <h2 className="page-title">카테고리 관리</h2>
 
-      {/* 입력 폼 카드 */}
+      {/* 카테고리 입력/수정 폼 카드 */}
       <div className="admin-card form-card">
         <h3 className="content-title">
           {editId ? '카테고리 수정' : '하위 카테고리 추가'}
@@ -178,11 +191,12 @@ function AdminCategoryList() {
         </form>
       </div>
 
-      {/* 목록 카드 */}
+      {/* 카테고리 목록 테이블 카드 */}
       <div className="admin-card">
         <div className="card-header">
           <h3 className="content-title">카테고리 목록</h3>
         </div>
+        {/* 계층형 테이블 컴포넌트 */}
         <CategoryTable 
             categories={categories} 
             onEdit={handleEditClick} 

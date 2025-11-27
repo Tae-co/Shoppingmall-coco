@@ -3,20 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import '../../css/PaymentPage.css';
 import { useOrder } from '../OrderContext'; // 전역 주문 상태(Context) 훅
 import TermsPopup from './TermsPopup'; // 약관 상세 보기 팝업 컴포넌트
+import axios from 'axios';
 
 // 결제 수단 선택, 포인트 사용, 약관 동의 및 최종 결제를 처리하는 페이지 컴포넌트 (주문 프로세스 3단계)
 function PaymentPage() {
   const navigate = useNavigate();
 
-
   // OrderContext에서 배송지 정보(lastName, phone 등)까지 모두 가져옴
-  // (OrderContext.jsx에 정의된 모든 값)
   const {
     orderSubtotal, // 상품 총액
     shippingFee,   // 배송비
     userPoints,    // 사용자 보유 포인트
     pointsToUse, setPointsToUse, // 사용할 포인트 상태
-    lastName, firstName, phone, postcode, address, addressDetail // 배송지 정보
+    lastName, firstName, phone, postcode, address, addressDetail, deliveryMessage // 배송지 정보
   } = useOrder();
 
   // 로컬 상태 관리: 결제 수단, 약관 동의, 약관 팝업 표시 여부
@@ -76,19 +75,19 @@ function PaymentPage() {
       // 2-1. 'API 간편결제'일 경우: '포트원' 실제 결제 로직
       
       const { IMP } = window; // index.html에서 로드한 IMP 객체
-      IMP.init("iamport"); // 테스트용 아이디
+      IMP.init("iamport"); // 테스트용 가맹점 식별코드
 
       // 결제 요청 데이터 정의
       const data = {
         pg: "kakaopay", // PG사 (예: 카카오페이)
         pay_method: "card", // 결제 방식
         merchant_uid: `coco_order_${new Date().getTime()}`, // 고유한 주문번호
-        name: "Coco 뷰티 상품 외 1건", // 주문명 (상품명이 길면 요약)
+        name: "Coco 뷰티 상품 외 1건", // 주문명
         amount: finalAmount, // ★★★ 실제 최종 결제 금액 ★★★
-        buyer_name: `${lastName}${firstName}`, // 구매자 이름 (Context에서)
-        buyer_tel: phone,                      // 구매자 연락처 (Context에서)
-        buyer_addr: `${address} ${addressDetail}`, // 구매자 주소 (Context에서)
-        buyer_postcode: postcode,               // 구매자 우편번호 (Context에서)
+        buyer_name: `${lastName}${firstName}`, // 구매자 이름
+        buyer_tel: phone,                      // 구매자 연락처
+        buyer_addr: `${address} ${addressDetail}`, // 구매자 주소
+        buyer_postcode: postcode,               // 구매자 우편번호
       };
 
       // 포트원 결제 창 호출
@@ -96,28 +95,76 @@ function PaymentPage() {
         if (rsp.success) {
           // --- 결제 성공 ---
           console.log("결제 성공:", rsp);
-          
-          
-          // 검증 성공 후, 성공 페이지로 이동
-          navigate('/order-success');
+
+         
+          const orderData = {
+            orderItems: [
+              { 
+                prdNo: 1,       // (임시) 1번 상품
+                optionNo: 1,    // (임시) 1번 옵션
+                orderQty: 2     // (임시) 2개 주문
+              } 
+            ],
+            // 배송지 정보
+            recipientName: lastName + firstName, 
+            recipientPhone: phone,
+            orderZipcode: postcode,
+            orderAddress1: address,
+            orderAddress2: addressDetail,
+            deliveryMessage: deliveryMessage || "조심해서 배송해 주세요.",
+            pointsUsed: pointsToUse
+          };
+
+          // 토큰 가져오기
+          const token = localStorage.getItem('token');
+
+          //  Axios로 백엔드 API 호출 (헤더에 토큰 포함)
+          axios.post('http://localhost:8080/api/orders', orderData, {
+            headers: {
+              'Authorization': `Bearer ${token}`, 
+              'Content-Type': 'application/json'
+            }
+          })
+            .then((response) => {
+              // 백엔드가 보내준 진짜 주문 번호 받기
+              const realOrderNo = response.data; 
+              console.log("백엔드 저장 성공. 주문번호:", realOrderNo);
+
+              alert("주문이 성공적으로 완료되었습니다!");
+              
+              //  성공 페이지로 이동하며 주문 번호를 state로 전달
+              navigate('/order-success', { state: { orderNo: realOrderNo } }); 
+            })
+            .catch((error) => {
+              console.error("백엔드 저장 실패:", error);
+              
+              // (403 에러 처리: 토큰 만료 등)
+              if (error.response && error.response.status === 403) {
+                alert("로그인 정보가 만료되었습니다. 다시 로그인해주세요.");
+                // navigate('/login');
+              } else {
+                alert("주문 저장 실패: " + (error.response?.data || "서버 오류"));
+              }
+            });
+
         } else {
           // --- 결제 실패 ---
           console.log("결제 실패:", rsp.error_msg);
-          navigate('/order-fail'); // 실패 페이지로 이동
+          alert(`결제에 실패하였습니다. 에러 내용: ${rsp.error_msg}`);
+          navigate('/order-fail'); 
         }
       });
 
     } else if (paymentMethod === 'card') {
-      // 2-2. '신용/체크카드' 직접 입력일 경우: 카드 정보 필수값 검사
+      // 2-2. '신용/체크카드' 직접 입력일 경우
       
       if (!cardNumber || !cardName || !cardExpiry || !cardCvc) {
         alert("카드 정보를 모두 입력해주세요.");
         return;
       }
 
-      // 카드 정보 유효성 검사 통과 후: 모의 실패 처리
       console.log("현재 '신용/체크카드 직접 입력'은 지원하지 않습니다. 실패 처리합니다.");
-      navigate('/order-fail'); // 실패 페이지로 이동
+      navigate('/order-fail'); 
     }
   };
 

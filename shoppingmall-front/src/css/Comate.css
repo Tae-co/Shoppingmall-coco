@@ -1,12 +1,17 @@
 .comate_wrapper {
     display: flex;
     max-width: 1280px;
+    min-height: 450px;
     margin: 30px auto;
     gap: 80px;
 }
 .comate_card_wrapper {
     margin-left: 100px;
     text-align: center;
+
+    position: sticky;
+    top: 30px;
+    align-self: flex-start;
 }
 
 .comate_content_wrapper {

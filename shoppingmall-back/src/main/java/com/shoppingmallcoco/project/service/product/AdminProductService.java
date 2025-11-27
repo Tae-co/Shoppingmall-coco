@@ -21,6 +21,10 @@ import java.util.UUID;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * 관리자 전용 상품 관리 비즈니스 로직을 담당하는 서비스 클래스
+ * 상품 등록, 수정(이미지/옵션 포함), 삭제 및 대시보드 통계 기능을 제공함
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -39,7 +43,7 @@ public class AdminProductService {
 	@Transactional
 	public ProductEntity createProduct(ProductSaveDTO dto, List<MultipartFile> files) throws IOException {
 
-		// 카테고리 조회 및 상품 기본 정보 저장
+		// 카테고리 조회 및 상품 기본 정보 설정
 		CategoryEntity category = catRepo.findById(dto.getCategoryNo())
 				.orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다: " + dto.getCategoryNo()));
 
@@ -55,12 +59,13 @@ public class AdminProductService {
 		newProduct.setPersonalColor(dto.getPersonalColor());
 		newProduct.setStatus(dto.getStatus() != null ? dto.getStatus() : "SALE");
 
+		// 상품 기본 정보 DB 저장
 		ProductEntity savedProduct = prdRepo.save(newProduct);
 
-		// 옵션 저장
+		// 옵션 정보 저장
 		saveOptions(savedProduct, dto.getOptions());
 
-		// 이미지 저장 로직
+		// 이미지 파일 저장 및 정보 DB 저장
 		saveImages(savedProduct, files);
 
 		return savedProduct;
@@ -75,14 +80,14 @@ public class AdminProductService {
 		ProductEntity product = prdRepo.findById(prdNo)
 				.orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다: " + prdNo));
 
-		// 카테고리 변경
+		// 카테고리 변경 로직
 		if (!product.getCategory().getCategoryNo().equals(dto.getCategoryNo())) {
 			CategoryEntity newCategory = catRepo.findById(dto.getCategoryNo())
 					.orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
 			product.setCategory(newCategory);
 		}
 
-		// 기본 정보 수정
+		// 기본 정보 업데이트
 		product.setPrdName(dto.getPrdName());
 		product.setPrdPrice(dto.getPrdPrice());
 		product.setDescription(dto.getDescription());
@@ -91,26 +96,31 @@ public class AdminProductService {
 		product.setSkinConcern(dto.getSkinConcern());
 		product.setPersonalColor(dto.getPersonalColor());
 
-		// 상태 수정
+		// 판매 상태 수정
 		if (dto.getStatus() != null && !dto.getStatus().isEmpty()) {
 			product.setStatus(dto.getStatus());
 		}
 
-		// 옵션 수정 (기존 옵션 삭제 후 재생성)
+		// 옵션 수정 (기존 옵션 삭제 후 재생성 또는 업데이트)
 		updateOptions(product, dto.getOptions());
 
-		// 이미지 처리 로직 (기존 이미지 정리 + 새 이미지 추가)
+		// 이미지 처리 로직 (기존 이미지 순서 변경, 삭제, 새 이미지 추가)
 		processImages(product, dto.getKeptImageUrls(), files);
 
 		return product;
 	}
 
-	// 이미지 동기화 및 순서 재정렬 메서드
+	/**
+	 * 상품 이미지 목록을 동기화하고 순서를 재정렬하는 내부 헬퍼 메소드
+	 * - 프론트엔드에서 전달받은 이미지 순서(imageOrderList)에 따라 정렬 순서(sortOrder)를 업데이트함
+	 * - 목록에 없는 기존 이미지는 DB와 로컬 디스크에서 삭제함
+	 * - "NEW_FILE" 마커가 있는 위치에 새 파일을 저장함
+	 */
 	private void processImages(ProductEntity product, List<String> imageOrderList, List<MultipartFile> newFiles)
 			throws IOException {
 		List<ProductImageEntity> currentImages = product.getImages();
 
-		// 삭제 처리: 요청된 순서 리스트(imageOrderList)에 없는 기존 이미지는 삭제
+		// 삭제 대상 이미지 선별 및 삭제
 		if (currentImages != null && !currentImages.isEmpty()) {
 			List<ProductImageEntity> toDelete = new ArrayList<>();
 			for (ProductImageEntity img : currentImages) {
@@ -127,31 +137,31 @@ public class AdminProductService {
 					toDelete.add(img);
 			}
 
-			// 리스트와 DB에서 삭제
+			// DB 삭제
 			currentImages.removeAll(toDelete);
 			prdImgRepo.deleteAll(toDelete);
 
-			// 로컬 파일 삭제 로직
+			// 로컬 파일 삭제
 			for (ProductImageEntity img : toDelete) {
 				String fileName = img.getImageUrl().substring(img.getImageUrl().lastIndexOf("/") + 1);
 				new File(uploadDir + fileName).delete();
 			}
 		}
 
-		// 순서대로 저장 및 정렬
+		// 순서 재정렬 및 새 파일 저장
 		if (imageOrderList != null) {
 			int sortOrder = 1;
 			int newFileIndex = 0;
 
 			for (String item : imageOrderList) {
 				if ("NEW_FILE".equals(item)) {
-					// "NEW_FILE" 자리에는 새 파일 리스트에서 하나 꺼내와서 저장
+					// 새 파일 저장
 					if (newFiles != null && newFileIndex < newFiles.size()) {
 						MultipartFile file = newFiles.get(newFileIndex++);
 						saveSingleImage(product, file, sortOrder++);
 					}
 				} else {
-					// URL인 경우: 기존 이미지 찾아서 sortOrder 업데이트
+					// 기존 이미지 순서 업데이트
 					if (currentImages != null) {
 						for (ProductImageEntity img : currentImages) {
 							if (img.getImageUrl().equals(item)) {
@@ -165,7 +175,7 @@ public class AdminProductService {
 		}
 	}
 
-	// 단일 파일 저장 메서드
+	// 단일 파일 저장 로직 (UUID 파일명 생성)
 	private void saveSingleImage(ProductEntity product, MultipartFile file, int sortOrder) throws IOException {
 		if (file.isEmpty())	return;
 
@@ -187,13 +197,11 @@ public class AdminProductService {
 		prdImgRepo.save(image);
 	}
 
-	// 단순 리스트 저장
+	// (신규 등록용) 단순 이미지 리스트 저장
 	private void saveImages(ProductEntity product, List<MultipartFile> files) throws IOException {
 		if (files == null || files.isEmpty())	return;
 		
 		int sortOrder = 1;
-		
-		// 혹시 모를 기존 이미지가 있다면 그 뒤로 순서 배정
 		if (product.getImages() != null) {
             sortOrder = product.getImages().size() + 1;
         }
@@ -205,55 +213,54 @@ public class AdminProductService {
 
 	/**
 	 * API: 관리자 상품 삭제 (논리적 삭제로 변경)
+	 * 실제 DB에서 삭제하지 않고, '삭제됨(isDeleted=Y)' 상태로 변경함.
 	 */
 	public void deleteProduct(Long prdNo) {
 		ProductEntity product = prdRepo.findById(prdNo).orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
 
-		// 실제로 지우지 않고 상태만 변경
+		// 논리적 삭제 (isDeleted = 'Y')
 		product.delete();
 
-		// 상태를 '판매중지' 등으로 같이 변경할 수도 있음
+		// 판매 상태도 중지로 변경
 		product.setStatus("STOP");
 	}
 
-	// 리뷰 수 조회
+	// 리뷰 수 조회 (ReviewService 위임)
 	public int getReviewCount(ProductEntity product) {
 		return reviewService.getReviewCount(product);
 	}
 
-	// 평균 평점 조회
+	// 평균 평점 조회 (ReviewService 위임)
 	public double getAverageRating(ProductEntity product) {
 		return reviewService.getAverageRating(product);
 	}
 
-	// ================= 내부 헬퍼 메서드 =================
+	// ================= 내부 헬퍼 메서드 (옵션 관련) =================
 
-	// 옵션 저장
+	// 옵션 신규 저장
 	private void saveOptions(ProductEntity product, List<ProductSaveDTO.OptionDTO> optionDtos) {
 		if (optionDtos == null)
 			return;
 
 		for (ProductSaveDTO.OptionDTO optDto : optionDtos) {
-			// 정적 생성 메서드 호출
 			ProductOptionEntity option = ProductOptionEntity.create(product, optDto.getOptionName(),
 					optDto.getOptionValue(), optDto.getAddPrice(), optDto.getStock());
 			optionRepo.save(option);
 		}
 	}
 
-	// 옵션 수정
+	// 옵션 업데이트 (기존 유지, 수정, 신규 추가, 삭제 처리)
 	private void updateOptions(ProductEntity product, List<ProductSaveDTO.OptionDTO> optionDtos) {
 		if (optionDtos == null)
 			return;
 
 		List<ProductOptionEntity> managedOptions = product.getOptions();
 
-		// 요청된 옵션 ID 목록 추출 (삭제 대상 식별용)
 		List<Long> keepOptionIds = new ArrayList<>();
 
 		for (ProductSaveDTO.OptionDTO dto : optionDtos) {
 			if (dto.getOptionNo() != null) {
-				// 기존 리스트에서 해당 옵션을 찾아 값 변경
+				// 기존 옵션 수정
 				managedOptions.stream().filter(o -> o.getOptionNo().equals(dto.getOptionNo())).findFirst()
 						.ifPresent(o -> {
 							o.setOptionName(dto.getOptionName());
@@ -263,14 +270,14 @@ public class AdminProductService {
 							keepOptionIds.add(o.getOptionNo());
 						});
 			} else {
-				// ID가 없으면 새 옵션 생성하여 기존 리스트에 add
+				// 신규 옵션 추가
 				ProductOptionEntity newOption = ProductOptionEntity.create(product, dto.getOptionName(),
 						dto.getOptionValue(), dto.getAddPrice(), dto.getStock());
 				managedOptions.add(newOption);
 			}
 		}
 
-		// 요청 DTO에 없는 기존 옵션은 리스트에서 제거
+		// 요청에 포함되지 않은 기존 옵션은 삭제
 		managedOptions
 				.removeIf(option -> option.getOptionNo() != null && !keepOptionIds.contains(option.getOptionNo()));
 	}

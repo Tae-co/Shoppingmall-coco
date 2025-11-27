@@ -14,7 +14,8 @@ const ComateReviewCard = ({
     rating, content, tags, 
     likeCount, likedByCurrentUser,
     authorNo, authorNickname,
-    onToggleLike
+    onToggleLike,
+    loginUserNo
 }) => {
 
     const totalStar = 5;
@@ -22,6 +23,11 @@ const ComateReviewCard = ({
     const emptyStar = totalStar - filledStar;
 
     const handleLikeClick = async () => {
+        if (loginUserNo == null) {
+            alert('로그인이 필요한 기능입니다.');
+            return;
+        }
+
         try {
             if (onToggleLike) {
                 onToggleLike(reviewNo, likedByCurrentUser);

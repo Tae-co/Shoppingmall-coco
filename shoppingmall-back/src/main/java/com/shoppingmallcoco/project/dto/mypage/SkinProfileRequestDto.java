@@ -9,6 +9,6 @@ import java.util.List;
 @Setter
 public class SkinProfileRequestDto {
     private String skinType;
-    private List<String> skinConcern;
+    private List<String> concerns;
     private String personalColor;
 }

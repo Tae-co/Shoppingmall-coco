@@ -1,6 +1,6 @@
 package com.shoppingmallcoco.project.service.mypage;
 
-import com.shoppingmallcoco.project.dto.mypage.ProfileUpdateRequestDto;
+import com.shoppingmallcoco.project.dto.mypage.SkinProfileRequestDto;
 import com.shoppingmallcoco.project.dto.mypage.SkinProfileResponseDto;
 import com.shoppingmallcoco.project.entity.auth.Member;
 import com.shoppingmallcoco.project.entity.mypage.SkinProfile;
@@ -19,33 +19,28 @@ public class ProfileService {
     private final SkinRepository skinRepository;
 
     @Transactional
-    public void updateProfile(Long memNo, ProfileUpdateRequestDto dto) {
+    public void updateProfile(Long memNo, SkinProfileRequestDto dto) {
 
-        // 회원 존재 확인
         Member member = memberRepository.findById(memNo)
                 .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
 
-        // 기존 스킨 존재 여부
         SkinProfile skin = skinRepository.findByMember_MemNo(memNo)
                 .orElse(null);
 
-        // 없으면 새로 생성
         if (skin == null) {
             skin = new SkinProfile();
             skin.setMember(member);
         }
 
-        // NPE 방지 처리
-        String concernString = "";
-        if (dto.getConcerns() != null && !dto.getConcerns().isEmpty()) {
-            concernString = String.join(",", dto.getConcerns());
-        }
+        // concerns 리스트가 null일 수도 있음 -> 안전하게 처리
+        String concernString = (dto.getConcerns() != null && !dto.getConcerns().isEmpty())
+                ? String.join(",", dto.getConcerns())
+                : "";
 
         skin.setSkinType(dto.getSkinType());
-        skin.setSkinConcern(String.join(",", dto.getConcerns()));
+        skin.setSkinConcern(concernString);
         skin.setPersonalColor(dto.getPersonalColor());
 
-        // 저장
         skinRepository.save(skin);
     }
 
@@ -55,6 +50,6 @@ public class ProfileService {
         SkinProfile skin = skinRepository.findByMember_MemNo(memNo)
                 .orElse(null);
 
-        return SkinProfileResponseDto.of(skin);
+        return SkinProfileResponseDto.fromEntity(skin);
     }
 }
