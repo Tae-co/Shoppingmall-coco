@@ -11,7 +11,23 @@
   box-sizing: border-box;
   width: 100%;
 }
+
 .review-title {
   margin: 0;
   padding: 0;
+}
+
+.filter-container button:hover {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.filter-container {
+  padding-top: 30px;
+}
+
+.review-btn {
+  margin-bottom: 20px;   /* 양수면 아래로, 음수면 위로 올라감 */
 }

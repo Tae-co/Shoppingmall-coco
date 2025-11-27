@@ -103,8 +103,6 @@ function UpdateReview() {
         return 0 < starTotal && starTotal <= 2 ? "별점이 낮을 경우, 아쉬운 점을 최소 1개 이상 선택해주세요." : " ";
     }
 
-    console.log("이미지", previewFiles);
-
     return (
         <div className="reviewBox">
             <div className="reviewMain">
@@ -125,7 +123,6 @@ function UpdateReview() {
                                     src={clicked[i] ? yellowStar : greyStar}
                                 />
                             ))}
-                            {console.log(clicked)}
                             별점 {starTotal}
                         </div>
                     </div>
@@ -167,7 +164,7 @@ function UpdateReview() {
                                 rows={30}
                                 placeholder="자세한 리뷰는 다른 분들께 큰 도움이 됩니다."
                                 value={content}
-                                minLength={1000}
+                                minLength={10}
                                 onChange={(e) => setContent(e.target.value)}
                             />
                         </div>

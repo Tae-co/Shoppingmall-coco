@@ -38,8 +38,6 @@ import PaymentPage from './pages/PaymentPage/PaymentPage';
 import OrderSuccessPage from './pages/OrderSuccessPage/OrderSuccessPage';
 import OrderFailPage from './pages/OrderFailPage/OrderFailPage';
 import { OrderProvider } from './pages/OrderContext';
-import CreateReviewwPage from "./features/CreateReviewPage.js";
-import CreateUpdatePage from "./features/CreateUpdatePage.js";
 
 function App() {
   const location = useLocation();
