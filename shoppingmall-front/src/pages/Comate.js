@@ -135,6 +135,10 @@ const Comate = () => {
     /* URL 파라미터 탭 변경 감지 */
     useEffect(() => {
         if (tab && tab !== activeTab) setActiveTab(tab);
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth', // 부드럽게 올라감, 바로 올리고 싶으면 'auto'
+        });
     }, [tab]);
 
     /* 탭 클릭 */
