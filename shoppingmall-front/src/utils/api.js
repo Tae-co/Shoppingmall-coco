@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const API_BASE_URL = 'http://localhost:8080/api';
 
 // 상수 정의
@@ -118,13 +120,40 @@ export const getStoredMember = () => {
   }
 };
 
+// 스킨 프로필 확인 (인증 필요)
+export const checkSkinProfile = async (memNo) => {
+  try {
+    const token = storage.get(STORAGE_KEYS.TOKEN);
+    const headers = {};
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await axios.get(`http://localhost:8080/api/coco/members/profile/${memNo}`, { headers });
+    const profile = response.data;
+    // skinType이 없거나 빈 값이면 프로필이 없는 것으로 간주
+    return profile && profile.skinType && profile.skinType.trim() !== '';
+  } catch (error) {
+    // 프로필이 없으면 404 또는 빈 응답이 올 수 있음
+    return false;
+  }
+};
+
 // 로그인 성공 후 공통 처리
-const handleLoginSuccess = (data) => {
+const handleLoginSuccess = async (data) => {
   if (data.token) {
     storage.set(STORAGE_KEYS.TOKEN, data.token);
   }
   storage.set(STORAGE_KEYS.MEMBER, JSON.stringify(data));
   window.dispatchEvent(new Event('loginStatusChanged'));
+  
+  // 스킨 프로필 확인
+  if (data.memNo) {
+    const hasProfile = await checkSkinProfile(data.memNo);
+    data.hasSkinProfile = hasProfile;
+  }
+  
   return data;
 };
 
@@ -141,7 +170,7 @@ export const login = async ({ memId, memPwd }) => {
     throw new Error(data.message || '아이디 또는 비밀번호가 일치하지 않습니다.');
   }
 
-  return handleLoginSuccess(data);
+  return await handleLoginSuccess(data);
 };
 
 // 카카오 로그인 처리
@@ -157,7 +186,7 @@ export const kakaoLogin = async (accessToken) => {
     throw new Error(data.message || '카카오 로그인에 실패했습니다.');
   }
 
-  return handleLoginSuccess(data);
+  return await handleLoginSuccess(data);
 };
 
 // 네이버 로그인 처리
@@ -173,7 +202,7 @@ export const naverLogin = async (accessToken) => {
     throw new Error(data.message || '네이버 로그인에 실패했습니다.');
   }
 
-  return handleLoginSuccess(data);
+  return await handleLoginSuccess(data);
 };
 
 // 구글 로그인 처리
@@ -189,7 +218,7 @@ export const googleLogin = async (accessToken) => {
     throw new Error(data.message || '구글 로그인에 실패했습니다.');
   }
 
-  return handleLoginSuccess(data);
+  return await handleLoginSuccess(data);
 };
 
 // 이메일 인증번호 전송

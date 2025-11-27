@@ -14,12 +14,12 @@ public class SkinProfileResponseDto {
     private String[] concerns;       // 피부 고민 배열
     private String personalColor;    // 퍼스널 컬러
 
-    public static SkinProfileResponseDto of(SkinProfile entity) {
+    public static SkinProfileResponseDto fromEntity(SkinProfile entity) {
         if (entity == null) {
             return SkinProfileResponseDto.builder()
-                    .skinType(null)
+                    .skinType("")
                     .concerns(new String[]{})
-                    .personalColor(null)
+                    .personalColor("")
                     .build();
         }
 

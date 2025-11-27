@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductButton from '../ProductButton';
 import SimilarSkinReview from '../../../features/SimilarSkinReview';
+import ProductOptionSelector from './ProductOptionSelector';
 import '../../../css/product/ProductInfoBox.css';
 
 const skinTypeMap = { all: '모든피부', dry: '건성', oily: '지성', combination: '복합성', sensitive: '민감성' };
@@ -14,6 +15,10 @@ const personalColorMap = {
   spring: '봄 웜톤', summer: '여름 쿨톤', autumn: '가을 웜톤', winter: '겨울 쿨톤'
 };
 
+/**
+ * [상품 상세] 우측 정보 및 구매 액션 영역 컴포넌트
+ */
+
 const ProductInfoBox = ({
   product,
   selectedOption,
@@ -23,25 +28,26 @@ const ProductInfoBox = ({
   handleAddToCart,
   handleBuyNow
 }) => {
+  // 판매 상태 체크 (품절/판매중지 여부)
   const isSoldOut = product.status === '품절' || product.status === 'SOLD_OUT';
   const isStop = product.status === '판매중지' || product.status === 'STOP';
-  const isUnavailable = isSoldOut || isStop;
+  const isUnavailable = isSoldOut || isStop; // 구매 불가 상태 통합
 
+  // 선택된 옵션에 따른 추가금 계산
   const selectedOpt = product.options?.find(opt => opt.optionNo === Number(selectedOption));
   const unitPrice = product.prdPrice + (selectedOpt?.addPrice || 0);
   const totalPrice = unitPrice * quantity;
 
   const navigate = useNavigate();
-
-  const handleTagClick = (keyword) => {
-    navigate(`/product?q=${encodeURIComponent(keyword)}`);
-  };
+  const handleTagClick = (keyword) => navigate(`/product?q=${encodeURIComponent(keyword)}`);
 
   return (
     <div className="info-box">
       <h2 className="product-name">{product.prdName}</h2>
+      {/* 별점 및 리뷰 수 */}
       <p className="product-rating">⭐ {product.averageRating} ({product.reviewCount})</p>
       
+      {/* 태그 렌더링 영역 */}
       <div className="tag-container">
         {product.skinTypes?.map(type => {
             const label = skinTypeMap[type] || type;
@@ -57,28 +63,17 @@ const ProductInfoBox = ({
         })}
       </div>
 
+      {/* 가격 렌더링 영역 */}
       <p className="product-price"> {unitPrice.toLocaleString()}원 </p>
 
-      {product.options && product.options.length > 0 && (
-        <div>
-          <label htmlFor="product-option" className="visually-hidden">상품 옵션 선택</label>
-          <select
-            id="product-option"
-            className="product-select"
-            value={selectedOption}
-            onChange={(e) => setSelectedOption(e.target.value)}>
-            <option value="">옵션을 선택하세요</option>
-            {product.options.map((opt) => (
-              <option key={opt.optionNo} value={opt.optionNo}>
-                {opt.optionValue}
-                {opt.addPrice > 0 ? ` (+${opt.addPrice.toLocaleString()}원)` : ''}
-                (재고: {opt.stock})
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+      {/* 옵션 선택 및 품절 임박 알림 */}
+      <ProductOptionSelector 
+        options={product.options} 
+        selectedOption={selectedOption} 
+        onSelect={setSelectedOption} 
+      />
 
+      {/* 상품 수량 조절 및 총 가격 */}
       <div>
         <label htmlFor="product-quantity" className="visually-hidden">상품 수량</label>
         <div className="qty-control">
@@ -98,10 +93,12 @@ const ProductInfoBox = ({
         <span className="total-price-value">{totalPrice.toLocaleString()}원</span>
       </div>
 
+      {/* 구매 통계 (유사 피부 타입 리뷰 요약) */}
       <div>
          <SimilarSkinReview productId={product.prdNo} />
       </div>
       
+      {/* 액션 버튼 그룹 (장바구니 / 바로구매) */}
       <div className="btn-group">
         <ProductButton
           onClick={handleAddToCart}

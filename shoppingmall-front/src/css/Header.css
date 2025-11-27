@@ -197,3 +197,99 @@ ul {
   align-items: center;
   justify-content: center;
 }
+
+.header {
+    position: relative;  /* 자식인 메가 메뉴의 위치 기준점이 됨 */
+    z-index: 2000;      
+    background-color: #fff;
+}
+
+/* --- 메가 메뉴 스타일 --- */
+.mega-menu {
+    position: absolute;
+    top: 100%; /* 헤더 바로 아래 */
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    overflow: hidden;
+    z-index: 2001; /* 다른 요소보다 위에 */
+    
+    /* 애니메이션 초기 상태 */
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease-in-out;
+    border-top: 1px solid #eee;
+}
+
+.mega-menu.active {
+    max-height: 400px; /* 충분한 높이 */
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    padding-bottom: 20px; /* 하단 여백 */
+}
+
+.menu-inner {
+    display: flex;
+    justify-content: center;
+    gap: 100px; /* 카테고리 간 간격 */
+    padding: 50px 0;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.menu-column h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #222; /* 포인트 컬러 */
+    padding-bottom: 10px;
+    display: inline-block;
+    min-width: 140px;
+}
+
+.menu-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-column ul li {
+    margin-bottom: 16px;
+}
+
+.menu-column ul li a {
+    text-decoration: none;
+    color: #666;
+    font-size: 16px;
+    transition: color 0.2s;
+    display: block;
+}
+
+.menu-column ul li a:hover {
+    color: #000;
+    font-weight: 700;
+    transform: translateX(5px);
+}
+
+/* --- 오버레이 (배경 흐림) --- */
+.menu-overlay {
+    position: fixed;
+    top: 0; /* 헤더 높이만큼 띄우려면 top 조정 필요할 수 있음 */
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.3);
+    z-index: 1500;
+}
+
+/* btn_category 스타일 보정 (button 태그로 변경했으므로) */
+.btn_category {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}

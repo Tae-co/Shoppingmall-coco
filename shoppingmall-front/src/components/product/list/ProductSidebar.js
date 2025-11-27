@@ -1,6 +1,7 @@
 import React from 'react';
 import '../../../css/product/ProductSidebar.css';
 
+// 필터 옵션 상수 데이터 (키워드 매핑용 ID 포함)
 const filterOptions = {
   skinTypes: [{ id: 'all', label: '모든 피부' }, { id: 'dry', label: '건성' }, { id: 'oily', label: '지성' }, { id: 'combination', label: '복합성' }, { id: 'sensitive', label: '민감성' }],
   skinConcerns: [
@@ -23,6 +24,10 @@ const filterOptions = {
   ]
 };
 
+/**
+ * [상품 목록] 좌측 필터 사이드바 컴포넌트
+ * - 모바일 환경에서는 드로어(Drawer) 형태로 동작함
+ */
 const ProductSidebar = ({
   isOpen,
   onClose,
@@ -35,7 +40,7 @@ const ProductSidebar = ({
 }) => {
   return (
     <>
-      {/* 뒷배경 (모바일용) */}
+      {/* 모바일용 배경 오버레이 (클릭 시 닫힘) */}
       <div 
         className={`backdrop ${isOpen ? 'open' : ''}`} 
         onClick={onClose} 
@@ -53,7 +58,7 @@ const ProductSidebar = ({
 
         <h3 className="filter-title">필터</h3>
 
-        {/* 내 피부 맞춤 버튼 */}
+        {/* 로그인 회원 전용: 내 프로필 기반 자동 필터 버튼 */}
         {isLoggedIn && (
           <button 
             className={`profile-toggle-btn ${isProfileMode ? 'active' : ''}`}

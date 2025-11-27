@@ -40,7 +40,7 @@ public class CM_ReviewService {
     	default:
     		reviews = reviewRepository.findByOrderItem_Order_Member_MemNoOrderByCreatedAtDesc(targetMemNo);
     	}
-    	
+    		
     	return reviews.stream().map(review -> {
         	var orderItem = review.getOrderItem();
         	var product = orderItem.getProduct();
@@ -51,8 +51,7 @@ public class CM_ReviewService {
         		.toList();
         		
         	int likeCount = likeRepository.countByReview_ReviewNo(review.getReviewNo());
-        	boolean likedByCurrentUser = currentMemNo != null &&
-        		likeRepository.existsByMember_MemNoAndReview_ReviewNo(currentMemNo, review.getReviewNo());
+        	boolean likedByCurrentUser = likeRepository.existsByMember_MemNoAndReview_ReviewNo(currentMemNo, review.getReviewNo());
         	
         	// 상품 사진 파일 가져오기
         	String productImg = null;

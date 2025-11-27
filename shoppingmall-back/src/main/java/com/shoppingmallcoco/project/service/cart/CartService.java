@@ -7,9 +7,9 @@ import com.shoppingmallcoco.project.entity.auth.Member;
 import com.shoppingmallcoco.project.entity.product.ProductOptionEntity;
 import com.shoppingmallcoco.project.repository.auth.MemberRepository;
 import com.shoppingmallcoco.project.repository.cart.CartRepository;
-import com.shoppingmallcoco.project.repository.auth.MemberRepository;
 import com.shoppingmallcoco.project.repository.product.ProductOptionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,38 +24,50 @@ public class CartService {
     private final MemberRepository memberRepository;
     private final ProductOptionRepository productOptionRepository;
 
-    // 공통 조회 메서드 (중복 제거)
-    private Member getMember(Long memNo) {
-        return memberRepository.findById(memNo)
-                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다. memNo=" + memNo));
+    // 현재 로그인한 사용자 조회
+    private Member getCurrentMember() {
+        String memId = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        return memberRepository.findByMemId(memId)
+                .orElseThrow(() -> new IllegalArgumentException("로그인한 회원이 존재하지 않습니다."));
     }
 
     private ProductOptionEntity getProductOption(Long optionNo) {
         return productOptionRepository.findById(optionNo)
-                .orElseThrow(() -> new IllegalArgumentException("상품 옵션이 존재하지 않습니다. optionNo=" + optionNo));
+                .orElseThrow(() -> new IllegalArgumentException("상품 옵션이 존재하지 않습니다."));
     }
 
     // 장바구니 추가
     @Transactional
     public CartResponseDto addToCart(CartRequestDto dto) {
-        Member member = getMember(dto.getMemNo());
+
+        Member member = getCurrentMember();
+        Long memNo = member.getMemNo();
+
         ProductOptionEntity option = getProductOption(dto.getOptionNo());
 
+        // 기존 장바구니 항목 확인
         CartEntity existing = cartRepository
-                .findByMember_MemNoAndProductOption_OptionNo(dto.getMemNo(), dto.getOptionNo())
+                .findByMember_MemNoAndProductOption_OptionNo(memNo, dto.getOptionNo())
                 .orElse(null);
 
         if (existing != null) {
             existing.addQuantity(dto.getCartQty());
-            return CartResponseDto.fromEntity(cartRepository.save(existing));
+            return CartResponseDto.fromEntity(existing);
         }
 
-        CartEntity cart = CartEntity.create(member, option, dto.getCartQty());
-        return CartResponseDto.fromEntity(cartRepository.save(cart));
+        CartEntity newCart = CartEntity.create(member, option, dto.getCartQty());
+        return CartResponseDto.fromEntity(cartRepository.save(newCart));
     }
 
     // 장바구니 목록 조회
-    public List<CartResponseDto> getCartItems(Long memNo) {
+    public List<CartResponseDto> getCartItems() {
+
+        Member member = getCurrentMember();
+        Long memNo = member.getMemNo();
+
         return cartRepository.findByMember_MemNo(memNo).stream()
                 .map(CartResponseDto::fromEntity)
                 .collect(Collectors.toList());
@@ -64,20 +76,39 @@ public class CartService {
     // 수량 변경
     @Transactional
     public CartResponseDto updateCartQty(Long cartNo, Integer qty) {
+
+        Member member = getCurrentMember();
+        Long memNo = member.getMemNo();
+
         CartEntity cart = cartRepository.findById(cartNo)
-                .orElseThrow(() -> new IllegalArgumentException("해당 cartNo가 없습니다."));
+                .filter(c -> c.getMember().getMemNo().equals(memNo))
+                .orElseThrow(() -> new IllegalArgumentException("해당 장바구니가 존재하지 않거나 권한이 없습니다."));
+
         cart.updateQuantity(qty);
-        return CartResponseDto.fromEntity(cartRepository.save(cart));
+        return CartResponseDto.fromEntity(cart);
     }
 
-    // 장바구니 삭제
+    // 단일 상품 삭제
     @Transactional
     public void deleteCart(Long cartNo) {
-        cartRepository.deleteByCartNo(cartNo);
+
+        Member member = getCurrentMember();
+        Long memNo = member.getMemNo();
+
+        CartEntity cart = cartRepository.findById(cartNo)
+                .filter(c -> c.getMember().getMemNo().equals(memNo))
+                .orElseThrow(() -> new IllegalArgumentException("삭제 권한이 없습니다."));
+
+        cartRepository.delete(cart);
     }
-    // 장바구니 전체 비우기
+
+    // 장바구니 비우기
     @Transactional
-    public void clearCart(Long memNo) {
+    public void clearCart() {
+
+        Member member = getCurrentMember();
+        Long memNo = member.getMemNo();
+
         cartRepository.deleteAllByMember_MemNo(memNo);
     }
 }

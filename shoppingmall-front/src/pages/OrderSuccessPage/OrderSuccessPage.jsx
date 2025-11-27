@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useLocation } from 'react-router-dom';
 import '../../css/OrderResultPage.css'; // 주문 결과 페이지 공용 CSS 사용
 
 // 전역 주문 상태(Context)를 관리하는 훅
@@ -13,8 +13,10 @@ function OrderSuccessPage() {
   // 최종 결제 금액 계산: 상품 합계 + 배송비 - 사용 포인트
   const finalAmount = orderSubtotal + shippingFee - pointsToUse;
   
-  // 현재 시각을 이용한 랜덤 주문번호 생성 (실제 DB에서는 고유 번호를 발급받아야 함)
-  const orderNumber = `ORD-${new Date().getTime()}`;
+    const location = useLocation();
+  
+  // 주문 번호  (없으면 '정보 없음' 표시)
+  const orderNumber = location.state?.orderNo || "정보 없음";
   
   // 현재 주문 일시를 포맷하여 생성 (예: 2025년 11월 5일 15:30)
   const now = new Date();
@@ -86,7 +88,7 @@ function OrderSuccessPage() {
           <span className="step-row-icon">✍️</span>
           <div className="step-row-text">
             <h3>배송 완료</h3>
-            <p>상품 수령 후 리뷰를 남겨주시면 적립금을 드립니다.</p>
+            <p>상품 수령 후 리뷰를 남겨주시면 포인트를 드립니다.</p>
           </div>
         </div>
       </div>

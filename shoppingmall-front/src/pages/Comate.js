@@ -43,6 +43,7 @@ const Comate = () => {
                 const current = await getCurrentMember();
                 setLoginUser(current);
 
+                // 사용자 본인이 로그인 한 경우
                 if (!memNo || memNo === current.memNo.toString()) {
                     if (window.location.pathname !== `/comate/me/`) {
                         navigate('/comate/me/review', {replace: true});
@@ -50,11 +51,17 @@ const Comate = () => {
                     setUserType('me');
                     setTargetMemNo(current.memNo);
                 } else {
+                    // 타 사용자 프로필 조회 or 로그인 하지 않은 사용자 
                     setUserType('user');
-                    setTargetMemNo(memNo);
+                    setTargetMemNo(memNo || null);
                 }
             } catch (error) {
-                console.error('로그인 유저 정보 불러오기 실패: ', error);
+                console.error('로그인 유저 정보 불러오기 실패 (비로그인 상태/토큰 만료) ', error);
+
+                // 비로그인-> userType='user' targetMemNo 는 URL 에서 가져옴
+                setLoginUser(null);
+                setUserType("user");
+                setTargetMemNo(memNo);
             }
         }
 
@@ -83,14 +90,19 @@ const Comate = () => {
     }, [targetMemNo]);
 
     /* 탭별 데이터 조회 */
+    /* React 18 strict mode - AbortController  */
     useEffect(() => {
         if (!targetMemNo) return;
+
+        const controller = new AbortController();
 
         const loadTabData = async() => {
             try {
                 switch (activeTab) {
                     case 'review' :
-                        setReviewList(await getReviewList(targetMemNo));
+                        const review = await getReviewList(targetMemNo, {signal: controller.signal});
+                        setReviewList(review);
+                        console.log(`[Review] 요청 완료 targetMemNo=${targetMemNo}`, review);
                         break;
                     case 'like' :
                         setLikeList(await getLikedList(targetMemNo));
@@ -105,17 +117,28 @@ const Comate = () => {
                         break;
                 }
             } catch (error) {
-                console.error(error);
-                alert(`${activeTab} 데이터를 불러오는 중 오류가 발생햇습니다.`);
+                if (error.name === 'AbortError') {
+                    console.log(`[TabData] 요청 취소됨 targetMemNo=${targetMemNo} tab=${activeTab}`);
+                } else {
+                    console.error(error);
+                    alert(`${activeTab} 데이터를 불러오는 중 오류가 발생햇습니다.`);
+                }
             }
         };
 
         loadTabData();
+        return () => {
+            controller.abort();
+        }
     }, [activeTab, targetMemNo]);
 
     /* URL 파라미터 탭 변경 감지 */
     useEffect(() => {
         if (tab && tab !== activeTab) setActiveTab(tab);
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     }, [tab]);
 
     /* 탭 클릭 */
@@ -130,7 +153,13 @@ const Comate = () => {
 
     /* Full Profile 팔로우/언팔로우 클릭 */
     const handleFollowClick = async () => {
-        if (!member || !loginUser) return;
+        if (!loginUser) {
+            alert('로그인이 필요한 기능입니다.');
+            navigate('/login');
+            return;
+        }
+
+        if (!member) return;
 
         try {
             if (following) {

@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import TagCheckboxGroup from './TagCheckboxGroup';
 import '../../css/admin/ProductForm.css';
 
-// 카테고리 계층 정리 함수
+/**
+ * [관리자] 상품 등록 및 수정 양식 컴포넌트
+ */
+
 const organizeCategories = (categories) => {
   const parents = categories.filter(c => !c.parentCategory && !c.parentCategoryNo);
   const result = [];
@@ -41,19 +44,26 @@ const TAG_OPTIONS = {
 };
 
 function ProductForm({ initialData, categories, onSubmit, isEdit }) {
+  // 폼 입력 데이터 상태 관리
   const [formData, setFormData] = useState({
     prdName: '', description: '', categoryNo: '', prdPrice: 0,
     status: 'SALE', howToUse: '', skinType: [], skinConcern: [], personalColor: [],
     ...initialData
   });
 
+  // 동적 옵션 리스트 상태 (기본값: 1개)
   const [options, setOptions] = useState(initialData?.options || [
     { optionName: '기본', optionValue: '', addPrice: 0, stock: 0 }
   ]);
 
-  // 이미지 통합 관리 State
+  /**
+   * 이미지 통합 관리 State
+   * - type: OLD(기존 URL) 또는 NEW(새로 업로드된 File 객체)
+   * - url: 화면 표시용 미리보기 URL
+   */
   const [imageList, setImageList] = useState([]);
 
+  // 초기 데이터 로드 시 State 동기화
   useEffect(() => {
     if (initialData) {
       setFormData(prev => ({ 
@@ -66,7 +76,7 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
       if (initialData.options && initialData.options.length > 0) {
         setOptions(initialData.options);
       }
-      // 기존 이미지를 리스트에 'OLD' 타입으로 세팅
+      // 기존 이미지 URL을 리스트 형태로 변환하여 세팅
       if (initialData.imageUrls && initialData.imageUrls.length > 0) {
         const oldImages = initialData.imageUrls.map(url => ({
           type: 'OLD',
@@ -136,15 +146,20 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
     setOptions(options.filter((_, i) => i !== index));
   };
 
+  /**
+   * 폼 제출 핸들러
+   * - 이미지 리스트를 분석하여 유지할 URL 리스트와 새로 추가할 파일 리스트로 분리
+   * - 부모 컴포넌트(onSubmit)로 정제된 데이터 전달
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // 전체 이미지 순서 리스트 생성
+    // 기존 이미지 중 유지된 것과 새 이미지가 들어갈 자리를 마킹("NEW_FILE")하여 순서 리스트 생성
     const imageOrderList = imageList.map(img => 
         img.type === 'OLD' ? img.url : "NEW_FILE"
     );
 
-    // 새로 추가된 파일 객체들만 따로 리스트로 추출
+    // 실제 업로드할 새 파일 객체만 추출
     const newFiles = imageList
       .filter(img => img.type === 'NEW')
       .map(img => img.file);

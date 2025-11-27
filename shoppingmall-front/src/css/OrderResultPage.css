@@ -256,6 +256,11 @@
   text-decoration: none;
   width: 200px; /* 버튼 너비 고정 */
   box-sizing: border-box;
+  display: flex;            
+  justify-content: center; 
+  align-items: center;      
+  text-align: center;
+  text-decoration: none;
 }
 
 /* 주 버튼 스타일 (검은색 배경) */

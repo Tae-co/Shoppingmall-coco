@@ -22,11 +22,27 @@ export const getProfile = async (memNo) => {
 };
 
 /* 사용자 작성 리뷰 목록 */
+/*
 export const getReviewList = async (targetMemNo, sort = "latest") => {
     const response = await fetchWithAuth(`${API_BASE_URL}/review/${targetMemNo}?sort=${sort}`);
     if (!response.ok) throw new Error("작성한 리뷰 조회 실패");
     return response.json();
 }
+*/
+export const getReviewList = async (targetMemNo, options = {}) => {
+    let sortParam = options.sort || 'latest';
+    if (typeof sortParam === 'object') {
+        sortParam = encodeURIComponent(JSON.stringify(sortParam));
+    }
+
+    const response = await fetchWithAuth(`${API_BASE_URL}/review/${targetMemNo}?sort=${sortParam}`, {
+        signal: options.signal
+    });
+
+    if (!response.ok) throw new Error("작성한 리뷰 조회 실패");
+    return response.json();
+};
+
 
 /* 사용자가 좋아요 누른 리뷰 목록 */
 export const getLikedList = async (targetMemNo, sort = "latest") => {

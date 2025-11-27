@@ -40,7 +40,6 @@ public class ComateController {
     private final CM_ReviewService reviewService;
     
     private final JwtUtil jwtUtil;
-    private final MemberRepository memberRepository;
     
     /* JWT 에서 현재 로그인 memNo 가져오기 */
     // 현재 동작 방식은 memNo-> DB에서 서치 
@@ -49,16 +48,17 @@ public class ComateController {
     	
     	String bearerToken = request.getHeader("Authorization");
     	if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
-    		throw new RuntimeException("JWT 토큰이 없습니다.");
+    		// 로그인 안한 경우 null 반환
+    		return null;
     	}
     	
     	String token = bearerToken.substring(7);
-    	
     	if (!jwtUtil.validateToken(token)) {
-    		throw new RuntimeException("유효하지 않은 JWT 토큰입니다.");
+    		return null;
     	}
     	
     	Long memNo = jwtUtil.getMemNoFromToken(token);
+    	return memNo;
     
     	//Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     	//if (auth == null || auth.getName() == null) {
@@ -70,14 +70,13 @@ public class ComateController {
     	
     	//Member member = memberRepository.findByMemId(memId)
     	//		.orElseThrow(()-> new RuntimeException("회원 정보를 찾을 수 없습니다."));
-    	
-    	return memNo;
+ 
     }
 
     /* 프로필 조회 */
     @GetMapping("/user/{memNo}")
     public ProfileDTO getProfile(@PathVariable("memNo") Long memNo, HttpServletRequest request) {
-        Long currentMemNo = getCurrentMemNo(request);
+        Long currentMemNo = getCurrentMemNo(request); // 로그인 안한 경우 null
         
         System.out.println("로그인 사용자: " + currentMemNo);
         System.out.println("프로필: " + memNo);
@@ -143,7 +142,8 @@ public class ComateController {
 
     // 메인용 - 전체 회원 목록 조회
     @GetMapping("/users")
-    public ResponseEntity<List<MiniProfileDTO>> getAllComates() {
-    	return ResponseEntity.ok(comateService.getAllComates());
+    public ResponseEntity<List<MiniProfileDTO>> getAllComates(HttpServletRequest request) {
+    	Long currentMemNo = getCurrentMemNo(request);
+    	return ResponseEntity.ok(comateService.getAllComates(currentMemNo));
     }
 }

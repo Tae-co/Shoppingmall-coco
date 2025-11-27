@@ -72,7 +72,10 @@ const ComateContent = ({
                                                             } : r
                                                         ));
                                                         if (typeof onLikeChange === 'function') onLikeChange(!likedByCurrentUser);
-                                                    }} />);
+                                                    }} 
+                                                    isLoggedIn={!!loginUserNo}
+                                                    loginUserNo={loginUserNo}
+                                                />);
             break;
         case 'like':
             title = "좋아요";
@@ -85,10 +88,11 @@ const ComateContent = ({
                                                         if (likedByCurrentUser) {
                                                             setLikeList(prev => prev.filter(r => r.reviewNo !== reviewNo));
                                                         } 
-
                                                         if (typeof onLikeChange === 'function') onLikeChange(!likedByCurrentUser);
                                                     }}
-                                                    />);
+                                                    isLoggedIn={!!loginUserNo}
+                                                    loginUserNo={loginUserNo}
+                                                 />);
             break;
         case 'follower':
             title = "팔로워";
@@ -106,6 +110,7 @@ const ComateContent = ({
                         if (typeof onListFollowChange === "function")
                             onListFollowChange("following", newState);
                     }}
+                    isLoggedIn={!!loginUserNo}
                 />
             ));
             break;
@@ -125,6 +130,7 @@ const ComateContent = ({
                         if (typeof onListFollowChange === "function")
                             onListFollowChange("following", newState);
                     }}
+                    isLoggedIn={!!loginUserNo}
                 />
                 ));
             break;

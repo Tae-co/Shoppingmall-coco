@@ -23,14 +23,15 @@ public class CartController {
     }
 
     // 장바구니 조회
-    @GetMapping("/items/{memNo}")
-    public List<CartResponseDto> getCartItems(@PathVariable("memNo") Long memNo) {
-        return cartService.getCartItems(memNo);
+    @GetMapping("/items")
+    public List<CartResponseDto> getCartItems() {
+        return cartService.getCartItems();
     }
 
     // 수량 변경
     @PatchMapping("/items/{cartNo}")
-    public CartResponseDto updateQty(@PathVariable("cartNo") Long cartNo, @RequestBody Map<String, Integer> body) {
+    public CartResponseDto updateQty(@PathVariable("cartNo") Long cartNo,
+                                     @RequestBody Map<String, Integer> body) {
         Integer qty = body.get("qty");
         return cartService.updateCartQty(cartNo, qty);
     }
@@ -42,8 +43,8 @@ public class CartController {
     }
 
     // 장바구니 전체 비우기
-    @DeleteMapping("/items/clear/{memNo}")
-    public void clearCart(@PathVariable("memNo") Long memNo) {
-        cartService.clearCart(memNo);
+    @DeleteMapping("/items/clear")
+    public void clearCart() {
+        cartService.clearCart();
     }
 }

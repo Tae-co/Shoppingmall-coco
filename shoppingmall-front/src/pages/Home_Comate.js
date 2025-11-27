@@ -7,7 +7,8 @@ import "slick-carousel/slick/slick-theme.css";
 import '../css/Home_Comate.css';
 
 import ComateMiniProfile from "../components/ComateMiniProfile";
-import { getAllComates } from "../utils/comate_api"; 
+import { getCurrentMember } from '../utils/api'; 
+import { getAllComates, follow, unfollow } from "../utils/comate_api"; 
 
 function Home_Comate() {
     const navigate = useNavigate();
@@ -30,10 +31,29 @@ function Home_Comate() {
     const [comates, setComates] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // 로그인 여부 (임시)
+    // 로그인 여부
+    const [loginUser, setLoginUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    // 팔로우 상태 관리 (유저별)
+
+    // 팔로우 상태 관리 (memNo 기준)
     const [followStatus, setFollowStatus] = useState({});
+
+    // 로그인 정보 가져오기
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const user = await getCurrentMember();
+                setLoginUser(user);
+                setIsLoggedIn(true);
+            } catch (error) {
+                console.error('로그인 유저 정보 없음 (비로그인 상태/토큰 만료) ', error);
+                setLoginUser(null);
+                setIsLoggedIn(false);
+            }
+        };
+
+        fetchUser();
+    }, []);
 
     // 회원 전체 목록 가져오기
     useEffect(() => {
@@ -41,13 +61,21 @@ function Home_Comate() {
             try {
                 const data = await getAllComates();
                 setComates(data);
+
+                // 팔로우 상태 초기화
+                const status = {};
+                data.forEach(c => {
+                    status[c.memNo] = !!c.following;
+                });
+                setFollowStatus(status);
+
             } catch (error) {
                 console.error(error);
                 alert("회원 정보를 불러오는 중 오류가 발생했습니다.");
             } finally {
                 setLoading(false);
             }
-        }
+        };
         
         loadComates();
     }, []);
@@ -58,48 +86,63 @@ function Home_Comate() {
     };
 
     // 팔로우 버튼 클릭
-    const handleFollowClick = (comateNickname) => {
-        // 로그인 여부 확인
+    const handleFollowClick = async (comate) => {
         if (!isLoggedIn) {
             alert("로그인이 필요한 서비스입니다.");
             navigate("/login");
             return;
         }
-        console.log(`${comateNickname} 팔로우`);
 
-        // 팔로우 상태 업데이트
-        // 이미 팔로잉 하고 있다면 active 버튼으로 표시
-        setFollowStatus((prev) => {
-            const isFollowing = prev[comateNickname] || false;
-            return {
+        try {
+            const isFollowing = followStatus[comate.memNo] || false;
+
+            if (isFollowing) {
+                await unfollow(comate.memNo);
+            } else {
+                await follow(comate.memNo);
+            }
+
+            // 팔로우 상태 업데이트
+            setFollowStatus(prev => ({
                 ...prev,
-                [comateNickname]: !isFollowing,
-            };
-        });
+                [comate.memNo]: !isFollowing
+            }));
+
+            // 팔로워 수 UI 업데이트
+            setComates(prev => prev.map(c => 
+                c.memNo === comate.memNo 
+                ? {...c, followerCount: c.followerCount + (isFollowing ? -1 : 1)}
+                : c
+            ));
+
+        } catch (error) {
+            console.error(error);
+            alert("팔로우/언팔로우 처리 중 오류가 발생했습니다.");
+        }
     };
 
-  return (
-    <div className="comate-slider-container">
-        <Slider {...settings}>
-            {comates.map((comate) => {
-                const isFollowing = followStatus[comate.nickname] || false;
-                return (
+    if (loading) return <div>로딩중...</div>;
+
+    return (
+        <div className="comate-slider-container">
+            <Slider {...settings}>
+                {comates
+                    .filter(c => loginUser ? c.memNo !== loginUser.memNo : true)
+                    .map((comate) => (
                     <div key={comate.memNo}>
                         <ComateMiniProfile
                             nickname={comate.memNickname}
-                            // skinTypes={comate.skinTypes}
-                            followers={comate.followerCount + (isFollowing ? 1 : 0)}
+                            followers={comate.followerCount}
                             reviews={comate.reviewCount}
-                            isFollowing={isFollowing}
+                            isFollowing={followStatus[comate.memNo] || false}
                             onClick={() => handleCardClick(comate.memNo)}
-                            onFollowClick={() => handleFollowClick(comate.nickname)}
+                            onFollowClick={() => handleFollowClick(comate)}
                         />
                     </div>
-                );
-            })}
-        </Slider>
-    </div>
-  );
+                ))}
+            </Slider>
+        </div>
+    );
 }
 
 export default Home_Comate;

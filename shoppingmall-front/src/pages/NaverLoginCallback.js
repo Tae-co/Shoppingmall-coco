@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { fetchWithoutAuth, storage, STORAGE_KEYS } from '../utils/api';
+import { fetchWithoutAuth, storage, STORAGE_KEYS, checkSkinProfile } from '../utils/api';
+import SkinProfilePopup from '../components/SkinProfilePopup';
 
 const NaverLoginCallback = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [showSkinProfilePopup, setShowSkinProfilePopup] = useState(false);
 
   useEffect(() => {
     const code = searchParams.get('code');
@@ -58,7 +60,20 @@ const NaverLoginCallback = () => {
             navigate('/kakao/additional-info');
           } else {
             alert('네이버 로그인되었습니다.');
-            navigate('/');
+
+            const isAdmin = (data.role || '').toUpperCase() === 'ADMIN';
+
+            // 스킨 프로필이 없으면 팝업 표시 (관리자는 제외)
+            if (data.memNo && !isAdmin) {
+              const hasProfile = await checkSkinProfile(data.memNo);
+              if (!hasProfile) {
+                setShowSkinProfilePopup(true);
+              } else {
+                navigate('/');
+              }
+            } else {
+              navigate('/');
+            }
           }
         } else {
           throw new Error(data.message || '네이버 로그인에 실패했습니다.');
@@ -76,9 +91,18 @@ const NaverLoginCallback = () => {
   }, [searchParams, navigate]);
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <div>네이버 로그인 처리 중...</div>
-    </div>
+    <>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div>네이버 로그인 처리 중...</div>
+      </div>
+      
+      {showSkinProfilePopup && (
+        <SkinProfilePopup
+          onClose={() => setShowSkinProfilePopup(false)}
+          onLater={() => navigate('/')}
+        />
+      )}
+    </>
   );
 };
 
