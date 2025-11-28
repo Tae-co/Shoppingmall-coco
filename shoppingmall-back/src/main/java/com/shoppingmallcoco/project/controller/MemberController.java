@@ -15,7 +15,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class MemberController {
 
     private final MemberService memberService;
@@ -349,6 +348,17 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("success", false, "message", e.getMessage()));
         }
+    }
+    
+    // 관리자용 회원 포인트 수정
+    @PutMapping("/admin/{memNo}/point")
+    public ResponseEntity<?> updatePoint(
+            @PathVariable Long memNo,
+            @RequestBody Map<String, Long> body
+    ) {
+        Long newPoint = body.get("point");
+        memberService.updatePoint(memNo, newPoint);
+        return ResponseEntity.ok("포인트가 수정되었습니다.");
     }
 
 }

@@ -32,16 +32,19 @@ import AdminProductNew from './pages/admin/AdminProductNew';
 import AdminProductEdit from './pages/admin/AdminProductEdit';
 import AdminCategoryList from './pages/admin/AdminCategoryList';
 import AdminMemberList from './pages/admin/AdminMemberList';
+import AdminOrderList from './pages/admin/AdminOrderList';
 import OrderPage from './pages/Orderpage/OrderPage';
 import PaymentPage from './pages/PaymentPage/PaymentPage';
 import OrderSuccessPage from './pages/OrderSuccessPage/OrderSuccessPage';
 import OrderFailPage from './pages/OrderFailPage/OrderFailPage';
 import { OrderProvider } from './pages/OrderContext';
+import TermsPage from './pages/TermsPage';
 
 function App() {
   const location = useLocation();
   const hideHeaderFooter = ['/login', '/login/naver/callback', '/signup/terms', '/signup/info', '/find-account', '/kakao/additional-info'].includes(location.pathname) 
     || location.pathname.startsWith('/admin');
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -88,6 +91,7 @@ function App() {
               <Route path="product/edit/:productId" element={<AdminProductEdit />} />
               <Route path="categories" element={<AdminCategoryList />} />
               <Route path="members" element={<AdminMemberList />} />
+              <Route path="orders" element={<AdminOrderList />} />
             </Route>
           </Route>
           {/* COMATE 관련 - 다른 사용자 계정 */}
@@ -98,6 +102,8 @@ function App() {
           {/* 상품 관련 */}
           <Route path="/product" element={<ProductListPage />} />
           <Route path="/products/:productId" element={<ProductDetailPage />} />
+          {/* 약관 관련 */}
+          <Route path="/terms/:type" element={<TermsPage />} />
         </Routes>
         {!hideHeaderFooter && <Footer />}
       </div>
@@ -105,5 +111,6 @@ function App() {
     </ThemeProvider>
   ); 
 }   
+
 
 export default App;

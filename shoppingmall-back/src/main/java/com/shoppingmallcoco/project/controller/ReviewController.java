@@ -15,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -128,6 +125,17 @@ public class ReviewController {
 
         Long orderItemNo = reviewService.getOrderItemNo(prdNo, member.getMemNo());
         return orderItemNo;
+    }
+
+    //reviewNo 유무 확인
+    @GetMapping("/review/{reviewNo}/check")
+    public ResponseEntity<?> checkReviewNo(@PathVariable Long reviewNo) {
+        boolean exists = reviewRepository.existsById(reviewNo);
+        if (exists) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // 좋아요 추가/삭제 (토글)

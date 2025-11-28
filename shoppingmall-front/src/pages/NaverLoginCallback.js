@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { fetchWithoutAuth, storage, STORAGE_KEYS, checkSkinProfile } from '../utils/api';
+import { fetchWithoutAuth, storage, STORAGE_KEYS, checkSkinProfile, getStoredMember } from '../utils/api';
 import SkinProfilePopup from '../components/SkinProfilePopup';
+import Logo from '../images/logo.png';
+import '../css/Login.css';
 
 const NaverLoginCallback = () => {
   const navigate = useNavigate();
@@ -92,8 +94,15 @@ const NaverLoginCallback = () => {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <div>네이버 로그인 처리 중...</div>
+      <div className="login-container">
+        <div className="login-card">
+          <div className="login-header">
+            <div className="login-logo-container">
+              <img src={Logo} alt="Coco" className="login-logo" />
+            </div>
+            <p className="login-subtitle">네이버 로그인 처리 중...</p>
+          </div>
+        </div>
       </div>
       
       {showSkinProfilePopup && (

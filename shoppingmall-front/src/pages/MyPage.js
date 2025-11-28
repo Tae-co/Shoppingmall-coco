@@ -7,7 +7,7 @@ import { getStoredMember, getCurrentMember } from "../utils/api";
 function MyPage() {
   const navigate = useNavigate();
 
-    // 관리자 체크 - 관리자는 관리자 페이지로 리다이렉트
+  // 관리자 체크 - 관리자는 관리자 페이지로 리다이렉트
   useEffect(() => {
     const checkAdminRole = async () => {
       try {
@@ -50,7 +50,7 @@ function MyPage() {
     if (!token) return; // 토큰 없으면 요청x
 
     axios
-      .get("http://localhost:8080/api/mypage", {
+      .get("http://localhost:8080/api/orders/my", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -69,7 +69,15 @@ function MyPage() {
   if (loading) return <div>로딩 중...</div>;
   if (!myPageData) return <div>데이터를 불러오지 못했습니다.</div>;
 
-  const { nickname, point, recentOrders } = myPageData;
+  // 주문번호(orderNo) 기준 내림차순 정렬 후, 상위 3개만 사용
+  const recentOrders = Array.isArray(myPageData)
+    ? [...myPageData].sort((a, b) => b.orderNo - a.orderNo).slice(0, 3)
+    : [];
+
+  // 닉네임/포인트는 로그인 정보에서 가져오기
+  const storedMember = getStoredMember();
+  const nickname = storedMember?.memNickname || "";
+  const point = storedMember?.point ?? 0;
 
   return (
     <div className="mypage-container">
@@ -124,7 +132,7 @@ function MyPage() {
           </button>
         </div>
 
-        {recentOrders.length > 0 ? (
+        {Array.isArray(recentOrders) && recentOrders.length > 0 ? (
           <div className="recent-orders-list">
             {recentOrders.map((order) => (
               <div
@@ -135,7 +143,7 @@ function MyPage() {
                 {/* 이미지 영역 */}
                 <div className="order-image-box">
                   <img
-                    src={order.thumbnailImage}
+                    src={order.thumbnailImage || "/default-product.png"}
                     alt={order.mainProductName}
                     className="order-thumbnail"
                   />
@@ -151,7 +159,8 @@ function MyPage() {
                     {order.mainProductName}
                     {order.extraItemCount > 0 && (
                       <span className="extra-count">
-                        {" "}외 {order.extraItemCount}건
+                        {" "}
+                        외 {order.extraItemCount}건
                       </span>
                     )}
                   </p>

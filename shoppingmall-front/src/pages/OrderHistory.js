@@ -19,24 +19,21 @@ function OrderHistory() {
     취소됨: "취소됨",
   };
 
-  useEffect(() => {
+    useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
     setLoading(true);
 
     axios
-      .get(
-        `http://localhost:8080/api/coco/orders?page=${page}&size=10&period=${period}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+      .get(`http://localhost:8080/api/orders/my`, {
+        headers: {
+          Authorization: `Bearer ${token}`
         }
-      )
+      })
       .then((res) => {
-        setOrders(res.data.content);
-        setTotalPages(res.data.totalPages);
+        setOrders(res.data);    
+        setTotalPages(1);        
       })
       .catch((err) => {
         console.error("주문 내역 조회 실패:", err);
@@ -152,7 +149,7 @@ function OrderHistory() {
                 <div className="item-info">
                   <p className="item-name">{item.productName}</p>
                   <p className="item-detail">
-                    {item.price.toLocaleString()}원 × {item.qty}개
+                    {item.price?.toLocaleString() || 0}원 / {item.qty}개
                   </p>
                 </div>
                 

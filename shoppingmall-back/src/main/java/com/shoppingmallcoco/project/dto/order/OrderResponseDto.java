@@ -17,7 +17,7 @@ public class OrderResponseDto {
     private String status;
     private Long totalPrice;
 
-    // 배송지 및 주문자 정보
+    //배송지 및 주문자 정보
     private String recipientName;
     private String recipientPhone;
     private String orderZipcode;
@@ -26,10 +26,34 @@ public class OrderResponseDto {
     private String deliveryMessage;
     private Long pointsUsed;
 
-    // 주문 상품 목록
+    //주문 상품 목록
     private List<OrderItemDto> items;
 
+    //대표이미지, 대표상품, 외 n건 처리
+    private String mainProductName;
+    private String thumbnailImage;
+    private int extraItemCount;
+
     public static OrderResponseDto fromEntity(Order order) {
+
+        var items = order.getOrderItems();
+        boolean hasItems = !items.isEmpty();
+
+        String mainProductName = "상품 없음";
+        String thumbnailImage = "/default-product.png";
+
+        if (hasItems) {
+            var firstItem = items.get(0);
+            mainProductName = firstItem.getProduct().getPrdName();
+
+            if (firstItem.getProduct().getImages() != null
+                    && !firstItem.getProduct().getImages().isEmpty()) {
+                thumbnailImage = firstItem.getProduct().getImages().get(0).getImageUrl();
+            }
+        }
+
+        int extraItemCount = Math.max(items.size() - 1, 0);
+
         return new OrderResponseDto(
                 order.getOrderNo(),
                 order.getOrderDate().toString(),
@@ -42,9 +66,12 @@ public class OrderResponseDto {
                 order.getOrderAddress2(),
                 order.getDeliveryMessage(),
                 order.getPointsUsed(),
-                order.getOrderItems().stream()
+                items.stream()
                         .map(OrderItemDto::fromEntity)
-                        .toList()
+                        .toList(),
+                mainProductName,
+                thumbnailImage,
+                extraItemCount
         );
     }
 }

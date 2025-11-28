@@ -10,26 +10,26 @@ function OrderDetail() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const token = localStorage.getItem("token");
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!orderNo || !token) return;
-
-    axios
-      .get(`http://localhost:8080/api/coco/orders/${orderNo}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      .then((res) => {
-        setOrder(res.data);
-      })
-      .catch((err) => {
-        console.error("주문 상세 조회 실패:", err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [orderNo]);
+  
+  if (!orderNo || !token) return;
+  axios
+    .get(`http://localhost:8080/api/orders/${orderNo}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then((res) => {
+      setOrder(res.data);
+    })
+    .catch((err) => {
+      console.error("주문 상세 조회 실패:", err);
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+}, [orderNo, token]);
 
   if (loading) return <p className="loading-text">불러오는 중...</p>;
   if (!order) return <p className="empty-order">주문 정보를 찾을 수 없습니다.</p>;
@@ -83,7 +83,7 @@ return (
           <div className="product-info">
             <p className="product-name">{item.productName}</p>
             <p className="product-detail">
-              {item.price.toLocaleString()}원 / {item.qty}개
+              {item.price?.toLocaleString() || 0}원 / {item.qty}개
             </p>
             </div>
             {order.status === "배송완료" && (

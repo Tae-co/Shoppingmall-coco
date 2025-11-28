@@ -126,11 +126,25 @@ public class MemberService {
                 .build();
     }
 
+    // 소셜 로그인 계정인지 확인
+    private boolean isSocialAccount(String memId) {
+        if (memId == null) {
+            return false;
+        }
+        return memId.startsWith("KAKAO_") || memId.startsWith("NAVER_") || memId.startsWith("GOOGLE_");
+    }
+
     // 아이디 찾기용 인증번호 전송 처리
     public void sendFindIdVerificationCode(String email) {
         Optional<Member> memberOpt = memberRepository.findByMemMail(email);
         if (memberOpt.isEmpty()) {
             throw new RuntimeException("해당 이메일로 등록된 회원을 찾을 수 없습니다.");
+        }
+
+        Member member = memberOpt.get();
+        // 소셜 로그인 계정인지 확인
+        if (isSocialAccount(member.getMemId())) {
+            throw new RuntimeException("소셜 로그인으로 가입한 계정입니다. 해당 소셜 로그인 서비스를 통해 로그인해주세요.");
         }
 
         emailVerificationService.generateVerificationCode(email);
@@ -147,11 +161,21 @@ public class MemberService {
         Member member = memberRepository.findByMemMail(findIdDto.getEmail())
                 .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
 
+        // 소셜 로그인 계정인지 확인
+        if (isSocialAccount(member.getMemId())) {
+            throw new RuntimeException("소셜 로그인으로 가입한 계정입니다. 해당 소셜 로그인 서비스를 통해 로그인해주세요.");
+        }
+
         return member.getMemId();
     }
 
     // 비밀번호 재설정용 인증번호 전송 처리
     public void sendResetPasswordVerificationCode(String memId, String email) {
+        // 소셜 로그인 계정인지 확인
+        if (isSocialAccount(memId)) {
+            throw new RuntimeException("소셜 로그인으로 가입한 계정입니다. 비밀번호 찾기 기능을 사용할 수 없습니다. 해당 소셜 로그인 서비스를 통해 로그인해주세요.");
+        }
+
         Optional<Member> memberOpt = memberRepository.findByMemId(memId);
         if (memberOpt.isEmpty()) {
             throw new RuntimeException("해당 아이디로 등록된 회원을 찾을 수 없습니다.");
@@ -168,6 +192,11 @@ public class MemberService {
 
     // 비밀번호 재설정 처리
     public void resetPassword(ResetPasswordDto resetPasswordDto) {
+        // 소셜 로그인 계정인지 확인
+        if (isSocialAccount(resetPasswordDto.getMemId())) {
+            throw new RuntimeException("소셜 로그인으로 가입한 계정입니다. 비밀번호 찾기 기능을 사용할 수 없습니다. 해당 소셜 로그인 서비스를 통해 로그인해주세요.");
+        }
+
         boolean isValid = emailVerificationService.verifyCode(
                 resetPasswordDto.getEmail(),
                 resetPasswordDto.getCode()
@@ -258,9 +287,12 @@ public class MemberService {
         if (memberOpt.isPresent()) {
             member = memberOpt.get();
         } else {
-            String nickname = kakaoUserInfo.getNickname() != null
-                    ? kakaoUserInfo.getNickname()
-                    : "카카오사용자_" + kakaoUserInfo.getKakaoId();
+            // 카카오에서 받은 name을 닉네임으로 사용
+            String nickname = kakaoUserInfo.getName() != null && !kakaoUserInfo.getName().trim().isEmpty()
+                    ? kakaoUserInfo.getName().trim()
+                    : (kakaoUserInfo.getNickname() != null && !kakaoUserInfo.getNickname().trim().isEmpty()
+                            ? kakaoUserInfo.getNickname().trim()
+                            : "카카오사용자_" + kakaoUserInfo.getKakaoId());
 
             String finalNickname = nickname;
             int suffix = 1;
@@ -272,8 +304,8 @@ public class MemberService {
             member = Member.builder()
                     .memId(kakaoMemId)
                     .memPwd(passwordEncoder.encode("KAKAO_" + kakaoUserInfo.getKakaoId() + "_NO_PASSWORD"))
-                    .memNickname(finalNickname)
-                    .memName(kakaoUserInfo.getName())
+                    .memNickname(finalNickname)  // 카카오 name을 닉네임으로 저장
+                    .memName(null)  // 이름은 추가 정보 입력 페이지에서 입력
                     .memMail(kakaoUserInfo.getEmail())
                     .role(Member.Role.USER)
                     .point(0L)
@@ -286,8 +318,9 @@ public class MemberService {
         MemberResponseDto response = toResponseDto(member);
         response.setToken(token);
 
-        boolean needsAdditionalInfo = (member.getMemMail() == null || member.getMemMail().trim().isEmpty()) ||
-                (member.getMemName() == null || member.getMemName().trim().isEmpty()) ||
+        // 추가 정보 입력 필요 여부 확인
+        // 소셜 로그인 계정은 이메일은 필수이므로, 이름과 전화번호만 확인
+        boolean needsAdditionalInfo = (member.getMemName() == null || member.getMemName().trim().isEmpty()) ||
                 (member.getMemHp() == null || member.getMemHp().trim().isEmpty());
         response.setNeedsAdditionalInfo(needsAdditionalInfo);
 
@@ -444,8 +477,9 @@ public class MemberService {
         MemberResponseDto response = toResponseDto(member);
         response.setToken(token);
 
-        boolean needsAdditionalInfo = (member.getMemMail() == null || member.getMemMail().trim().isEmpty()) ||
-                (member.getMemName() == null || member.getMemName().trim().isEmpty()) ||
+        // 추가 정보 입력 필요 여부 확인
+        // 소셜 로그인 계정은 이메일은 필수이므로, 이름과 전화번호만 확인
+        boolean needsAdditionalInfo = (member.getMemName() == null || member.getMemName().trim().isEmpty()) ||
                 (member.getMemHp() == null || member.getMemHp().trim().isEmpty());
         response.setNeedsAdditionalInfo(needsAdditionalInfo);
 
@@ -492,12 +526,21 @@ public class MemberService {
         MemberResponseDto response = toResponseDto(member);
         response.setToken(token);
 
-        boolean needsAdditionalInfo = (member.getMemMail() == null || member.getMemMail().trim().isEmpty()) ||
-                (member.getMemName() == null || member.getMemName().trim().isEmpty()) ||
+        // 추가 정보 입력 필요 여부 확인
+        // 소셜 로그인 계정은 이메일은 필수이므로, 이름과 전화번호만 확인
+        boolean needsAdditionalInfo = (member.getMemName() == null || member.getMemName().trim().isEmpty()) ||
                 (member.getMemHp() == null || member.getMemHp().trim().isEmpty());
         response.setNeedsAdditionalInfo(needsAdditionalInfo);
 
         return response;
+    }
+    
+    // 포인트 수정 로직
+    @Transactional
+    public void updatePoint(Long memNo, Long point) {
+        Member member = memberRepository.findById(memNo)
+                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+        member.setPoint(point);
     }
 }
 

@@ -22,7 +22,6 @@ import com.shoppingmallcoco.project.service.product.ProductService;
  * - 구매 경고 알림 (피부 타입 기반 통계)
  */
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class ProductApiController {

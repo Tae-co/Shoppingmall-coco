@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '../images/logo.png';
 import '../css/Footer.css';
-import SignupTermsPopup from './SignupTermsPopup';
 
 const Footer = () => {
     const navigate = useNavigate(); // 훅 선언
-    const [showTermsPopup, setShowTermsPopup] = useState(false);
-    const [termsType, setTermsType] = useState(null);
 
     // 카테고리 이동 핸들러
     const handleCategoryClick = (categoryNo) => {
@@ -15,16 +12,9 @@ const Footer = () => {
         window.scrollTo(0, 0);
     };
 
-    // 약관 팝업 열기
+    // 약관 페이지로 이동
     const handleViewTerms = (type) => {
-        setTermsType(type);
-        setShowTermsPopup(true);
-    };
-
-    // 약관 팝업 닫기
-    const handleCloseTermsPopup = () => {
-        setShowTermsPopup(false);
-        setTermsType(null);
+        navigate(`/terms/${type}`);
     };
 
     return (
@@ -89,13 +79,6 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
-
-            {showTermsPopup && (
-                <SignupTermsPopup
-                    type={termsType}
-                    onClose={handleCloseTermsPopup}
-                />
-            )}
         </div>
     );
 }
