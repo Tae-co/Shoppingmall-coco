@@ -17,9 +17,10 @@ export function OrderProvider({ children }) {
   const [address, setAddress] = useState('');
   const [addressDetail, setAddressDetail] = useState('');
   const [deliveryMessage, setDeliveryMessage] = useState('');
-  
+  const [orderItems, setOrderItems] = useState([]);
+
   // --- 2. PaymentPage (금액) state ---
-  const [orderSubtotal, setOrderSubtotal] = useState(1000); // (임시) 상품 금액
+  const [orderSubtotal, setOrderSubtotal] = useState(0); // (임시) 상품 금액
   const [userPoints, setUserPoints] = useState(0);       // (임시) 보유 포인트
   const [pointsToUse, setPointsToUse] = useState(0);        // 사용할 포인트
 
@@ -77,7 +78,8 @@ export function OrderProvider({ children }) {
     shippingFee: calculatedShippingFee, 
     
     userPoints, setUserPoints,
-    pointsToUse, setPointsToUse
+    pointsToUse, setPointsToUse,
+    orderItems, setOrderItems,
   };
 
   return (
