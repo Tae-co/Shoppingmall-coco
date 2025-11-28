@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../css/PaymentPage.css';
 import { useOrder } from '../OrderContext'; // 전역 주문 상태(Context) 훅
@@ -15,8 +15,18 @@ function PaymentPage() {
     shippingFee,   // 배송비
     userPoints,    // 사용자 보유 포인트
     pointsToUse, setPointsToUse, // 사용할 포인트 상태
-    lastName, firstName, phone, postcode, address, addressDetail, deliveryMessage // 배송지 정보
+    lastName, firstName, phone, postcode, address, addressDetail, deliveryMessage, // 배송지 정보
+    orderItems
   } = useOrder();
+
+  useEffect(() => {
+    // 상품 금액이 0이거나 유효하지 않으면 (새로고침으로 Context가 초기화된 경우)
+    if (orderSubtotal <= 0) {
+        
+        alert("유효하지 않은 주문 정보입니다. 장바구니로 돌아갑니다.");
+        navigate('/cart'); //  장바구니 페이지로 강제 이동
+    }
+}, [orderSubtotal, navigate]); // orderSubtotal이 0일 때 실행되도록 설정
 
   // 로컬 상태 관리: 결제 수단, 약관 동의, 약관 팝업 표시 여부
   const [paymentMethod, setPaymentMethod] = useState('api'); // 'api' 또는 'card'
@@ -98,13 +108,12 @@ function PaymentPage() {
 
          
           const orderData = {
-            orderItems: [
-              { 
-                prdNo: 1,       // (임시) 1번 상품
-                optionNo: 1,    // (임시) 1번 옵션
-                orderQty: 2     // (임시) 2개 주문
-              } 
-            ],
+            // 1. 주문 상품 목록 (가장 중요)
+              orderItems: orderItems?.map(item => ({ 
+                  prdNo: item.prdNo,       
+                  optionNo: item.optionNo,    
+                  orderQty: item.cartQty, 
+              })),
             // 배송지 정보
             recipientName: lastName + firstName, 
             recipientPhone: phone,
@@ -112,7 +121,9 @@ function PaymentPage() {
             orderAddress1: address,
             orderAddress2: addressDetail,
             deliveryMessage: deliveryMessage || "조심해서 배송해 주세요.",
+            //포인트
             pointsUsed: pointsToUse
+            
           };
 
           // 토큰 가져오기

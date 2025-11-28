@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../css/Cart.css";
-import OrderSteps from "../components/OrderSteps.js";
 import { getStoredMember } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
@@ -157,13 +156,27 @@ function Cart() {
       .catch((err) => console.error("선택 삭제 실패:", err));
   };
 
-  // 주문하기 → 배송 정보 페이지로 이동
+  // 주문하기 > 배송 정보 페이지로 이동
   const handleCheckoutSelected = () => {
     if (selectedItems.length === 0) {
       alert("주문할 상품을 선택해주세요.");
       return;
     }
-    navigate("/order");
+   //  선택된 상품 목록 추출
+  const selectedCartItems = cartItems.filter(item => selectedItems.includes(item.cartNo));
+  
+  //  최종 금액 계산
+  const subtotal = selectedTotalPrice;
+  const fee = shippingFee; // 이미 계산된 값 사용
+
+  //  React Router의 state를 이용해 데이터 전달
+  navigate("/order", { 
+        state: { 
+            orderItems: selectedCartItems, 
+            orderSubtotal: selectedTotalPrice, 
+            shippingFee: shippingFee,          
+        } 
+    });
   };
 
   const handleCheckoutAll = () => {
@@ -171,7 +184,17 @@ function Cart() {
       alert("장바구니가 비어 있습니다.");
       return;
     }
-    navigate("/order");
+    const allItemsSubtotal = totalPrice; 
+    const allItemsShippingFee = allItemsSubtotal >= 30000 ? 0 : 3000;
+
+    // navigate를 사용하여 OrderPage로 데이터 전달
+    navigate("/order", {
+        state: {
+            orderItems: cartItems, //  전체 장바구니 상품 목록 전달
+            orderSubtotal: allItemsSubtotal,
+            shippingFee: allItemsShippingFee,
+        }
+    });
   };
 
   return (

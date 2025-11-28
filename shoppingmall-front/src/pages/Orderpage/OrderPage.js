@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate,useLocation } from 'react-router-dom'; 
 import '../../css/OrderPage.css'; 
 import { useOrder } from '../OrderContext'; 
 import axios from 'axios'; 
@@ -7,6 +7,7 @@ import axios from 'axios';
 // 주문자가 배송 정보를 입력하는 페이지 컴포넌트 (주문 프로세스 2단계)
 function OrderPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   
   // 전역 주문 상태(OrderContext)에서 배송지 정보 state와 계산된 값을 가져옵니다.
   const {
@@ -18,9 +19,30 @@ function OrderPage() {
     addressDetail, setAddressDetail,
     deliveryMessage, setDeliveryMessage,
     shippingFee, 
-    orderSubtotal  // 상품 합계 금액 (배송비 계산에 사용)
+    orderSubtotal,  // 상품 합계 금액 (배송비 계산에 사용)
+    setOrderSubtotal, // 상품 합계 금액
+    setShippingFee,   // 배송비
+    setOrderItems     // 주문 상품 목록
   } = useOrder();
   
+  //  장바구니 데이터 수신 및 Context 저장 
+useEffect(() => {
+  if (location.state) {
+    const { orderItems, orderSubtotal, shippingFee } = location.state;
+    
+    if (orderItems && setOrderItems) {
+      setOrderItems(orderItems);
+    }
+    if (orderSubtotal && setOrderSubtotal) {
+      setOrderSubtotal(orderSubtotal);
+    }
+    if (shippingFee && setShippingFee) {
+      setShippingFee(shippingFee);
+    }
+  }
+  
+}, [location.state, setOrderItems, setOrderSubtotal, setShippingFee]);
+
   // Daum Postcode API 스크립트 로드 여부 확인
   useEffect(() => {
     // window.daum 객체와 Postcode 함수가 있는지 확인하여 스크립트 오류를 방지합니다.
