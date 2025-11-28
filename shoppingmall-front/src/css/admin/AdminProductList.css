@@ -178,3 +178,24 @@
   padding: 50px;
   color: #888;
 }
+
+/* 주문 관리 검색 버튼 */
+.btn-search {
+  padding: 10px 20px;
+  background-color: #333; /* 메인 컬러 */
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap; /* 글자 줄바꿈 방지 */
+  text-decoration: none;
+}
+
+.btn-search:hover {
+  background-color: #555;
+  border-color: #555;
+  color: #fff !important; 
+  text-decoration: none !important;
+}

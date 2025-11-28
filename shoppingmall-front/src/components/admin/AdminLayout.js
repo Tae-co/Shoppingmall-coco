@@ -44,9 +44,9 @@ function AdminLayout() {
             </Link>
           </li>
           <li>
-            <span className="admin-nav-item disabled">
-              주문 관리 (준비중)
-            </span>
+            <Link to="/admin/orders" className={`admin-nav-item ${isActive('/admin/orders') ? 'active' : ''}`}>
+              주문 관리
+            </Link>
           </li>
         </ul>
       </nav>
@@ -66,8 +66,19 @@ function AdminLayout() {
         <main className="admin-content">
           <Outlet />
         </main>
-      </div>
 
+        {/* 관리자용 미니 Footer */}
+        <footer style={{ 
+            textAlign: 'center', 
+            padding: '20px', 
+            color: '#888', 
+            fontSize: '12px',
+            borderTop: '1px solid #eee' 
+        }}>
+          Copyright © 2025 Coco Admin System. All rights reserved.
+        </footer>
+
+      </div>
       <ToastContainer autoClose={2000} position="bottom-right" />
     </div>
   );

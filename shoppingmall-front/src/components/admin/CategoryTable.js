@@ -1,6 +1,9 @@
 import React from 'react';
 import '../../css/admin/CategoryTable.css';
 
+import editIcon from '../../images/edit.svg';
+import deleteIcon from '../../images/delete.svg';
+
 function CategoryTable({ categories, onEdit, onDelete }) {
   const PROTECTED_IDS = [1, 2, 3, 4];
 
@@ -33,8 +36,12 @@ function CategoryTable({ categories, onEdit, onDelete }) {
             <td>
               {!isProtected && (
                 <>
-                  <button className="action-btn" onClick={() => onEdit(parent)}>수정</button>
-                  <button className="action-btn btn-danger" onClick={() => onDelete(parent)}>삭제</button>
+                  <button className="icon-btn edit" onClick={() => onEdit(parent)} title="수정">
+                    <img src={editIcon} alt="수정" />
+                  </button>
+                  <button className="icon-btn delete" onClick={() => onDelete(parent)} title="삭제">
+                    <img src={deleteIcon} alt="삭제" />
+                  </button>
                 </>
               )}
             </td>
@@ -46,8 +53,12 @@ function CategoryTable({ categories, onEdit, onDelete }) {
               <td className="id-cell-child">{child.categoryNo}</td>
               <td className="category-name-cell child">└ {child.categoryName}</td>
               <td>
-                <button className="action-btn" onClick={() => onEdit(child)}>수정</button>
-                <button className="action-btn btn-danger" onClick={() => onDelete(child)}>삭제</button>
+                <button className="icon-btn edit" onClick={() => onEdit(child)} title="수정">
+                  <img src={editIcon} alt="수정" />
+                </button>
+                <button className="icon-btn delete" onClick={() => onDelete(child)} title="삭제">
+                  <img src={deleteIcon} alt="삭제" />
+                </button>
               </td>
             </tr>
           ))}
@@ -63,7 +74,7 @@ function CategoryTable({ categories, onEdit, onDelete }) {
           <tr>
             <th style={{ width: '100px' }}>ID</th>
             <th>카테고리 이름</th>
-            <th style={{ width: '150px' }}>관리</th>
+            <th style={{ width: '170px' }}>관리</th>
           </tr>
         </thead>
         <tbody>

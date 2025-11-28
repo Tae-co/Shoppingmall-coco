@@ -5,6 +5,8 @@ import { toast } from 'react-toastify';
 import Pagination from '../../components/admin/Pagination';
 import Spinner from '../../components/admin/Spinner';
 import '../../css/admin/AdminProductList.css';
+import editIcon from '../../images/edit.svg';
+import deleteIcon from '../../images/delete.svg';
 
 /**
  * [AdminProductList] 관리자용 상품 관리 페이지
@@ -248,9 +250,14 @@ function AdminProductList() {
                         {product.status}
                       </span>
                     </td>
+                    {/* 수정, 삭제 버튼 영역 */}
                     <td>
-                      <Link to={`/admin/product/edit/${product.prdNo}`} className="link-edit">수정</Link>
-                      <button onClick={() => handleDelete(product)} className="btn-delete">삭제</button>
+                      <Link to={`/admin/product/edit/${product.prdNo}`} className="icon-btn edit" title="수정">
+                        <img src={editIcon} alt="수정" />
+                      </Link>
+                      <button onClick={() => handleDelete(product)} className="icon-btn delete" title="삭제">
+                        <img src={deleteIcon} alt="삭제" />
+                      </button>
                     </td>
                   </tr>
                 ))
