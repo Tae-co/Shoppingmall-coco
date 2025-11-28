@@ -101,7 +101,7 @@ const ComateContent = ({
                     key={item.memNo}
                     memNo={item.memNo}
                     nickname={item.nickname}
-                    skinTypes={item.skinTypes}
+                    skinTags={item.skinTags}
                     isFollowing={item.following}
                     loginUserNo={loginUserNo}
                     onFollowChange = {(newState) => {
@@ -120,7 +120,7 @@ const ComateContent = ({
                     key={item.memNo}
                     memNo={item.memNo}
                     nickname={item.nickname}
-                    skinTypes={item.skinTypes}
+                    skinTags={item.skinTags}
                     isFollowing={item.following}
                     loginUserNo={loginUserNo}
                     onFollowChange = {(newState) => {

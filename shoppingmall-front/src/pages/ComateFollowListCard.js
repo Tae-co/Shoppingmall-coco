@@ -8,7 +8,7 @@ import { follow, unfollow } from '../utils/comate_api';
 const ComateFollowListCard = ({ 
     memNo, 
     nickname,
-    skinTypes, 
+    skinTags, 
     isFollowing, 
     loginUserNo, 
     onFollowChange 
@@ -46,7 +46,7 @@ const ComateFollowListCard = ({
                 <div className="uc_info">
                     <div className="nickname">{nickname}</div>
                     <div className="skin_types">
-                        {skinTypes?.map((type, index) => (
+                        {skinTags?.map((type, index) => (
                             <span key={index}>{type}</span>
                         ))}
                     </div>
