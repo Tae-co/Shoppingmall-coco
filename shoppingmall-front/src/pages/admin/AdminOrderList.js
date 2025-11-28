@@ -13,6 +13,10 @@ function AdminOrderList() {
   const [totalPages, setTotalPages] = useState(0);
   const [selectedOrder, setSelectedOrder] = useState(null); // 모달용 선택된 주문
 
+  // 검색 필터 상태
+  const [searchStatus, setSearchStatus] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+
   // 한글 변환을 위한 매핑 객체 생성
   const statusMap = {
     PENDING: "결제대기",
@@ -30,21 +34,41 @@ function AdminOrderList() {
     fetchOrders();
   }, [currentPage]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = async (resetPage = false) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
+      const params = {
+        page: resetPage ? 1 : currentPage,
+        size: 10,
+        status: searchStatus || null,     // 필터 없으면 null
+        searchTerm: searchTerm || null    // 검색어 없으면 null
+      };
       const response = await axios.get(`http://localhost:8080/api/admin/orders?page=${currentPage}&size=10`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        params: params
       });
+
       setOrders(response.data.content);
       setTotalPages(response.data.totalPages);
+      if (resetPage) setCurrentPage(1);
+
     } catch (error) {
       console.error(error);
       toast.error("주문 목록을 불러오지 못했습니다.");
     } finally {
       setLoading(false);
     }
+  };
+
+  // 검색 버튼 핸들러
+  const handleSearch = () => {
+    fetchOrders(true); // 검색 시 1페이지로 초기화
+  };
+
+  // 엔터키 검색 지원
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handleSearch();
   };
 
   const handleStatusChange = async (orderNo, newStatus) => {
@@ -85,7 +109,39 @@ function AdminOrderList() {
       <div className="admin-content-card">
         <div className="content-header">
           <h3>전체 주문 목록</h3>
-          <button className="btn-refresh" onClick={fetchOrders}>🔄 새로고침</button>
+          <div className="header-actions">
+            <button className="btn-refresh" onClick={() => fetchOrders(false)}>🔄 새로고침</button>
+          </div>
+        </div>
+
+        {/* 검색 및 필터 영역 */}
+        <div className="filter-container" style={{marginBottom: '20px', display: 'flex', gap: '10px'}}>
+          <select 
+            className="filter-select"
+            value={searchStatus}
+            onChange={(e) => setSearchStatus(e.target.value)}
+          >
+            <option value="">전체 상태</option>
+            {statusOptions.map(key => (
+              <option key={key} value={key}>{statusMap[key]}</option>
+            ))}
+          </select>
+
+          <input 
+            type="text" 
+            className="search-input"
+            placeholder="주문번호 또는 주문자명 검색" 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+
+          <button 
+            className="btn-search"
+            onClick={handleSearch}
+          >
+            검색
+          </button>
         </div>
 
         <div className="table-wrapper">

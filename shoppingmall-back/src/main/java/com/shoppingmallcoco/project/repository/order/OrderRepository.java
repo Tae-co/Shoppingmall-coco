@@ -36,4 +36,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("orderNo") Long orderNo,
             @Param("memNo") Long memNo
     );
+    
+    // 관리자용 검색/필터 쿼리
+    @Query("SELECT o FROM Order o WHERE " +
+           "(:status IS NULL OR :status = '' OR o.status = :status) AND " +
+           "(:searchTerm IS NULL OR :searchTerm = '' OR " +
+           "o.recipientName LIKE %:searchTerm% OR " +
+           "CAST(o.orderNo AS string) LIKE %:searchTerm%)")
+    Page<Order> findAllByAdminSearch(
+            @Param("status") String status, 
+            @Param("searchTerm") String searchTerm, 
+            Pageable pageable
+    );
 }

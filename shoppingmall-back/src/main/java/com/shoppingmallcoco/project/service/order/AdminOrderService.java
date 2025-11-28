@@ -21,6 +21,17 @@ public class AdminOrderService {
         Page<Order> orderPage = orderRepository.findAll(pageable);
         return orderPage.map(OrderResponseDto::fromEntity);
     }
+    
+    // 검색 조건(status, searchTerm)
+    public Page<OrderResponseDto> getAllOrders(int page, int size, String status, String searchTerm) {
+        
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "orderNo"));
+        
+        // Repository의 검색 메서드 호출
+        Page<Order> orderPage = orderRepository.findAllByAdminSearch(status, searchTerm, pageable);
+        
+        return orderPage.map(OrderResponseDto::fromEntity);
+    }
 
     // 주문 상태 변경 (예: 배송중, 배송완료 등)
     public void updateOrderStatus(Long orderNo, String newStatus) {

@@ -20,9 +20,11 @@ public class AdminOrderApiController {
     @GetMapping
     public ResponseEntity<Page<OrderResponseDto>> getAllOrders(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String searchTerm
     ) {
-        return ResponseEntity.ok(adminOrderService.getAllOrders(page, size));
+        return ResponseEntity.ok(adminOrderService.getAllOrders(page, size, status, searchTerm));
     }
 
     // 주문 상태 변경
