@@ -499,5 +499,13 @@ public class MemberService {
 
         return response;
     }
+    
+    // 포인트 수정 로직
+    @Transactional
+    public void updatePoint(Long memNo, Long point) {
+        Member member = memberRepository.findById(memNo)
+                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+        member.setPoint(point);
+    }
 }
 
