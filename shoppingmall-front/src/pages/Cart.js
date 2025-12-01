@@ -29,7 +29,7 @@ function Cart() {
       .then((res) => {
         setCartItems(res.data);
         setSelectedItems(res.data.map((item) => item.cartNo)); // 초기 전체 선택
-        
+        window.dispatchEvent(new Event("cartUpdated"));
       })
       .catch((err) => console.error("장바구니 불러오기 실패:", err));
   }, [token, setCartItems]);
@@ -60,11 +60,7 @@ function Cart() {
   const selectedTotalPrice = cartItems
     .filter((item) => selectedItems.includes(item.cartNo))
     .reduce((total, item) => total + item.productPrice * item.cartQty, 0);
-  //총 상품 금액 계산
-    const totalPrice = cartItems.reduce(
-    (total, item) => total + item.productPrice * item.cartQty,
-    0
-); 
+   
   //배송비
   const shippingFee = selectedTotalPrice >= 30000 ? 0 : 3000;
   // 수량 변경
@@ -167,7 +163,7 @@ function Cart() {
     navigate("/order", {
       state: {
         orderItems: selectedCartItems,
-        orderSubtotal: subtotal,
+        orderSubtotal: selectedTotalPrice,
         shippingFee: shippingFee,
       },
     });

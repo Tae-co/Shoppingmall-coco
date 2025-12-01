@@ -157,6 +157,7 @@ function PaymentPage() {
                   if (setCartItems) { 
                       setCartItems([]); 
                   }
+                  window.dispatchEvent(new Event("cartUpdated"));
                   
                   alert("주문이 성공적으로 완료되었습니다!");
                   // 최종 성공 페이지로 이동하며 주문 번호 전달
