@@ -11,11 +11,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -23,6 +25,9 @@ import java.util.Arrays;
 public class WebSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    
+    @Value("${cors.allowed-origins:http://localhost:3000}")
+    private String allowedOrigins;
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
@@ -69,6 +74,8 @@ public class WebSecurityConfig {
 					"/api/member/delete",
 					"/api/mypage"
 				).authenticated()
+				// 로그인된 사용자만 접근할 수 있는 장바구니 및 프로필 API
+				.requestMatchers("/api/coco/members/**").authenticated()
 				// 관리자만 접근할 수 있는 API
 				.requestMatchers("/api/member/admin/**").authenticated()
 				// 나머지 요청은 모두 허용 (추후 필요 시 제한 추가)
@@ -84,13 +91,28 @@ public class WebSecurityConfig {
 	public CorsConfigurationSource corsConfigurationSource() {
 		// 프론트엔드 도메인에 대해 교차 출처 요청을 허용
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+		
+		// 환경 변수에서 허용할 오리진 목록 가져오기 (쉼표로 구분)
+		List<String> origins = Arrays.asList(allowedOrigins.split(","));
+		configuration.setAllowedOrigins(origins);
+		
 		// REST API에서 사용하는 HTTP 메서드를 허용
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-		// 필요한 모든 헤더를 허용
-		configuration.setAllowedHeaders(Arrays.asList("*"));
+		
+		// 필요한 헤더만 명시적으로 허용 (보안 강화)
+		configuration.setAllowedHeaders(Arrays.asList(
+			"Authorization",
+			"Content-Type",
+			"X-Requested-With",
+			"Accept",
+			"Origin"
+		));
+		
 		// 자격 증명(쿠키, 인증 헤더 등)을 포함한 요청 허용
 		configuration.setAllowCredentials(true);
+		
+		// Preflight 요청 캐시 시간 설정 (초 단위)
+		configuration.setMaxAge(3600L);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);

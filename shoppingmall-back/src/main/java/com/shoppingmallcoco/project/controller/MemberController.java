@@ -15,7 +15,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class MemberController {
 
     private final MemberService memberService;

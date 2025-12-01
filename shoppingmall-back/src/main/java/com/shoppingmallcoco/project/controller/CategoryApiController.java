@@ -16,7 +16,6 @@ import com.shoppingmallcoco.project.repository.product.CategoryRepository;
  * - 관리자 페이지와 사용자 페이지(헤더, 필터 등)에서 공통으로 사용
  */
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/api")
 public class CategoryApiController {
 

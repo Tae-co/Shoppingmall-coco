@@ -5,6 +5,7 @@ import GoogleIcon from '../images/google.svg';
 import NaverIcon from '../images/naver.svg';
 import KakaoIcon from '../images/kakao.svg';
 import LoginIcon from '../images/login.svg';
+import Logo from '../images/logo.png';
 import { login as memberLogin, kakaoLogin, naverLogin, googleLogin } from '../utils/api';
 import SkinProfilePopup from '../components/SkinProfilePopup';
 
@@ -182,7 +183,9 @@ const Login = () => {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1 className="login-title">Coco</h1>
+          <div className="login-logo-container">
+            <img src={Logo} alt="Coco" className="login-logo" />
+          </div>
           <p className="login-subtitle">계정에 로그인하세요</p>
         </div>
 

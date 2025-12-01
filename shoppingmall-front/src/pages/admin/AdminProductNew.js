@@ -25,7 +25,7 @@ function AdminProductNew() {
       ...formData,
       categoryNo: Number(formData.categoryNo),
       prdPrice: Number(formData.prdPrice),
-      stock: 0, 
+      stock: 0,
       skinType: formData.skinType.join(','),
       skinConcern: formData.skinConcern.join(','),
       personalColor: formData.personalColor.join(','),
@@ -38,22 +38,26 @@ function AdminProductNew() {
 
     const dataToSend = new FormData();
     dataToSend.append("dto", new Blob([JSON.stringify(productDto)], { type: "application/json" }));
-    
+
     // 배열을 순회하며 FormData에 추가
     if (imageFiles && imageFiles.length > 0) {
-        imageFiles.forEach(file => {
-            dataToSend.append("imageFiles", file); // 백엔드가 List<MultipartFile>로 받음
-        });
+      imageFiles.forEach(file => {
+        dataToSend.append("imageFiles", file); // 백엔드가 List<MultipartFile>로 받음
+      });
     }
 
     try {
+      // 토큰 가져오기
+      const token = localStorage.getItem('token');
+
       // Axios POST
       await axios.post('http://localhost:8080/api/admin/products', dataToSend, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`
         }
       });
-      
+
       toast.success('상품이 등록되었습니다.');
       navigate('/admin/products');
     } catch (error) {
@@ -63,9 +67,9 @@ function AdminProductNew() {
   };
 
   return (
-    <ProductForm 
-      categories={categories} 
-      onSubmit={handleCreate} 
+    <ProductForm
+      categories={categories}
+      onSubmit={handleCreate}
       isEdit={false}
     />
   );

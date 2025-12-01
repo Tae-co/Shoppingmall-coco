@@ -64,13 +64,19 @@ function AdminProductList() {
           status: selectedStatus || undefined
         };
 
+        // 토큰 가져오기
+        const token = localStorage.getItem('token');
+
         // 상품 목록 요청
         const productRes = await axios.get('http://localhost:8080/api/products', { params });
         setProducts(productRes.data.content);
         setTotalPages(productRes.data.totalPages);
 
         // 통계 요청
-        const statsRes = await axios.get('http://localhost:8080/api/admin/stats');
+        const statsRes = await axios.get('http://localhost:8080/api/admin/stats', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
         setDashboardCounts({
           totalProducts: statsRes.data.totalProducts,
           inStock: statsRes.data.inStockProducts,
@@ -97,7 +103,13 @@ function AdminProductList() {
   const handleDelete = async (product) => {
     if (window.confirm(`정말 삭제하시겠습니까?\n상품명: ${product.prdName}`)) {
       try {
-        await axios.delete(`http://localhost:8080/api/admin/products/${product.prdNo}`);
+        // 토큰 가져오기
+        const token = localStorage.getItem('token');
+
+        await axios.delete(`http://localhost:8080/api/admin/products/${product.prdNo}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
         toast.success('삭제되었습니다.');
 
         // 새로고침 로직
@@ -245,7 +257,7 @@ function AdminProductList() {
                     <td>
                       {/* 상태값 CSS 클래스로 색상 처리 */}
                       <span className={`status-tag ${product.status === '판매중' ? 'status-sale' :
-                          product.status === '품절' ? 'status-soldout' : 'status-stop'
+                        product.status === '품절' ? 'status-soldout' : 'status-stop'
                         }`}>
                         {product.status}
                       </span>

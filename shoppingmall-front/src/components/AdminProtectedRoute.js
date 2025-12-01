@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { isLoggedIn, getStoredMember, getCurrentMember } from '../utils/api';
+import Forbidden from '../pages/error/Forbidden';
 
 // 관리자 권한이 필요한 페이지 접근 제어
 const AdminProtectedRoute = () => {
@@ -50,8 +51,7 @@ const AdminProtectedRoute = () => {
 
   // 관리자 권한 체크
   if (!isAdmin) {
-    alert('관리자 권한이 필요합니다.');
-    return <Navigate to="/" replace />;
+    return <Forbidden />;
   }
 
   return <Outlet />;

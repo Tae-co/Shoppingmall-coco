@@ -41,6 +41,12 @@ const FindAccount = () => {
     navigate('/login');
   };
 
+  // 소셜 로그인 계정인지 확인
+  const isSocialAccount = (memId) => {
+    if (!memId) return false;
+    return memId.startsWith('KAKAO_') || memId.startsWith('NAVER_') || memId.startsWith('GOOGLE_');
+  };
+
   // 아이디/비밀번호 찾기용 인증번호 전송 처리
   const handleSendVerificationCode = async (e) => {
     e.preventDefault();
@@ -73,6 +79,13 @@ const FindAccount = () => {
         alert('아이디를 입력해주세요.');
         return;
       }
+      
+      // 소셜 로그인 계정인지 확인
+      if (isSocialAccount(memId)) {
+        alert('소셜 로그인으로 가입한 계정입니다. 비밀번호 찾기 기능을 사용할 수 없습니다. 해당 소셜 로그인 서비스를 통해 로그인해주세요.');
+        return;
+      }
+      
       if (!email.trim()) {
         alert('이메일을 입력해주세요.');
         return;
@@ -109,6 +122,15 @@ const FindAccount = () => {
 
     try {
       const data = await findId(email, verificationCode);
+      
+      // 소셜 로그인 계정인지 확인
+      if (isSocialAccount(data.memId)) {
+        alert('소셜 로그인으로 가입한 계정입니다. 해당 소셜 로그인 서비스를 통해 로그인해주세요.');
+        setFoundId('');
+        setIsVerified(false);
+        return;
+      }
+      
       setFoundId(data.memId);
       setIsVerified(true);
       resetTimer();
@@ -176,6 +198,18 @@ const FindAccount = () => {
             >
               비밀번호 찾기
             </button>
+          </div>
+
+          <div style={{ 
+            marginTop: '16px', 
+            padding: '12px', 
+            backgroundColor: '#F3F3F5', 
+            borderRadius: '8px',
+            fontSize: '13px',
+            color: '#717182',
+            lineHeight: '1.5'
+          }}>
+            <strong style={{ color: '#0A0A0A' }}>안내:</strong> 소셜 로그인(카카오, 네이버, 구글)으로 가입한 계정은 아이디/비밀번호 찾기 기능을 사용할 수 없습니다. 해당 소셜 로그인 서비스를 통해 로그인해주세요.
           </div>
 
           {activeTab === 'id' ? (

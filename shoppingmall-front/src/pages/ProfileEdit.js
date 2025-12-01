@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/ProfileEdit.css";
-import { getStoredMember } from "../utils/api";
+import { getStoredMember, getAuthHeaders } from "../utils/api";
 import axios from "axios";
 
 function ProfileEdit() {
@@ -24,8 +24,9 @@ function ProfileEdit() {
   useEffect(() => {
     if (!memNo) return;
 
+    const headers = getAuthHeaders();
     axios
-      .get(`http://localhost:8080/api/coco/members/profile/${memNo}`)
+      .get(`http://localhost:8080/api/coco/members/profile/${memNo}`, { headers })
       .then((res) => {
         const data = res.data;
         console.log("프로필 조회 성공:", data);
@@ -39,6 +40,11 @@ function ProfileEdit() {
       })
       .catch((err) => {
         console.error("프로필 조회 실패:", err);
+        if (err.response?.status === 403) {
+          alert("본인의 프로필만 조회할 수 있습니다.");
+        } else if (err.response?.status === 401) {
+          alert("로그인이 필요합니다.");
+        }
       });
   }, [memNo]);
 
@@ -63,10 +69,12 @@ function ProfileEdit() {
       personalColor,
     };
 
+    const headers = getAuthHeaders();
     axios
       .put(
         `http://localhost:8080/api/coco/members/profile/${memNo}`,
-        requestBody
+        requestBody,
+        { headers }
       )
       .then(() => {
         alert("프로필이 성공적으로 저장되었습니다!");
@@ -74,7 +82,13 @@ function ProfileEdit() {
       })
       .catch((err) => {
         console.error("프로필 저장 실패:", err);
-        alert("저장 중 오류가 발생했습니다.");
+        if (err.response?.status === 403) {
+          alert("본인의 프로필만 수정할 수 있습니다.");
+        } else if (err.response?.status === 401) {
+          alert("로그인이 필요합니다.");
+        } else {
+          alert("저장 중 오류가 발생했습니다: " + (err.response?.data || err.message));
+        }
       });
   };
 

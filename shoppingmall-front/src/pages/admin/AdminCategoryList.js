@@ -16,7 +16,7 @@ import '../../css/admin/AdminCategoryList.css'; // CSS 파일 임포트
 function AdminCategoryList() {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // 입력 폼 상태 (신규 추가 및 수정 공용)
   const [newCategoryName, setNewCategoryName] = useState('');
   const [parentCategoryNo, setParentCategoryNo] = useState('');
@@ -57,7 +57,7 @@ function AdminCategoryList() {
     // 초기화 시에도 첫 번째 대분류로 설정
     const parents = categories.filter(c => !c.parentCategory && !c.parentCategoryNo);
     if (parents.length > 0) {
-        setParentCategoryNo(parents[0].categoryNo);
+      setParentCategoryNo(parents[0].categoryNo);
     }
   };
 
@@ -76,8 +76,8 @@ function AdminCategoryList() {
 
     // 부모 카테고리 필수 체크
     if (!editId && !parentCategoryNo) {
-        toast.warn('상위 카테고리를 선택해야 합니다.');
-        return;
+      toast.warn('상위 카테고리를 선택해야 합니다.');
+      return;
     }
 
     // 대분류/소분류 로직: 부모 ID가 없으면 대분류, 있으면 소분류로 처리
@@ -87,16 +87,22 @@ function AdminCategoryList() {
     };
 
     try {
+      // 토큰 가져오기
+      const token = localStorage.getItem('token');
+      const config = {
+        headers: { Authorization: `Bearer ${token}` }
+      };
+
       if (editId) {
         // 수정 (PUT)
-        await axios.put(`http://localhost:8080/api/admin/categories/${editId}`, categoryData);
+        await axios.put(`http://localhost:8080/api/admin/categories/${editId}`, categoryData, config);
         toast.success('수정되었습니다.');
       } else {
         // 추가 (POST)
-        await axios.post('http://localhost:8080/api/admin/categories', categoryData);
+        await axios.post('http://localhost:8080/api/admin/categories', categoryData, config);
         toast.success('추가되었습니다.');
       }
-      
+
       resetForm(); // 폼 초기화
       loadCategories(); // 목록 갱신 (최신 데이터 반영)
     } catch (error) {
@@ -109,16 +115,16 @@ function AdminCategoryList() {
   const handleEditClick = (category) => {
     setEditId(category.categoryNo);
     setNewCategoryName(category.categoryName);
-    
+
     // 부모가 있으면 부모 ID, 없으면 빈 값
     if (category.parentCategoryNo) {
-        setParentCategoryNo(category.parentCategoryNo);
+      setParentCategoryNo(category.parentCategoryNo);
     } else if (category.parentCategory) {
-        setParentCategoryNo(category.parentCategory.categoryNo);
+      setParentCategoryNo(category.parentCategory.categoryNo);
     } else {
-        setParentCategoryNo('');
+      setParentCategoryNo('');
     }
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -126,7 +132,13 @@ function AdminCategoryList() {
   const handleDeleteCategory = async (category) => {
     if (window.confirm(`'${category.categoryName}' 카테고리를 삭제하시겠습니까?`)) {
       try {
-        await axios.delete(`http://localhost:8080/api/admin/categories/${category.categoryNo}`);
+        // 토큰 가져오기
+        const token = localStorage.getItem('token');
+
+        await axios.delete(`http://localhost:8080/api/admin/categories/${category.categoryNo}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
         toast.success('삭제되었습니다.');
         loadCategories();
       } catch (error) {
@@ -147,7 +159,7 @@ function AdminCategoryList() {
         <h3 className="content-title">
           {editId ? '카테고리 수정' : '하위 카테고리 추가'}
         </h3>
-        
+
         <form className="category-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label>상위 카테고리</label>
@@ -197,10 +209,10 @@ function AdminCategoryList() {
           <h3 className="content-title">카테고리 목록</h3>
         </div>
         {/* 계층형 테이블 컴포넌트 */}
-        <CategoryTable 
-            categories={categories} 
-            onEdit={handleEditClick} 
-            onDelete={handleDeleteCategory} 
+        <CategoryTable
+          categories={categories}
+          onEdit={handleEditClick}
+          onDelete={handleDeleteCategory}
         />
       </div>
     </div>

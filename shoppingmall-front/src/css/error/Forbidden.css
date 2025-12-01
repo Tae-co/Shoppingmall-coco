@@ -1,0 +1,91 @@
+.forbidden-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh; 
+  text-align: center;
+  font-family: "Pretendard", sans-serif;
+  padding: 100px 20px;
+  background-color: #fff;
+}
+
+/* 403 숫자 */
+.forbidden-container .forbidden-code {
+  font-size: 200px; 
+  font-weight: 900;
+  color: #333;
+  margin: 0;
+  line-height: 1;
+  user-select: none;
+  opacity: 0.1;
+}
+
+/* 제목 */
+.forbidden-container .forbidden-title {
+  font-size: 40px;
+  font-weight: 700;
+  color: #222;
+  margin-top: -60px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+/* 설명글 */
+.forbidden-container .forbidden-desc {
+  font-size: 20px;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 60px; /* 버튼과의 간격 넓힘 */
+}
+
+.forbidden-container .btn-group {
+  display: flex;
+  gap: 20px; /* 버튼 사이 간격 넓힘 */
+}
+
+/* 버튼 스타일 스코핑 */
+.forbidden-container .back-btn, 
+.forbidden-container .login-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  
+  height: 64px;
+  padding: 0 40px;
+  min-width: 180px;
+  
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  box-sizing: border-box;
+}
+
+/* 이전 페이지 (Secondary 버튼) */
+.forbidden-container .back-btn {
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.forbidden-container .back-btn:hover {
+  background-color: #f9f9f9;
+  border-color: #ccc;
+}
+
+/* 로그인 페이지로 (Primary 버튼) */
+.forbidden-container .login-btn {
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #222;
+}
+
+.forbidden-container .login-btn:hover {
+  background-color: #000;
+  border-color: #000;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}

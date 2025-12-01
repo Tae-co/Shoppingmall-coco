@@ -44,7 +44,7 @@ function AdminProductEdit() {
       skinConcern: Array.isArray(formData.skinConcern) ? formData.skinConcern.join(',') : formData.skinConcern,
       personalColor: Array.isArray(formData.personalColor) ? formData.personalColor.join(',') : formData.personalColor,
       options: options.map(opt => ({
-        optionNo: opt.optionNo || null, 
+        optionNo: opt.optionNo || null,
         optionName: opt.optionName,
         optionValue: opt.optionValue,
         addPrice: Number(opt.addPrice),
@@ -57,16 +57,19 @@ function AdminProductEdit() {
 
     // 새 이미지가 있는 경우에만 추가
     if (imageFiles && imageFiles.length > 0) {
-        imageFiles.forEach(file => {
-            dataToSend.append("imageFiles", file);
-        });
+      imageFiles.forEach(file => {
+        dataToSend.append("imageFiles", file);
+      });
     }
 
     try {
+      // 토큰 가져오기
+      const token = localStorage.getItem('token');
       // Axios PUT
       await axios.put(`http://localhost:8080/api/admin/products/${productId}`, dataToSend, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`
         }
       });
 
@@ -81,7 +84,7 @@ function AdminProductEdit() {
   if (isLoading) return <Spinner />;
 
   return (
-    <ProductForm 
+    <ProductForm
       initialData={productData}
       categories={categories}
       onSubmit={handleUpdate}

@@ -1,21 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/KakaoAdditionalInfo.css';
-import { updateMember, isLoggedIn, validateEmail, storage, STORAGE_KEYS, checkSkinProfile, getStoredMember } from '../utils/api';
+import { 
+  updateMember, 
+  isLoggedIn, 
+  storage, 
+  STORAGE_KEYS, 
+  checkSkinProfile, 
+  getStoredMember,
+  checkNicknameDuplicate
+} from '../utils/api';
 import SkinProfilePopup from '../components/SkinProfilePopup';
 
 const KakaoAdditionalInfo = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    memName: '',
     memNickname: '',
-    memMail: '',
     memHp: '',
     memZipcode: '',
     memAddress1: '',
     memAddress2: ''
   });
+  
+  // 페이지 로드 시 저장된 회원 정보에서 기존 정보 가져오기 (닉네임은 가져오지 않음)
+  useEffect(() => {
+    const member = getStoredMember();
+    if (member) {
+      setFormData(prev => ({
+        ...prev,
+        memName: member.memName || '',
+        memHp: member.memHp || '',
+        memZipcode: member.memZipcode || '',
+        memAddress1: member.memAddress1 || '',
+        memAddress2: member.memAddress2 || ''
+      }));
+    }
+  }, []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSkinProfilePopup, setShowSkinProfilePopup] = useState(false);
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
 
   // 입력 필드 변경 처리
   const handleInputChange = (e) => {
@@ -24,6 +48,39 @@ const KakaoAdditionalInfo = () => {
       ...prev,
       [name]: value
     }));
+    
+    // 닉네임이 변경되면 중복확인 상태 초기화
+    if (name === 'memNickname') {
+      setIsNicknameChecked(false);
+    }
+  };
+
+  // 닉네임 중복 확인 처리
+  const handleCheckNickname = async () => {
+    if (!formData.memNickname.trim()) {
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+    if (formData.memNickname.length < 2) {
+      alert('닉네임은 2자 이상 입력해주세요.');
+      return;
+    }
+    
+    try {
+      const data = await checkNicknameDuplicate(formData.memNickname);
+      
+      if (data.available) {
+        setIsNicknameChecked(true);
+        alert('사용 가능한 닉네임입니다.');
+      } else {
+        alert(data.message || '이미 사용 중인 닉네임입니다.');
+        setIsNicknameChecked(false);
+      }
+    } catch (error) {
+      console.error('닉네임 중복확인 오류:', error);
+      alert(error.message || '중복확인 중 오류가 발생했습니다. 다시 시도해주세요.');
+      setIsNicknameChecked(false);
+    }
   };
 
   // 다음 주소 API를 통한 주소 검색 처리
@@ -47,21 +104,20 @@ const KakaoAdditionalInfo = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (!formData.memName.trim()) {
+      alert('이름을 입력해주세요.');
+      return;
+    }
     if (!formData.memNickname.trim()) {
       alert('닉네임을 입력해주세요.');
       return;
     }
-    if (!formData.memMail.trim()) {
-      alert('이메일을 입력해주세요.');
+    if (!isNicknameChecked) {
+      alert('닉네임 중복확인을 해주세요.');
       return;
     }
     if (!formData.memHp.trim()) {
       alert('전화번호를 입력해주세요.');
-      return;
-    }
-
-    if (!validateEmail(formData.memMail)) {
-      alert('올바른 이메일 형식을 입력해주세요.');
       return;
     }
 
@@ -111,12 +167,12 @@ const KakaoAdditionalInfo = () => {
 
         <form onSubmit={handleSubmit} className="additional-info-form">
           <div className="input-group">
-            <label>닉네임 *</label>
+            <label>이름 *</label>
             <input
               type="text"
-              name="memNickname"
-              placeholder="닉네임을 입력하세요"
-              value={formData.memNickname}
+              name="memName"
+              placeholder="이름을 입력하세요"
+              value={formData.memName}
               onChange={handleInputChange}
               className="additional-info-input"
               required
@@ -124,16 +180,25 @@ const KakaoAdditionalInfo = () => {
           </div>
 
           <div className="input-group">
-            <label>이메일 *</label>
-            <input
-              type="email"
-              name="memMail"
-              placeholder="이메일을 입력하세요"
-              value={formData.memMail}
-              onChange={handleInputChange}
-              className="additional-info-input"
-              required
-            />
+            <label>닉네임 *</label>
+            <div className="input-with-button">
+              <input
+                type="text"
+                name="memNickname"
+                placeholder="2자 이상 입력"
+                value={formData.memNickname}
+                onChange={handleInputChange}
+                className="additional-info-input"
+                required
+              />
+              <button
+                type="button"
+                className="check-button"
+                onClick={handleCheckNickname}
+              >
+                중복확인
+              </button>
+            </div>
           </div>
 
           <div className="input-group">

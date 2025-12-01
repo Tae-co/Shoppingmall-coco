@@ -11,7 +11,6 @@ import com.shoppingmallcoco.project.entity.product.CategoryEntity;
 import com.shoppingmallcoco.project.service.product.CategoryService;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/api/admin/categories")
 public class AdminCategoryApiController {
 

@@ -1,12 +1,3 @@
-/**
- * [ProductListPage] 상품 목록 페이지 컴포넌트
- * 역할:
- * 1. 필터링(검색어, 카테고리, 피부타입 등)된 상품 목록 조회 및 표시
- * 2. 내 피부 맞춤 기능 제공 (회원 프로필 기반 자동 필터 설정)
- * 3. 장바구니 담기 기능 연동
- * 4. 페이지네이션 및 정렬 기능 처리
- */
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -18,26 +9,35 @@ import ProductListHeader from '../../components/product/list/ProductListHeader';
 import { getStoredMember, isLoggedIn, STORAGE_KEYS } from '../../utils/api';
 import '../../css/product/ProductListPage.css';
 
+/**
+ * [ProductListPage] 상품 목록 페이지 컴포넌트
+ * 역할:
+ * 1. 필터링(검색어, 카테고리, 피부타입 등)된 상품 목록 조회 및 표시
+ * 2. 내 피부 맞춤 기능 제공 (회원 프로필 기반 자동 필터 설정)
+ * 3. 장바구니 담기 기능 연동
+ * 4. 페이지네이션 및 정렬 기능 처리
+ */
+
 // --- DB/마이페이지 데이터(한글) -> Shop 필터 ID 변환 맵 ---
 const reverseSkinMap = {
   '건성': 'dry', '지성': 'oily', '복합성': 'combination', '민감성': 'sensitive'
 };
 const reverseConcernMap = {
-  '수분': 'hydration',  '보습': 'moisture',  '미백': 'brightening',  '피부톤': 'tone',
-  '진정': 'soothing',  '민감': 'sensitive',  '자외선차단': 'uv',  '주름': 'wrinkle',
-  '탄력': 'elasticity',  '모공': 'pores'
+  '수분': 'hydration', '보습': 'moisture', '미백': 'brightening', '피부톤': 'tone',
+  '진정': 'soothing', '민감': 'sensitive', '자외선차단': 'uv', '주름': 'wrinkle',
+  '탄력': 'elasticity', '모공': 'pores'
 };
 const reverseColorMap = {
   '봄 웜톤': 'spring', '여름 쿨톤': 'summer', '가을 웜톤': 'autumn', '겨울 쿨톤': 'winter'
 };
 
 function ProductListPage() {
-  const [products, setProducts] = useState([]); 
-  const [totalPages, setTotalPages] = useState(0); 
-  const [totalElements, setTotalElements] = useState(0); 
+  const [products, setProducts] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  
+
   const [userProfile, setUserProfile] = useState(null);
   const [isProfileMode, setIsProfileMode] = useState(false);
 
@@ -58,14 +58,23 @@ function ProductListPage() {
   useEffect(() => {
     const fetchProfile = async () => {
       if (!isLoggedIn()) return;
-      
+
       const member = getStoredMember();
       if (!member || !member.memNo) return;
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/coco/members/profile/${member.memNo}`);
+        // 토큰 가져오기
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+
+        // 헤더에 Authorization 추가하여 요청
+        const response = await axios.get(`http://localhost:8080/api/coco/members/profile/${member.memNo}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
         setUserProfile(response.data);
-        
+
       } catch (error) {
         console.error("프로필 로드 실패:", error);
       }
@@ -137,7 +146,7 @@ function ProductListPage() {
 
     const controller = new AbortController();
     const fetchProducts = async () => {
-      setIsLoading(true); 
+      setIsLoading(true);
       try {
         const queryString = searchParams.toString();
         const response = await axios.get(`http://localhost:8080/api/products?${queryString}`, {
@@ -150,7 +159,7 @@ function ProductListPage() {
         setProducts(validContent);
         setTotalPages(response.data.totalPages);
         setTotalElements(response.data.totalElements);
-      } catch (error) { 
+      } catch (error) {
         if (axios.isCancel(error)) {
           console.log('Request canceled');
         } else {
@@ -161,13 +170,13 @@ function ProductListPage() {
       }
     };
 
-    fetchProducts(); 
+    fetchProducts();
     return () => controller.abort();
-  }, [searchParams]); 
+  }, [searchParams]);
 
   useEffect(() => {
     if (isFilterOpen) {
-      setTimeout(() => closeButtonRef.current?.focus(), 100); 
+      setTimeout(() => closeButtonRef.current?.focus(), 100);
     }
   }, [isFilterOpen]);
 
@@ -213,7 +222,7 @@ function ProductListPage() {
 
   // --- 장바구니 담기 ---
   const handleAddToCart = async (e, product) => {
-    e.preventDefault(); 
+    e.preventDefault();
     e.stopPropagation();
 
     if (!isLoggedIn()) {
@@ -224,38 +233,38 @@ function ProductListPage() {
 
     const member = getStoredMember();
     if (!member || !member.memNo) {
-        alert('회원 정보를 찾을 수 없습니다.');
-        return;
+      alert('회원 정보를 찾을 수 없습니다.');
+      return;
     }
 
     if (!product.defaultOptionNo) {
-        alert('옵션을 선택해야 하는 상품입니다. 상세 페이지에서 담아주세요.');
-        navigate(`/products/${product.prdNo}`);
-        return;
+      alert('옵션을 선택해야 하는 상품입니다. 상세 페이지에서 담아주세요.');
+      navigate(`/products/${product.prdNo}`);
+      return;
     }
 
     try {
-        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
-        // axios.post 사용
-        await axios.post(
-          'http://localhost:8080/api/coco/members/cart/items',
-          {
-            memNo: member.memNo,
-            optionNo: product.defaultOptionNo,
-            cartQty: 1
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        );
-
-        if(window.confirm(`${product.prdName}을(를) 장바구니에 담았습니다.\n장바구니로 이동하시겠습니까?`)) {
-             navigate('/cart');
+      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+      // axios.post 사용
+      await axios.post(
+        'http://localhost:8080/api/coco/members/cart/items',
+        {
+          memNo: member.memNo,
+          optionNo: product.defaultOptionNo,
+          cartQty: 1
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
         }
+      );
+
+      if (window.confirm(`${product.prdName}을(를) 장바구니에 담았습니다.\n장바구니로 이동하시겠습니까?`)) {
+        navigate('/cart');
+      }
     } catch (error) {
-        console.error(error);
-        const message = error.response?.data?.message || '장바구니 담기에 실패했습니다.';
-        alert(message);
+      console.error(error);
+      const message = error.response?.data?.message || '장바구니 담기에 실패했습니다.';
+      alert(message);
     }
   };
 

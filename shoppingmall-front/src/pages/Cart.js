@@ -164,31 +164,34 @@ function Cart() {
   
  
 
-  //  React Router의 state를 이용해 데이터 전달
-  navigate("/order", { 
-        state: { 
-            orderItems: selectedCartItems, 
-            orderSubtotal: selectedTotalPrice, 
-            shippingFee: shippingFee,          
-        } 
+    navigate("/order", {
+      state: {
+        orderItems: selectedCartItems,
+        orderSubtotal: subtotal,
+        shippingFee: shippingFee,
+      },
     });
   };
 
+  // 전체 주문하기
   const handleCheckoutAll = () => {
     if (cartItems.length === 0) {
       alert("장바구니가 비어 있습니다.");
       return;
     }
-    const allItemsSubtotal = totalPrice; 
-    const allItemsShippingFee = allItemsSubtotal >= 30000 ? 0 : 3000;
 
-    // navigate를 사용하여 OrderPage로 데이터 전달
+    const subtotal = cartItems.reduce(
+      (total, item) => total + item.productPrice * item.cartQty,
+      0
+    );
+    const shippingFee = subtotal >= 30000 ? 0 : 3000;
+
     navigate("/order", {
-        state: {
-            orderItems: cartItems, //  전체 장바구니 상품 목록 전달
-            orderSubtotal: allItemsSubtotal,
-            shippingFee: allItemsShippingFee,
-        }
+      state: {
+        orderItems: cartItems,
+        orderSubtotal: subtotal,
+        shippingFee: shippingFee,
+      },
     });
   };
 
