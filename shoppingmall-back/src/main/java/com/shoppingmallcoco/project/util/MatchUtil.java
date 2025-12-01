@@ -31,19 +31,21 @@ public class MatchUtil {
 		
 		
 		/* 피부고민 매칭 (50점) */
-		if (concernA != null && !concernA.isEmpty() 
-				&& concernB != null && !concernB.isEmpty()) {
+		if (concernA != null && concernB != null) {
+			if (!concernA.isEmpty() || !concernB.isEmpty()) {
+				total_weight += SKIN_CONCERN;
 			
-			total_weight += SKIN_CONCERN;
-			
-			Set<String> setA = new HashSet<>(concernA);
-			Set<String> setB = new HashSet<>(concernB);
-			
-			setA.retainAll(setB);
-			int commonCount = setA.size();
-			
-			int maxCount = Math.max(concernA.size(), concernB.size());
-			score += (int) ((double) commonCount /  maxCount * 	SKIN_CONCERN);
+				if (!concernA.isEmpty() && !concernB.isEmpty()) {
+					Set<String> setA = new HashSet<>(concernA);
+					Set<String> setB = new HashSet<>(concernB);
+					
+					setA.retainAll(setB);
+					int commonCount = setA.size();
+					
+					int maxCount = Math.max(concernA.size(), concernB.size());
+					score += (int) ((double) commonCount /  maxCount * 	SKIN_CONCERN);
+				}
+			}
 		}
 		
 		/* 퍼스널컬러 매칭 (20점) */

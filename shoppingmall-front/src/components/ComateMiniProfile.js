@@ -4,7 +4,23 @@ import '../css/ComateProfile.css';
 import sampleImg_profile from '../images/sampleImg_profile.png'; // 임시 프로필 이미지
 
 
-const ComateMiniProfile = ({nickname, skinTags, followers, reviews, onFollowClick, onClick, isFollowing}) => {
+const ComateMiniProfile = ({
+    nickname, 
+    skinTags,  
+    followers, 
+    reviews, 
+    isFollowing,
+    matchingRate,
+    onClick,
+    onFollowClick
+}) => {
+    
+    const getMatchClass = (matchingRate) => {
+        if (80 <= matchingRate) return "high";
+        if (50 <= matchingRate) return "medium";
+        return "low";
+    };
+    
     return (
         <div className="comate_card mini" onClick={onClick}>
             <div className="profile_section mini">
@@ -14,6 +30,9 @@ const ComateMiniProfile = ({nickname, skinTags, followers, reviews, onFollowClic
                     {skinTags?.map((type, index) => (
                         <span key={index}>{type}</span>
                     ))}
+                </div>
+                <div className={`matching_rate mini ${getMatchClass(matchingRate)}`}>
+                    {matchingRate}<span className="percent">%</span>
                 </div>
             </div>
 
