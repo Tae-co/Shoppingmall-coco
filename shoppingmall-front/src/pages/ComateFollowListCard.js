@@ -58,11 +58,15 @@ const ComateFollowListCard = ({
                         </div>
                     </div>
                 </div>
-                <div className="right">
-                    <div className={`matching_rate list ${getMatchClass(matchingRate)}`}>
-                        {matchingRate === -1 ? '??' : matchingRate}<span className="percent">%</span>
-                    </div>
-                </div>
+                    {!isMine && (
+                        <div className="right"> 
+                            <div className="matching_title">궁합도</div>
+                            <div className={`matching_rate list ${getMatchClass(matchingRate)}`}>
+                                {matchingRate === -1 ? '??' : matchingRate}
+                                {matchingRate !== -1 && <span className="percent">%</span>}
+                            </div>
+                        </div>
+                    )}
             </Link>
 
             {/* 버튼은 Link 밖, 항상 오른쪽 끝 */}
