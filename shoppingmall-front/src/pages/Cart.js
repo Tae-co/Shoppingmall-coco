@@ -111,7 +111,7 @@ function Cart() {
       .then(() => {
         setCartItems((prev) => prev.filter((i) => i.cartNo !== cartNo));
         setSelectedItems((prev) => prev.filter((id) => id !== cartNo));
-        
+        window.dispatchEvent(new Event("cartUpdated"));
       })
       .catch((err) => console.error("삭제 실패:", err));
   };
@@ -155,7 +155,14 @@ function Cart() {
       return;
     }
    //  선택된 상품 목록 추출
-  const selectedCartItems = cartItems.filter(item => selectedItems.includes(item.cartNo));
+  const selectedCartItems = cartItems
+  .filter(item => selectedItems.includes(item.cartNo))
+  .map(item => ({ 
+        prdNo: item.prdNo,
+        optionNo: item.optionNo,
+        orderQty: item.cartQty,
+        productName: item.productName,
+    }));
   
     navigate("/order", {
       state: {

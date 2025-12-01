@@ -72,6 +72,20 @@ function PaymentPage() {
     const { name, checked } = e.target;
     setAgreements(prev => ({ ...prev, [name]: checked }));
   };
+  const generateOrderName = (items) => {
+    if (!items || items.length === 0) {
+        return "Coco 뷰티 상품";
+    }
+    
+    const firstItemName = items[0].productName; // 첫 번째 상품의 이름
+    
+    if (items.length === 1) {
+        return firstItemName; // 상품이 1개일 경우 이름만 표시
+    }
+    
+    const remainingCount = items.length - 1; // 나머지 상품 개수
+    return `${firstItemName} 외 ${remainingCount}건`; 
+};
 
 
   // '결제하기' 버튼 클릭 시 최종 유효성 검사 및 '진짜' 결제 처리
@@ -93,7 +107,7 @@ function PaymentPage() {
         pg: "kakaopay", // PG사 (예: 카카오페이)
         pay_method: "card", // 결제 방식
         merchant_uid: `coco_order_${new Date().getTime()}`, // 고유한 주문번호
-        name: "Coco 뷰티 상품 외 1건", // 주문명
+        name: generateOrderName(orderItems), // 주문명
         amount: finalAmount, // ★★★ 실제 최종 결제 금액 ★★★
         buyer_name: `${lastName}${firstName}`, // 구매자 이름
         buyer_tel: phone,                      // 구매자 연락처
@@ -111,9 +125,9 @@ function PaymentPage() {
           const orderData = {
             // 1. 주문 상품 목록 (가장 중요)
               orderItems: orderItems?.map(item => ({ 
-                  prdNo: item.prdNo,       
-                  optionNo: item.optionNo,    
-                  orderQty: item.cartQty, 
+                  prdNo: Number(item.prdNo),       
+                  optionNo: Number(item.optionNo),    
+                  orderQty: Number(item.cartQty), 
               })),
             // 배송지 정보
             recipientName: lastName + firstName, 
