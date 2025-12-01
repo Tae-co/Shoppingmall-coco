@@ -148,15 +148,16 @@ function ProductDetailPage() {
     navigate('/order', { 
       state: { 
         mode: 'direct',
-        items: [{
+        orderItems: [{
           prdNo: product.prdNo,
           prdName: product.prdName,
           optionNo: Number(selectedOption),
           optionName: selectedOpt?.optionName,
-          qty: quantity,
+          cartQty: quantity,
           price: unitPrice,
-          img: product.imageUrls?.[0]
-        }]
+          productImage: product.imageUrls?.[0]
+        }],
+        orderSubtotal: total
       } 
     });
   };

@@ -62,6 +62,9 @@ public class OrderService {
                     .orElseThrow(() -> new RuntimeException("상품 옵션을 찾을 수 없습니다."));
 
             option.removeStock(itemDto.getOrderQty().intValue());
+            
+            // 상품 판매량(salesCount) 증가
+            option.getProduct().addSalesCount(itemDto.getOrderQty().intValue());
 
             long realPrice = option.getProduct().getPrdPrice() + option.getAddPrice();
 
@@ -140,6 +143,9 @@ public class OrderService {
 
         for (OrderItem item : order.getOrderItems()) {
             item.getProductOption().addStock(item.getOrderQty().intValue());
+            
+            // 상품 판매량(salesCount) 감소
+            item.getProduct().removeSalesCount(item.getOrderQty().intValue());
         }
 
         if (order.getPointsUsed() != null && order.getPointsUsed() > 0) {

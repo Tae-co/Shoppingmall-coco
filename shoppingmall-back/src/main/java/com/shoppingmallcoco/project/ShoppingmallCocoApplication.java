@@ -11,5 +11,4 @@ public class ShoppingmallCocoApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ShoppingmallCocoApplication.class, args);
 	}
-	//ㅎㅎ
 }
