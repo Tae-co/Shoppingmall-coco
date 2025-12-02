@@ -1,5 +1,6 @@
 package com.shoppingmallcoco.project.service.comate;
 
+import com.shoppingmallcoco.project.dto.comate.FollowInfoDTO;
 import com.shoppingmallcoco.project.dto.comate.MiniProfileDTO;
 import com.shoppingmallcoco.project.dto.comate.ProfileDTO;
 import com.shoppingmallcoco.project.entity.auth.Member;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -78,13 +80,24 @@ public class ComateService {
     
     // 메인용 - 전체 회원 목록 조회
     public List<MiniProfileDTO> getAllComates(Long currentMemNo) {
-    	List<Member> members = memberRepository.findAll();
+    	
+    	List<Member> members = (currentMemNo == null)
+    			? memberRepository.findAll()
+    			:followRepository.findAllMembersExcluding(currentMemNo);
+    	
+    	// 팔로우 중인 회원번호 한번에 조회-> N+1 방지
+    	Set<Long> followingList = (currentMemNo != null) 
+    			? followRepository.findFollowingInfo(currentMemNo).stream()
+    					.map(FollowInfoDTO::getMemNo)
+    					.collect(Collectors.toSet())
+    			: Set.of();
+    	
     	return members.stream().map(member -> {
-    		
+
     		int followerCount = followRepository.countByFollowing_MemNo(member.getMemNo());
     		int reviewCount = reviewRepository.countByOrderItem_Order_Member_MemNo(member.getMemNo());
-    		
-    		SkinProfile skinProfile = skinRepository.findByMember_MemNo(member.getMemNo()).orElse(null);
+    	
+    		SkinProfile skinProfile = member.getSkin();
         	List<String> skinTags = new ArrayList<>();
         	if (skinProfile != null) {
         		if (skinProfile.getSkinType() != null) skinTags.add(skinProfile.getSkinType());
@@ -97,9 +110,9 @@ public class ComateService {
         	}
     		
     		boolean isFollowing = currentMemNo != null &&
-    							followRepository.existsByFollowerMemNoAndFollowingMemNo(currentMemNo, member.getMemNo());
+    							followingList.contains(member.getMemNo());
     		
-    		int matchRate = (currentMemNo != null)
+    		int matchRate = (currentMemNo != null && !currentMemNo.equals(member.getMemNo()))
        				? matchingService.getUserMatch(currentMemNo, member.getMemNo())
        				: -1;
     		
