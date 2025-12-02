@@ -245,7 +245,12 @@ const Header = () => {
                                         className={({ isActive }) => {
                                             return window.location.pathname.startsWith('/comate') ? 'gnb_link active' : 'gnb_link'
                                         }}>CO-MATE</NavLink></li>
-                                    <li className="gnb_item"><div className="gnb_link">EVENT</div></li>
+                                    <li className="gnb_item"><NavLink
+                                            to="/event"
+                                            className={({ isActive }) =>
+                                                isActive ? 'gnb_link active' : 'gnb_link'}
+                                        >EVENT</NavLink>
+                                    </li>
                                 </ul>
                             </nav>
                         </div>
