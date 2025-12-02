@@ -24,12 +24,17 @@ public class FollowService {
     public List<FollowInfoDTO> getFollowers(Long targetMemNo, Long currentMemNo) {
         List<FollowInfoDTO> list = followRepository.findFollowerInfo(targetMemNo);
         
-        // isFollowing 체크
-        list.forEach(item -> {
-     	   boolean isFollowing = followRepository
-     			   .existsByFollowerMemNoAndFollowingMemNo(currentMemNo, item.getMemNo());
-     	   item.setFollowing(isFollowing);
-        });
+        // isFollowing 체크 (로그인한 경우에만)
+        if (currentMemNo != null) {
+            list.forEach(item -> {
+                boolean isFollowing = followRepository
+                        .existsByFollowerMemNoAndFollowingMemNo(currentMemNo, item.getMemNo());
+                item.setFollowing(isFollowing);
+            });
+        } else {
+            // 로그인하지 않은 경우 모두 false
+            list.forEach(item -> item.setFollowing(false));
+        }
         
         return list;
     }
@@ -38,12 +43,17 @@ public class FollowService {
     public List<FollowInfoDTO> getFollowings(Long targetMemNo, Long currentMemNo) {
        List<FollowInfoDTO> list = followRepository.findFollowingInfo(targetMemNo);
        
-       // isFollowing 체크
-       list.forEach(item -> {
-    	   boolean isFollowing = followRepository
-    			   .existsByFollowerMemNoAndFollowingMemNo(currentMemNo, item.getMemNo());
-    	   item.setFollowing(isFollowing);
-       });
+       // isFollowing 체크 (로그인한 경우에만)
+       if (currentMemNo != null) {
+           list.forEach(item -> {
+               boolean isFollowing = followRepository
+                       .existsByFollowerMemNoAndFollowingMemNo(currentMemNo, item.getMemNo());
+               item.setFollowing(isFollowing);
+           });
+       } else {
+           // 로그인하지 않은 경우 모두 false
+           list.forEach(item -> item.setFollowing(false));
+       }
        
        return list;
     }

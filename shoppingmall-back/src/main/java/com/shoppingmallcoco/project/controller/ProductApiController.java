@@ -47,6 +47,14 @@ public class ProductApiController {
         @RequestParam(value = "page", required = false, defaultValue = "1") int page,
         @RequestParam(value = "size", required = false, defaultValue = "6") int size
     ) {
+        // 입력 검증
+        if (page < 1) page = 1;
+        if (size < 1 || size > 100) size = 6;
+        
+        // 검색어 길이 제한
+        if (q != null && q.length() > 100) {
+            q = q.substring(0, 100);
+        }
         // Service를 호출하여 필터링된 Entity Page 객체 획득
         Page<ProductEntity> productPage = prdService.getProductList(q, skinType, skinConcern,
             personalColor, categoryNo, status, sort, page, size);
@@ -62,6 +70,10 @@ public class ProductApiController {
      */
     @GetMapping("/products/{prdNo}")
     public ProductDetailResponseDTO getProductDetail(@PathVariable(value = "prdNo") Long prdNo) {
+        // 입력 검증
+        if (prdNo == null || prdNo <= 0) {
+            return null;
+        }
 
         // 상품 Entity 조회
         ProductEntity productEntity = prdService.getProductDetail(prdNo);
@@ -89,9 +101,21 @@ public class ProductApiController {
     @GetMapping("/products/{prdNo}/similar-skin-tags")
     public ResponseEntity<SimilarSkinStatsDTO> getSimilarSkinTagStats(
         @PathVariable Long prdNo, @RequestParam("memberNo") Long memberNo) {
+        
+        // 입력 검증
+        if (prdNo == null || prdNo <= 0) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (memberNo == null || memberNo <= 0) {
+            return ResponseEntity.badRequest().build();
+        }
 
-        SimilarSkinStatsDTO result = reviewService.getSimilarSkinStats(prdNo, memberNo);
-        return ResponseEntity.ok(result);
+        try {
+            SimilarSkinStatsDTO result = reviewService.getSimilarSkinStats(prdNo, memberNo);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 

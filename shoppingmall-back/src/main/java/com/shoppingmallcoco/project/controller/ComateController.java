@@ -104,8 +104,21 @@ public class ComateController {
             @PathVariable("targetMemNo") Long targetMemNo,
             HttpServletRequest request) {
     	Long currentMemNo = getCurrentMemNo(request);
-        followService.follow(currentMemNo, targetMemNo);
-        return ResponseEntity.ok("팔로우 완료");
+    	if (currentMemNo == null) {
+    		return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED)
+    				.body("로그인이 필요합니다.");
+    	}
+    	if (targetMemNo == null || targetMemNo <= 0) {
+    		return ResponseEntity.status(org.springframework.http.HttpStatus.BAD_REQUEST)
+    				.body("유효하지 않은 사용자입니다.");
+    	}
+        try {
+        	followService.follow(currentMemNo, targetMemNo);
+        	return ResponseEntity.ok("팔로우 완료");
+        } catch (Exception e) {
+        	return ResponseEntity.status(org.springframework.http.HttpStatus.BAD_REQUEST)
+        			.body(e.getMessage());
+        }
     }
 
     // 언팔로우
@@ -114,8 +127,21 @@ public class ComateController {
             @PathVariable("targetMemNo") Long targetMemNo,
             HttpServletRequest request) {
     	Long currentMemNo = getCurrentMemNo(request);
-        followService.unfollow(currentMemNo, targetMemNo);
-        return ResponseEntity.ok("언팔로우 완료");
+    	if (currentMemNo == null) {
+    		return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED)
+    				.body("로그인이 필요합니다.");
+    	}
+    	if (targetMemNo == null || targetMemNo <= 0) {
+    		return ResponseEntity.status(org.springframework.http.HttpStatus.BAD_REQUEST)
+    				.body("유효하지 않은 사용자입니다.");
+    	}
+        try {
+        	followService.unfollow(currentMemNo, targetMemNo);
+        	return ResponseEntity.ok("언팔로우 완료");
+        } catch (Exception e) {
+        	return ResponseEntity.status(org.springframework.http.HttpStatus.BAD_REQUEST)
+        			.body(e.getMessage());
+        }
     }
     
     // 사용자가 작성한 리뷰 목록

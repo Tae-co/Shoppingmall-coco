@@ -53,18 +53,33 @@ public class MemberController {
     // 아이디 중복 확인
     @GetMapping("/check-id/{memId}")
     public ResponseEntity<Map<String, Object>> checkIdDuplicate(@PathVariable String memId) {
+        // 입력 검증
+        if (memId == null || memId.trim().isEmpty() || memId.length() > 50) {
+            return ResponseEntity.badRequest().body(Map.of("available", false, "message", "유효하지 않은 아이디입니다."));
+        }
         return checkDuplicate(memberService.checkIdDuplicate(memId), "아이디");
     }
 
     // 닉네임 중복 확인
     @GetMapping("/check-nickname/{memNickname}")
     public ResponseEntity<Map<String, Object>> checkNicknameDuplicate(@PathVariable String memNickname) {
+        // 입력 검증
+        if (memNickname == null || memNickname.trim().isEmpty() || memNickname.length() > 100) {
+            return ResponseEntity.badRequest().body(Map.of("available", false, "message", "유효하지 않은 닉네임입니다."));
+        }
         return checkDuplicate(memberService.checkNicknameDuplicate(memNickname), "닉네임");
     }
 
     // 이메일 중복 확인
     @GetMapping("/check-email/{memMail}")
     public ResponseEntity<Map<String, Object>> checkEmailDuplicate(@PathVariable String memMail) {
+        // 입력 검증
+        if (memMail == null || memMail.trim().isEmpty() || memMail.length() > 100) {
+            return ResponseEntity.badRequest().body(Map.of("available", false, "message", "유효하지 않은 이메일입니다."));
+        }
+        if (!memMail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            return ResponseEntity.badRequest().body(Map.of("available", false, "message", "올바른 이메일 형식이 아닙니다."));
+        }
         return checkDuplicate(memberService.checkEmailDuplicate(memMail), "이메일");
     }
 
@@ -354,11 +369,39 @@ public class MemberController {
     @PutMapping("/admin/{memNo}/point")
     public ResponseEntity<?> updatePoint(
             @PathVariable Long memNo,
-            @RequestBody Map<String, Long> body
+            @RequestBody Map<String, Long> body,
+            Authentication authentication
     ) {
+        if (authentication == null || authentication.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "인증이 필요합니다."));
+        }
+        
+        // 관리자 권한 체크
+        try {
+            MemberResponseDto currentMember = memberService.getMemberByMemId(authentication.getName());
+            if (currentMember.getRole() == null ||
+                    (!currentMember.getRole().equals("ADMIN") && !currentMember.getRole().equals("admin"))) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "관리자 권한이 필요합니다."));
+            }
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "인증이 필요합니다."));
+        }
+        
+        if (memNo == null || memNo <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "유효하지 않은 회원 번호입니다."));
+        }
+        
         Long newPoint = body.get("point");
-        memberService.updatePoint(memNo, newPoint);
-        return ResponseEntity.ok("포인트가 수정되었습니다.");
+        if (newPoint == null || newPoint < 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "유효하지 않은 포인트 값입니다."));
+        }
+        
+        try {
+            memberService.updatePoint(memNo, newPoint);
+            return ResponseEntity.ok("포인트가 수정되었습니다.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
+        }
     }
 
 }

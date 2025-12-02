@@ -26,6 +26,14 @@ public class OrderController {
             @RequestBody OrderRequestDto requestDto,
             @AuthenticationPrincipal String memId
     ) {
+        if (memId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        if (requestDto == null || requestDto.getOrderItems() == null || requestDto.getOrderItems().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        
         try {
             Long orderNo = orderService.createOrder(requestDto, memId);
             return ResponseEntity.status(HttpStatus.CREATED).body(orderNo);
@@ -42,6 +50,10 @@ public class OrderController {
     public ResponseEntity<List<OrderResponseDto>> getMyOrderHistory(
             @AuthenticationPrincipal String memId
     ) {
+        if (memId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
         List<OrderResponseDto> orderHistory = orderService.getOrderHistory(memId);
         return ResponseEntity.ok(orderHistory);
     }
@@ -54,6 +66,14 @@ public class OrderController {
             @PathVariable Long orderNo,
             @AuthenticationPrincipal String memId
     ) {
+        if (memId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        if (orderNo == null || orderNo <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 주문 번호입니다.");
+        }
+        
         try {
             orderService.cancelOrder(orderNo, memId);
             return ResponseEntity.ok("주문이 성공적으로 취소되었습니다.");
@@ -68,21 +88,45 @@ public class OrderController {
      * 주문 목록 조회 - 페이지 기반
      */
     @GetMapping("/page")
-    public Page<OrderResponseDto> getOrders(
+    public ResponseEntity<Page<OrderResponseDto>> getOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "all") String period
+            @RequestParam(defaultValue = "all") String period,
+            @AuthenticationPrincipal String memId
     ) {
-        return orderService.getOrders(page, size, period);
+        if (memId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        if (page < 0) page = 0;
+        if (size < 1 || size > 100) size = 10;
+        
+        return ResponseEntity.ok(orderService.getOrders(page, size, period));
     }
 
     /**
      * 주문 상세 조회
      */
     @GetMapping("/{orderNo}")
-    public OrderDetailResponseDto getOrderDetail(
-            @PathVariable Long orderNo
+    public ResponseEntity<OrderDetailResponseDto> getOrderDetail(
+            @PathVariable Long orderNo,
+            @AuthenticationPrincipal String memId
     ) {
-        return orderService.getOrderDetail(orderNo);
+        if (memId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        if (orderNo == null || orderNo <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        
+        try {
+            OrderDetailResponseDto orderDetail = orderService.getOrderDetail(orderNo);
+            return ResponseEntity.ok(orderDetail);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 }

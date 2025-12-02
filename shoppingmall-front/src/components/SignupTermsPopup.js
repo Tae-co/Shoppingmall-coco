@@ -278,3 +278,4 @@ function SignupTermsPopup({ type, onClose }) {
 
 export default SignupTermsPopup;
 
+

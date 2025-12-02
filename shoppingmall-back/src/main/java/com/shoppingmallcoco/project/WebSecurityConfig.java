@@ -60,12 +60,16 @@ public class WebSecurityConfig {
 				// 인증 없이 접근 가능한 리뷰 조회 API (GET만 허용)
 				.requestMatchers(HttpMethod.GET, "/api/reviews/*").permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/products/*/reviews").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/products/*/countReviews/*").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/review/*/check").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/products/*/reviewPages").permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/tags").permitAll()
 				// 로그인된 사용자만 접근할 수 있는 리뷰 관련 API
 				.requestMatchers(HttpMethod.POST, "/api/reviews").authenticated()
 				.requestMatchers(HttpMethod.PUT, "/api/reviews/*").authenticated()
 				.requestMatchers(HttpMethod.DELETE, "/api/reviews/*").authenticated()
 				.requestMatchers(HttpMethod.POST, "/api/reviews/*/like").authenticated()
+				.requestMatchers(HttpMethod.GET, "/api/reviews/*/getOrderItemNo").authenticated()
 				// 로그인된 사용자만 접근할 수 있는 회원 관련 API
 				.requestMatchers(
 					"/api/member/me", 
@@ -76,14 +80,28 @@ public class WebSecurityConfig {
 				).authenticated()
 				// 로그인된 사용자만 접근할 수 있는 장바구니 및 프로필 API
 				.requestMatchers("/api/coco/members/**").authenticated()
+				// 주문 관련 API는 인증 필요
+				.requestMatchers("/api/orders/**").authenticated()
+				// Comate 관련 API - 조회는 공개, 작성/수정/삭제는 인증 필요
+				.requestMatchers(HttpMethod.GET, "/api/comate/**").permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/comate/**").authenticated()
+				.requestMatchers(HttpMethod.DELETE, "/api/comate/**").authenticated()
 				// 관리자만 접근할 수 있는 API
 				.requestMatchers("/api/member/admin/**").authenticated()
-				// 나머지 요청은 모두 허용 (추후 필요 시 제한 추가)
-				.anyRequest().permitAll()
+				.requestMatchers("/api/admin/**").authenticated()
+				// 상품 조회는 공개
+				.requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
+				// 나머지 요청은 인증 필요
+				.anyRequest().authenticated()
 			)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-			// H2 콘솔 등에서 iframe 사용을 허용하기 위해 X-Frame-Options 헤더 비활성화
-			.headers(headerConfig -> headerConfig.frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()));
+			// 보안 헤더 설정
+			.headers(headerConfig -> headerConfig
+				.frameOptions(frameOptionsConfig -> frameOptionsConfig.deny())
+				.contentTypeOptions(contentTypeOptionsConfig -> contentTypeOptionsConfig.disable())
+				.httpStrictTransportSecurity(hstsConfig -> hstsConfig.disable())
+			);
 		return http.build();
 	}
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.shoppingmallcoco.project.dto.auth.MemberResponseDto;
 import com.shoppingmallcoco.project.dto.product.ProductSaveDTO;
 import com.shoppingmallcoco.project.dto.product.ProductDetailResponseDTO;
 import com.shoppingmallcoco.project.entity.product.ProductEntity;
+import com.shoppingmallcoco.project.service.auth.MemberService;
 import com.shoppingmallcoco.project.service.product.AdminProductService;
 
 /**
@@ -33,6 +36,21 @@ public class AdminProductApiController {
 	@Autowired
 	private AdminProductService prdService;
 	
+	@Autowired
+	private MemberService memberService;
+	
+	// 관리자 권한 검증 헬퍼 메서드
+	private void checkAdminRole(Authentication authentication) {
+		if (authentication == null || authentication.getName() == null) {
+			throw new SecurityException("인증이 필요합니다.");
+		}
+		MemberResponseDto currentMember = memberService.getMemberByMemId(authentication.getName());
+		if (currentMember.getRole() == null || 
+				(!currentMember.getRole().equals("ADMIN") && !currentMember.getRole().equals("admin"))) {
+			throw new SecurityException("관리자 권한이 필요합니다.");
+		}
+	}
+	
 	/**
      * API: 관리자 상품 등록
      * [POST] /api/admin/products
@@ -40,8 +58,10 @@ public class AdminProductApiController {
 	@PostMapping(value = "/products", consumes = { "multipart/form-data" })
 	public ResponseEntity<ProductDetailResponseDTO> createProduct(
             @RequestPart(value = "dto") ProductSaveDTO requestDTO,
-            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> files
-    ) throws IOException { 
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> files,
+            Authentication authentication
+    ) throws IOException {
+		checkAdminRole(authentication); 
 		
 		ProductEntity createdProduct = prdService.createProduct(requestDTO, files);
         
@@ -62,8 +82,14 @@ public class AdminProductApiController {
     public ResponseEntity<ProductDetailResponseDTO> updateProduct(
     		@PathVariable(value = "prdNo") Long prdNo,
             @RequestPart(value = "dto") ProductSaveDTO requestDTO,
-            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> files
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> files,
+            Authentication authentication
     ) throws IOException {
+		checkAdminRole(authentication);
+		
+		if (prdNo == null || prdNo <= 0) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
         
         ProductEntity updatedProduct = prdService.updateProduct(prdNo, requestDTO, files);
         
@@ -82,8 +108,15 @@ public class AdminProductApiController {
      */
     @DeleteMapping("/products/{prdNo}")
     public ResponseEntity<String> deleteProduct(
-    		@PathVariable(value = "prdNo") Long prdNo
+    		@PathVariable(value = "prdNo") Long prdNo,
+    		Authentication authentication
     		) {
+		checkAdminRole(authentication);
+		
+		if (prdNo == null || prdNo <= 0) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		
         prdService.deleteProduct(prdNo);
         return new ResponseEntity<>("상품 삭제 성공", HttpStatus.OK);
     }
@@ -93,7 +126,9 @@ public class AdminProductApiController {
      * [GET] /api/admin/stats
      */
     @GetMapping("/stats")
-    public ResponseEntity<Map<String, Long>> getDashboardStats() {
+    public ResponseEntity<Map<String, Long>> getDashboardStats(Authentication authentication) {
+		checkAdminRole(authentication);
+		
         Map<String, Long> stats = prdService.getDashboardStats();
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }

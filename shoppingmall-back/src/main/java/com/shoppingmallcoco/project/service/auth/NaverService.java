@@ -30,6 +30,23 @@ public class NaverService {
     // 네이버 인증 코드로 액세스 토큰 받기
     public String getAccessToken(String code, String state, String redirectUri) {
         try {
+            // 필수 파라미터 검증
+            if (clientId == null || clientId.isEmpty()) {
+                throw new RuntimeException("네이버 클라이언트 ID가 설정되지 않았습니다.");
+            }
+            if (clientSecret == null || clientSecret.isEmpty()) {
+                throw new RuntimeException("네이버 클라이언트 시크릿이 설정되지 않았습니다.");
+            }
+            if (code == null || code.isEmpty()) {
+                throw new RuntimeException("네이버 인증 코드가 없습니다.");
+            }
+            if (state == null || state.isEmpty()) {
+                throw new RuntimeException("네이버 상태값이 없습니다.");
+            }
+            if (redirectUri == null || redirectUri.isEmpty()) {
+                throw new RuntimeException("네이버 리다이렉트 URI가 없습니다.");
+            }
+
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -50,22 +67,42 @@ public class NaverService {
                     String.class
             );
 
-            if (response.getStatusCode().is2xxSuccessful()) {
-                JsonNode jsonNode = objectMapper.readTree(response.getBody());
+            String responseBody = response.getBody();
+            
+            if (response.getStatusCode().is2xxSuccessful() && responseBody != null) {
+                JsonNode jsonNode = objectMapper.readTree(responseBody);
+                
+                // 에러 응답 확인
+                if (jsonNode.has("error")) {
+                    String error = jsonNode.get("error").asText();
+                    String errorDescription = jsonNode.has("error_description") 
+                            ? jsonNode.get("error_description").asText() 
+                            : "알 수 없는 오류";
+                    throw new RuntimeException("네이버 API 오류: " + error + " - " + errorDescription);
+                }
+                
                 if (jsonNode.has("access_token")) {
                     return jsonNode.get("access_token").asText();
+                } else {
+                    throw new RuntimeException("네이버 응답에 액세스 토큰이 없습니다. 응답: " + responseBody);
                 }
+            } else {
+                throw new RuntimeException("네이버 API 호출 실패. 상태 코드: " + response.getStatusCode() + ", 응답: " + responseBody);
             }
-
-            throw new RuntimeException("네이버 액세스 토큰 받기 실패");
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("네이버 API 호출 오류: " + e.getMessage());
+            throw new RuntimeException("네이버 API 호출 오류: " + e.getMessage(), e);
         }
     }
 
     // 네이버 액세스 토큰을 통한 사용자 정보 조회
     public NaverUserInfo getUserInfo(String accessToken) {
         try {
+            if (accessToken == null || accessToken.isEmpty()) {
+                throw new RuntimeException("네이버 액세스 토큰이 없습니다.");
+            }
+
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + accessToken);
             HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -77,8 +114,20 @@ public class NaverService {
                     String.class
             );
 
-            if (response.getStatusCode().is2xxSuccessful()) {
-                JsonNode jsonNode = objectMapper.readTree(response.getBody());
+            String responseBody = response.getBody();
+            
+            if (response.getStatusCode().is2xxSuccessful() && responseBody != null) {
+                JsonNode jsonNode = objectMapper.readTree(responseBody);
+                
+                // 에러 응답 확인
+                if (jsonNode.has("errorCode")) {
+                    String errorCode = jsonNode.get("errorCode").asText();
+                    String errorMessage = jsonNode.has("errorMessage") 
+                            ? jsonNode.get("errorMessage").asText() 
+                            : "알 수 없는 오류";
+                    throw new RuntimeException("네이버 API 오류: " + errorCode + " - " + errorMessage);
+                }
+                
                 JsonNode responseNode = jsonNode.get("response");
 
                 if (responseNode != null) {
@@ -95,12 +144,16 @@ public class NaverService {
                             .name(name)
                             .mobile(mobile)
                             .build();
+                } else {
+                    throw new RuntimeException("네이버 응답에 사용자 정보가 없습니다. 응답: " + responseBody);
                 }
+            } else {
+                throw new RuntimeException("네이버 API 호출 실패. 상태 코드: " + response.getStatusCode() + ", 응답: " + responseBody);
             }
-
-            throw new RuntimeException("네이버 사용자 정보 조회 실패");
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("네이버 API 호출 오류: " + e.getMessage());
+            throw new RuntimeException("네이버 API 호출 오류: " + e.getMessage(), e);
         }
     }
 

@@ -179,6 +179,23 @@ public class AdminProductService {
 	private void saveSingleImage(ProductEntity product, MultipartFile file, int sortOrder) throws IOException {
 		if (file.isEmpty())	return;
 
+		// 파일 타입 검증 (이미지 파일만 허용)
+		String contentType = file.getContentType();
+		if (contentType == null || !contentType.startsWith("image/")) {
+			throw new IllegalArgumentException("이미지 파일만 업로드 가능합니다.");
+		}
+		// 허용된 이미지 타입만 허용
+		List<String> allowedTypes = List.of(
+			"image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"
+		);
+		if (!allowedTypes.contains(contentType.toLowerCase())) {
+			throw new IllegalArgumentException("지원하지 않는 이미지 형식입니다. (JPEG, PNG, GIF, WEBP만 허용)");
+		}
+		// 파일 크기 검증 (10MB 제한)
+		if (file.getSize() > 10 * 1024 * 1024) {
+			throw new IllegalArgumentException("파일 크기는 10MB를 초과할 수 없습니다.");
+		}
+
 		File dir = new File(uploadDir);
 		if (!dir.exists())	dir.mkdirs();
 
