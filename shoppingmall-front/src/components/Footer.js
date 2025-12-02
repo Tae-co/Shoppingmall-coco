@@ -49,17 +49,21 @@ const Footer = () => {
                             <div className="menu_box">
                                 <strong className="menu_title">고객지원</strong>
                                 <ul className="menu_list">
-                                    <li className="menu_item"><div>공지사항</div></li>
+                                    <li className="menu_item" onClick={() => { navigate('/notices'); window.scrollTo(0, 0); }}>
+                                        <div>공지사항</div>
+                                    </li>
                                     <li className="menu_item" onClick={() => handleViewTerms('service')}>
                                         <div>이용약관</div>
                                     </li>
                                     <li className="menu_item" onClick={() => handleViewTerms('privacy')}>
                                         <div>개인정보처리방침</div>
                                     </li>
-                                    <li className="menu_item"><div>배송/반품/교환 안내</div></li>
+                                    <li className="menu_item" onClick={() => handleViewTerms('shipping')}>
+                                        <div>배송/반품/교환 안내</div>
+                                    </li>
                                 </ul>
                             </div>
-                        </div> 
+                        </div>
                         <div className="customer_service">
                             <strong className="service_title">고객센터</strong>
                             <div className="service_time">
