@@ -158,11 +158,9 @@ function Cart() {
   const selectedCartItems = cartItems
   .filter(item => selectedItems.includes(item.cartNo))
   .map(item => ({ 
-        prdNo: item.prdNo,
-        optionNo: item.optionNo,
-        orderQty: item.cartQty,
-        productName: item.productName,
-    }));
+          ...item, // 모든 필드 포함 (PG사 연동 대비)
+          // orderQty: item.cartQty // 필요에 따라 DTO 필드 매핑 추가 가능
+      }));
   
     navigate("/order", {
       state: {

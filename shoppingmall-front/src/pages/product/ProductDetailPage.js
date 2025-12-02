@@ -150,7 +150,7 @@ function ProductDetailPage() {
         mode: 'direct',
         orderItems: [{
           prdNo: product.prdNo,
-          prdName: product.prdName,
+          productName: product.prdName,
           optionNo: Number(selectedOption),
           optionName: selectedOpt?.optionName,
           cartQty: quantity,
