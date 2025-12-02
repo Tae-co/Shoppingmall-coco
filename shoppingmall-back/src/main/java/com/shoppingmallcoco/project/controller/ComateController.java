@@ -25,12 +25,14 @@ import com.shoppingmallcoco.project.dto.comate.MemberSearchDTO;
 import com.shoppingmallcoco.project.dto.comate.MiniProfileDTO;
 import com.shoppingmallcoco.project.dto.comate.MyReviewDTO;
 import com.shoppingmallcoco.project.dto.comate.ProfileDTO;
+import com.shoppingmallcoco.project.dto.comate.RecommendPrdDTO;
 import com.shoppingmallcoco.project.entity.auth.Member;
 import com.shoppingmallcoco.project.repository.auth.MemberRepository;
 import com.shoppingmallcoco.project.service.auth.MemberService;
 import com.shoppingmallcoco.project.service.comate.CM_ReviewService;
 import com.shoppingmallcoco.project.service.comate.ComateService;
 import com.shoppingmallcoco.project.service.comate.FollowService;
+import com.shoppingmallcoco.project.service.comate.RecommendationService;
 import com.shoppingmallcoco.project.util.JwtUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,7 +47,9 @@ public class ComateController {
     private final FollowService followService;
     private final CM_ReviewService reviewService;
     private final MemberService memberService;
+    
     private final MemberRepository memberRepository;
+    private final RecommendationService recommendationService;
     
     private final JwtUtil jwtUtil;
     
@@ -165,5 +169,11 @@ public class ComateController {
     public ResponseEntity<List<MiniProfileDTO>> getAllComates(HttpServletRequest request) {
     	Long currentMemNo = getCurrentMemNo(request);
     	return ResponseEntity.ok(comateService.getAllComates(currentMemNo));
+    }
+    
+    // 추천 상품 조회
+    @GetMapping("/recommend")
+    public List<RecommendPrdDTO> getRecommendation(@RequestParam("memNo") Long memNo) {
+    	return recommendationService.recommendProduct(memNo);
     }
 }
