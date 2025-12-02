@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px;
+    padding: 25px 10px;
     border-bottom: 1px solid #bbb;
     gap: 18px;
 }
@@ -65,4 +65,10 @@
 }
 .right .matching_title {
     text-align: right;
+}
+.skin_types.follow_list {
+    width: 300px;
+    justify-content: initial;
+    /* 클래스 이름 중복-> 다른 css 무효화 */
+    margin-bottom: 0px;
 }
