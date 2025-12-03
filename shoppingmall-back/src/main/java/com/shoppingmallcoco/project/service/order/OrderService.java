@@ -139,8 +139,9 @@ public class OrderService {
             throw new RuntimeException("권한 없음");
         }
 
-        if ("SHIPPED".equals(order.getStatus()))
-            throw new RuntimeException("취소 불가");
+        if (!"PAID".equals(order.getStatus()) && !"PENDING".equals(order.getStatus())) {
+            throw new RuntimeException("현재 상태[" + order.getStatus() + "]는 취소할 수 없습니다. (PAID 또는 PENDING 상태에서만 가능)");
+        }
 
         for (OrderItem item : order.getOrderItems()) {
             item.getProductOption().addStock(item.getOrderQty().intValue());

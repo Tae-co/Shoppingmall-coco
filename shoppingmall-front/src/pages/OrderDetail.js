@@ -36,12 +36,36 @@ function OrderDetail() {
   const originalSubtotal = order.items
     .reduce((total, item) => total + (item.originalPrice || item.price || 0) * (item.qty || 1), 0);
 
-  // 2. 백엔드에서 계산해서 보내준 배송비와 사용 포인트
+  // 백엔드에서 계산해서 보내준 배송비와 사용 포인트
   const shippingFee = order.shippingFee || 0;
   const pointsUsed = order.pointsUsed || 0;
 
-  // 3. 최종 결제 금액 (검증용 계산: 상품총액 + 배송비 - 포인트)
+  // 최종 결제 금액 (검증용 계산: 상품총액 + 배송비 - 포인트)
   const finalPaymentAmount = originalSubtotal + shippingFee - pointsUsed;
+
+  // 주문 취소 핸들러
+  const handleCancelOrder = async () => {
+    if (window.confirm("정말로 주문을 취소하시겠습니까?")) {
+      try {
+        await axios.post(
+          `http://localhost:8080/api/orders/${orderNo}/cancel`, // 백엔드 API 호출
+          null,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        alert("주문이 취소되었습니다.");
+        // 취소 후 상태 변경을 반영하기 위해 페이지 새로고침
+        window.location.reload();
+      } catch (error) {
+        const errorMessage = error.response?.data || "취소할 수 없는 상태이거나 오류가 발생했습니다.";
+        alert(errorMessage);
+      }
+    }
+  };
+
 
   return (
     <div className="order-detail-container">
@@ -145,6 +169,16 @@ function OrderDetail() {
       <button className="list-btn" onClick={() => navigate("/order-history")}>
         목록
       </button>
+
+      {/*  주문 취소 버튼 (PAID 또는 PENDING 상태일 때만 표시)*/}
+      {(order.status === "PAID" || order.status === "PENDING") && (
+        <button
+          className="list-btn cancel-btn" // 'cancel-btn' 클래스는 빨간색 스타일링용
+          onClick={handleCancelOrder}
+        >
+          주문 취소
+        </button>
+      )}
 
     </div>
   );
