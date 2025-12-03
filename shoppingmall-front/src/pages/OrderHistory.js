@@ -137,8 +137,8 @@ function OrderHistory() {
 
           {/* 상품 목록 */}
           <div className="order-items">
-            {order.items.map((item) => (
-              <div key={item.orderItemNo} className="order-item">
+            {order.items.map((item, idx) => (
+                 <div key={idx} className="order-item">
 
                 <img
                   src={item.imageUrl}

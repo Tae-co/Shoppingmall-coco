@@ -77,8 +77,8 @@ return (
     <div className="section-box">
       <h3>주문 상품 {order.items.length}개</h3>
 
-      {order.items.map((item) => (
-        <div key={item.orderItemNo} className="product-card">
+       {order.items.map((item, idx) => (
+           <div key={idx} className="product-card">
           <img src={item.imageUrl} alt="" className="product-img"/>
           <div className="product-info">
             <p className="product-name">{item.productName}</p>
