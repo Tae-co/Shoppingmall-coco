@@ -23,6 +23,7 @@ import com.shoppingmallcoco.project.repository.comate.FollowRepository;
 import com.shoppingmallcoco.project.repository.mypage.SkinRepository;
 import com.shoppingmallcoco.project.repository.order.OrderRepository;
 import com.shoppingmallcoco.project.repository.product.ProductRepository;
+import com.shoppingmallcoco.project.repository.review.LikeRepository;
 import com.shoppingmallcoco.project.repository.review.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,8 @@ public class RecommendationService {
     private final SkinRepository skinRepository;
     private final ProductRepository productRepository;
     private final ReviewRepository reviewRepository;
+    private final LikeRepository likeRepository;
+    
     private final MatchingService matchingService;
     
     private static final int HIGH_MATCH = 70;
@@ -167,18 +170,18 @@ public class RecommendationService {
     	
     	// 1 팔로우한 사람의 리뷰
     	List<Review> followReviews = getReviewsFromFollowing(loginUserNo);
-    	addReview(result, followReviews);
+    	addReview(loginUserNo, result, followReviews);
     	
     	// 2 2개 미만인 경우-> 매칭률 높은 사용자 리뷰 추가
     	if (result.size() < RANDOM_REVIEW) {
     		List<Review> matchedReviews = getReviewsFromMatchedUsers(loginUserNo);
-    		addReview(result, matchedReviews);
+    		addReview(loginUserNo, result, matchedReviews);
     	}
     	
     	// 3 그래도 부족한 경우-> 최근 등록 리뷰
 		if (result.size() < RANDOM_REVIEW) {
 			List<Review> recentReviews = reviewRepository.findRecentReviews(PageRequest.of(0, 10));
-		    addReview(result, recentReviews);
+		    addReview(loginUserNo, result, recentReviews);
     	}
 		
 		return result.stream().limit(RANDOM_REVIEW).collect(Collectors.toList());
@@ -227,13 +230,20 @@ public class RecommendationService {
     }
     
     /* 리뷰 리스트에 추가 */
-    private void addReview(List<RecommendReviewDTO> result, List<Review> reviews) {
+    private void addReview(Long loginUserNo, List<RecommendReviewDTO> result, List<Review> reviews) {
         for (Review r : reviews) {
             if (result.size() >= RANDOM_REVIEW) break;
 
             boolean exists = result.stream()
                     .anyMatch(dto -> dto.getReviewNo().equals(r.getReviewNo()));
+            
+            List<String> tags = r.getReviewTagMaps().stream()
+					.map(map -> map.getTag().getTagName())
+					.toList();
 
+            int likeCount = likeRepository.countByReview_ReviewNo(r.getReviewNo());
+            boolean likedByLoginUser = likeRepository.existsByMember_MemNoAndReview_ReviewNo(loginUserNo, r.getReviewNo());
+        
             if (!exists) {
                 result.add(RecommendReviewDTO.builder()
                         .reviewNo(r.getReviewNo())
@@ -243,6 +253,9 @@ public class RecommendationService {
                         .authorNo(r.getOrderItem().getOrder().getMember().getMemNo())
                         .authorNickname(r.getOrderItem().getOrder().getMember().getMemNickname())
                         .rating(r.getRating())
+                        .tags(tags)
+                        .likedByLoginUser(likedByLoginUser)
+                        .likeCount(likeCount)
                         .content(r.getContent())
                         .createdAt(r.getCreatedAt())
                         .build()

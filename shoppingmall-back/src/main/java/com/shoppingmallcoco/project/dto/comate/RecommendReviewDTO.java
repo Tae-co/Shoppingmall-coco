@@ -24,6 +24,10 @@ public class RecommendReviewDTO {
     
     private Integer rating;
     private String content;
+    private List<String> tags;
     private LocalDateTime createdAt;
+    
+    private boolean likedByLoginUser;
+    private int likeCount;
     
 }
