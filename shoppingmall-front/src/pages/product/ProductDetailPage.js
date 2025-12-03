@@ -72,6 +72,19 @@ function ProductDetailPage() {
     }
   }, [toastMessage]);
 
+  // 페이지 타이틀 동적 변경
+  useEffect(() => {
+    if (product) {
+      // 상품 정보가 로드되면 탭 제목을 "상품명 | 사이트명"으로 변경
+      document.title = `${product.prdName} | COCO`;
+    }
+
+    // cleanup: 페이지를 나갈 때 원래 제목으로 복구
+    return () => {
+      document.title = 'COCO'; 
+    };
+  }, [product]);
+
   const handleBack = () => {
     navigate(-1);
   };
