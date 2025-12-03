@@ -259,3 +259,12 @@
   font-weight: 600;
   color: #333;
 }
+
+/* Pagination 줄임표 스타일 */
+.page-ellipsis {
+  padding: 0 8px;
+  color: #888;
+  font-weight: bold;
+  user-select: none;
+  align-self: center; /* 세로 중앙 정렬 */
+}
