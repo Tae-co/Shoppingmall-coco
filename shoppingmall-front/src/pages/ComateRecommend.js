@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import '../css/RecommendCard.css';
 
-import ComateReviewCard from './ComateReviewCard';
+import RecommendUserCard from './RecommendUserCard';
 import RecommendPrdCard from './RecommendPrdCard';
 import { getRecommendation } from '../utils/comate_api';
 
@@ -38,7 +38,11 @@ const ComateRecommend = ({ loginUserNo }) => {
                     <div className="recommend_title">추천 CO-MATE</div>
                     <div className="recommend_sub">CO-MATE 를 팔로우</div>
                 </div>
-                <div></div>
+                <div className="recommend_grid_4">
+                {recommendData?.users?.map((user) => (
+                    <RecommendUserCard key={user.memNo} {...user} />
+                ))} 
+                </div>
             </section>
             <section>
                 <div>
@@ -63,8 +67,8 @@ const ComateRecommend = ({ loginUserNo }) => {
                     <div className="recommend_title">이런 상품은 어떠세요?</div>
                     <div className="recommend_sub">팔로우하는 CO-MATE 가 구매한 상품이에요</div>
                 </div>
-                <div className="recommend_prd_grid">
-                {recommendData?.products?.map((product, index) => (
+                <div className="recommend_grid_4">
+                {recommendData?.products?.map((product) => (
                     <RecommendPrdCard key={product.productNo} {...product} />
                 ))} 
                 </div>
