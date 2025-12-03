@@ -108,6 +108,15 @@ public class MemberService {
     }
 
 
+    // 로그인 타입 판별
+    private String getLoginType(String memId) {
+        if (memId == null) return "일반";
+        if (memId.startsWith("KAKAO_")) return "카카오";
+        if (memId.startsWith("NAVER_")) return "네이버";
+        if (memId.startsWith("GOOGLE_")) return "구글";
+        return "일반";
+    }
+
     // Member Entity를 ResponseDto로 변환
     private MemberResponseDto toResponseDto(Member member) {
         return MemberResponseDto.builder()
@@ -123,6 +132,7 @@ public class MemberService {
                 .memJoindate(member.getMemJoindate())
                 .role(member.getRole() != null ? member.getRole().name() : "USER")
                 .point(member.getPoint() != null ? member.getPoint() : 0L)
+                .loginType(getLoginType(member.getMemId()))
                 .build();
     }
 
@@ -421,10 +431,28 @@ public class MemberService {
         long adminCount = memberRepository.countByRole(Member.Role.ADMIN);
         long userCount = memberRepository.countByRole(Member.Role.USER);
         
+        // 소셜 로그인 통계
+        long kakaoCount = memberRepository.findAll().stream()
+                .filter(m -> m.getMemId() != null && m.getMemId().startsWith("KAKAO_"))
+                .count();
+        long naverCount = memberRepository.findAll().stream()
+                .filter(m -> m.getMemId() != null && m.getMemId().startsWith("NAVER_"))
+                .count();
+        long googleCount = memberRepository.findAll().stream()
+                .filter(m -> m.getMemId() != null && m.getMemId().startsWith("GOOGLE_"))
+                .count();
+        long socialCount = kakaoCount + naverCount + googleCount;
+        long normalCount = totalMembers - socialCount;
+        
         Map<String, Long> stats = new HashMap<>();
         stats.put("totalMembers", totalMembers);
         stats.put("adminCount", adminCount);
         stats.put("userCount", userCount);
+        stats.put("normalCount", normalCount);
+        stats.put("socialCount", socialCount);
+        stats.put("kakaoCount", kakaoCount);
+        stats.put("naverCount", naverCount);
+        stats.put("googleCount", googleCount);
         response.put("stats", stats);
         
         return response;
