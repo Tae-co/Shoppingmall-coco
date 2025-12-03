@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
-import { useNavigate,useLocation } from 'react-router-dom'; 
-import '../../css/OrderPage.css'; 
-import { useOrder } from '../OrderContext'; 
-import axios from 'axios'; 
+import { useNavigate, useLocation } from 'react-router-dom';
+import '../../css/OrderPage.css';
+import { useOrder } from '../OrderContext';
+import axios from 'axios';
 
 // 주문자가 배송 정보를 입력하는 페이지 컴포넌트 (주문 프로세스 2단계)
 function OrderPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // 전역 주문 상태(OrderContext)에서 배송지 정보 state와 계산된 값을 가져옵니다.
   const {
     lastName, setLastName,
@@ -18,30 +18,54 @@ function OrderPage() {
     address, setAddress,
     addressDetail, setAddressDetail,
     deliveryMessage, setDeliveryMessage,
-    shippingFee, 
+    shippingFee,
     orderSubtotal,  // 상품 합계 금액 (배송비 계산에 사용)
     setOrderSubtotal, // 상품 합계 금액
     setShippingFee,   // 배송비
-    setOrderItems     // 주문 상품 목록
+    setOrderItems,     // 주문 상품 목록
+    setPointsToUse
   } = useOrder();
-  
+
+  //  페이지 진입 시 이전에 입력했던 배송지 및 포인트 정보 초기화
+  useEffect(() => {
+    setLastName('');
+    setFirstName('');
+    setPhone('');
+    setPostcode('');
+    setAddress('');
+    setAddressDetail('');
+    setDeliveryMessage('');
+
+    // 결제 페이지에서 입력했던 포인트도 초기화
+    if (setPointsToUse) setPointsToUse(0);
+  }, [
+    setLastName, 
+    setFirstName, 
+    setPhone, 
+    setPostcode, 
+    setAddress, 
+    setAddressDetail, 
+    setDeliveryMessage, 
+    setPointsToUse
+  ]); // 빈 배열: 컴포넌트가 처음 나타날 때 한 번만 실행
+
   //  장바구니 데이터 수신 및 Context 저장 
-useEffect(() => {
-  if (location.state) {
-    const { orderItems, orderSubtotal, shippingFee } = location.state;
-    
-    if (orderItems && setOrderItems) {
-      setOrderItems(orderItems);
+  useEffect(() => {
+    if (location.state) {
+      const { orderItems, orderSubtotal, shippingFee } = location.state;
+
+      if (orderItems && setOrderItems) {
+        setOrderItems(orderItems);
+      }
+      if (orderSubtotal && setOrderSubtotal) {
+        setOrderSubtotal(orderSubtotal);
+      }
+      if (shippingFee && setShippingFee) {
+        setShippingFee(shippingFee);
+      }
     }
-    if (orderSubtotal && setOrderSubtotal) {
-      setOrderSubtotal(orderSubtotal);
-    }
-    if (shippingFee && setShippingFee) {
-      setShippingFee(shippingFee);
-    }
-  }
-  
-}, [location.state, setOrderItems, setOrderSubtotal, setShippingFee]);
+
+  }, [location.state, setOrderItems, setOrderSubtotal, setShippingFee]);
 
   // Daum Postcode API 스크립트 로드 여부 확인
   useEffect(() => {
@@ -51,29 +75,29 @@ useEffect(() => {
     }
   }, []); // 컴포넌트 마운트 시 한 번만 실행
 
-  
+
   // 주소 검색 완료 시 우편번호와 주소를 Context state에 설정하는 핸들러
   const handleAddressSelect = (selectedPostcode, selectedAddress) => {
     setPostcode(selectedPostcode);
     setAddress(selectedAddress);
   };
-  
+
   // Daum Postcode API 팝업을 띄우는 함수
   const handleOpenPopup = () => {
     if (window.daum && window.daum.Postcode) {
       new window.daum.Postcode({
-        oncomplete: function(data) {
+        oncomplete: function (data) {
           handleAddressSelect(data.zonecode, data.address);
         }
-      }).open(); 
+      }).open();
     } else {
       alert("주소 검색 API를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
     }
   };
 
-  
+
   const handleLoadMyInfo = async () => {
-    
+
     // 1. 로컬 스토리지에서 토큰 확인
     const token = localStorage.getItem('token');//나중에 수정해야 할 수도
     if (!token) {
@@ -95,23 +119,23 @@ useEffect(() => {
       console.log("불러온 회원 정보:", member);
 
       // 3. 받아온 정보로 입력창 채우기 (Context 상태 업데이트)
-      
+
       // 이름 처리: DB에는 전체 이름(memName)만 있으므로, 임의로 성/이름을 나눕니다.
       if (member.memName && member.memName.length > 1) {
-          setLastName(member.memName.substring(0, 1)); // 첫 글자를 성으로
-          setFirstName(member.memName.substring(1));   // 나머지를 이름으로
+        setLastName(member.memName.substring(0, 1)); // 첫 글자를 성으로
+        setFirstName(member.memName.substring(1));   // 나머지를 이름으로
       } else {
-          setLastName(member.memName || "");
-          setFirstName("");
+        setLastName(member.memName || "");
+        setFirstName("");
       }
-      
+
       // 나머지 정보 매핑 (값이 없을 경우 빈 문자열 처리)
       setPhone(member.memHp || "");
       setPostcode(member.memZipcode || "");
       setAddress(member.memAddress1 || "");
       setAddressDetail(member.memAddress2 || "");
 
-      
+
 
     } catch (error) {
       console.error("내 정보 불러오기 실패:", error);
@@ -119,7 +143,7 @@ useEffect(() => {
     }
   };
 
-  
+
   // 결제 페이지로 이동하기 전 필수 폼 필드 유효성 검사
   const handleToPayment = () => {
     if (!lastName || !firstName || !phone || !postcode || !address || !addressDetail) {
@@ -136,20 +160,20 @@ useEffect(() => {
 
   return (
     <div className="order-page">
-      
+
 
       <h1>주문하기</h1>
 
       <div className="order-content-wrapper">
         {/* --- 2. 왼쪽: 배송 정보 입력 폼 --- */}
         <div className="shipping-details">
-          
+
           {/* 섹션 제목과 내 정보 불러오기 버튼을 포함하는 헤더 */}
           <div className="section-header">
             <h2>배송 정보</h2>
-            <button 
-              type="button" 
-              className="btn-load-info" 
+            <button
+              type="button"
+              className="btn-load-info"
               onClick={handleLoadMyInfo} // [연결] 수정된 핸들러 실행
             >
               내 정보 불러오기
@@ -161,26 +185,26 @@ useEffect(() => {
             <div className="form-group-half">
               <div className="form-group">
                 <label htmlFor="last-name">성</label>
-                <input type="text" id="last-name" placeholder="김" 
+                <input type="text" id="last-name" placeholder="김"
                   value={lastName} onChange={(e) => setLastName(e.target.value)} />
               </div>
               <div className="form-group">
                 <label htmlFor="first-name">이름</label>
-                <input type="text" id="first-name" placeholder="민수" 
+                <input type="text" id="first-name" placeholder="민수"
                   value={firstName} onChange={(e) => setFirstName(e.target.value)} />
               </div>
             </div>
             {/* 휴대폰 번호 입력 그룹 */}
             <div className="form-group">
               <label htmlFor="phone">휴대폰 번호</label>
-              <input type="text" id="phone" placeholder="010-1234-5678" 
+              <input type="text" id="phone" placeholder="010-1234-5678"
                 value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
             {/* 우편번호 및 주소 검색 버튼 그룹 */}
             <div className="form-group form-group-with-button">
               <div className="form-group">
                 <label htmlFor="postcode">우편번호</label>
-                <input type="text" id="postcode" placeholder="12345" 
+                <input type="text" id="postcode" placeholder="12345"
                   value={postcode} readOnly /> {/* 주소 검색으로만 입력 가능 */}
               </div>
               <button type="button" className="btn-outline" onClick={handleOpenPopup}>
@@ -190,19 +214,19 @@ useEffect(() => {
             {/* 주소 입력 그룹 (검색 결과) */}
             <div className="form-group">
               <label htmlFor="address">주소</label>
-              <input type="text" id="address" placeholder="서울시 강남구 테헤란로 123" 
+              <input type="text" id="address" placeholder="서울시 강남구 테헤란로 123"
                 value={address} readOnly /> {/* 주소 검색으로만 입력 가능 */}
             </div>
             {/* 상세 주소 입력 그룹 */}
             <div className="form-group">
               <label htmlFor="address-detail">상세 주소</label>
-              <input type="text" id="address-detail" placeholder="456호" 
+              <input type="text" id="address-detail" placeholder="456호"
                 value={addressDetail} onChange={(e) => setAddressDetail(e.target.value)} />
             </div>
             {/* 배송 메시지 입력 그룹 */}
             <div className="form-group">
               <label htmlFor="delivery-message">배송 메시지</label>
-              <input type="text" id="delivery-message" placeholder="배송 시 요청사항을 입력해주세요" 
+              <input type="text" id="delivery-message" placeholder="배송 시 요청사항을 입력해주세요"
                 value={deliveryMessage} onChange={(e) => setDeliveryMessage(e.target.value)} />
             </div>
           </form>
