@@ -37,7 +37,16 @@ function ProductDetailPage() {
       setIsLoading(true);
       try {
         const response = await axios.get(`http://localhost:8080/api/products/${productId}`);
-        setProduct(response.data);
+        const data = response.data;
+
+        // 판매 중지 상품 접근 차단 로직
+        if (data.status === 'STOP' || data.status === '판매중지') {
+            alert("판매가 중지된 상품입니다.");
+            navigate('/product', { replace: true }); // 상품 목록으로 이동
+            return; // 이후 로직 실행 중단
+        }
+
+        setProduct(data);
       } catch (error) {
         console.error(error);
         setProduct(null);
@@ -46,7 +55,7 @@ function ProductDetailPage() {
       }
     };
     fetchProductDetail();
-  }, [productId]);
+  }, [productId, navigate]);
 
   // 토스트 메시지 타이머
   useEffect(() => {
