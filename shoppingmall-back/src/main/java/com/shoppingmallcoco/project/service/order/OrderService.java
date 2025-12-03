@@ -62,7 +62,7 @@ public class OrderService {
                     .orElseThrow(() -> new RuntimeException("상품 옵션을 찾을 수 없습니다."));
 
             option.removeStock(itemDto.getOrderQty().intValue());
-            
+
             // 상품 판매량(salesCount) 증가
             option.getProduct().addSalesCount(itemDto.getOrderQty().intValue());
 
@@ -82,7 +82,8 @@ public class OrderService {
 
         long pointsToUse = requestDto.getPointsUsed();
         if (pointsToUse > 0) {
-            if (member.getPoint() < pointsToUse) throw new RuntimeException("포인트 부족");
+            if (member.getPoint() < pointsToUse)
+                throw new RuntimeException("포인트 부족");
             if (pointsToUse > (totalOrderPrice + shippingFee))
                 throw new RuntimeException("결제 금액 초과 사용 불가");
             member.usePoints(pointsToUse);
@@ -143,7 +144,7 @@ public class OrderService {
 
         for (OrderItem item : order.getOrderItems()) {
             item.getProductOption().addStock(item.getOrderQty().intValue());
-            
+
             // 상품 판매량(salesCount) 감소
             item.getProduct().removeSalesCount(item.getOrderQty().intValue());
         }
@@ -187,6 +188,13 @@ public class OrderService {
         Order order = orderRepository.findDetailByOrderNo(orderNo, memNo)
                 .orElseThrow(() -> new SecurityException("주문 조회 권한 없음"));
 
+        // DB에 저장된 개별 상품 가격(orderPrice) * 수량(orderQty)의 총합 계산 (원가 기준)
+        long totalItemPrice = order.getOrderItems().stream()
+                .mapToLong(item -> item.getOrderPrice() * item.getOrderQty())
+                .sum();
+
+        long calculatedShippingFee = (totalItemPrice >= FREE_SHIPPING_THRESHOLD) ? 0 : SHIPPING_FEE;
+
         List<OrderItemDto> items = order.getOrderItems().stream()
                 .map(OrderItemDto::fromEntity)
                 .toList();
@@ -202,6 +210,7 @@ public class OrderService {
                 .orderAddress1(order.getOrderAddress1())
                 .orderAddress2(order.getOrderAddress2())
                 .pointsUsed(order.getPointsUsed())
+                .shippingFee(calculatedShippingFee)
                 .items(items)
                 .build();
     }
