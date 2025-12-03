@@ -6,6 +6,7 @@ import com.shoppingmallcoco.project.entity.auth.Member;
 import com.shoppingmallcoco.project.entity.mypage.SkinProfile;
 import com.shoppingmallcoco.project.repository.auth.MemberRepository;
 import com.shoppingmallcoco.project.repository.mypage.SkinRepository;
+import com.shoppingmallcoco.project.service.comate.MatchingService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ public class ProfileService {
 
     private final MemberRepository memberRepository;
     private final SkinRepository skinRepository;
+    
+    private final MatchingService matchingService;
 
     @Transactional
     public void updateProfile(Long memNo, SkinProfileRequestDto dto) {
@@ -42,6 +45,8 @@ public class ProfileService {
         skin.setPersonalColor(dto.getPersonalColor());
 
         skinRepository.save(skin);
+        
+        matchingService.invalidateCacheForUser(memNo);
     }
 
     @Transactional(readOnly = true)

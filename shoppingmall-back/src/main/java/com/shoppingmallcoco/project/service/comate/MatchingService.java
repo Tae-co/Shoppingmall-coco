@@ -75,6 +75,11 @@ public class MatchingService {
 		
 	}
 	
+	/* 특정 사용자와 관련된 캐시 무효화 (피부 프로필 업데이트) */
+	public void invalidateCacheForUser(Long memNo) {
+		matchingCache.keySet().removeIf(key -> key.startsWith(memNo + "-") || key.endsWith("-" + memNo));
+	}
+	
 	/* 매칭 결과 캐시 초기화 */
 	public void clearCache() {
 		matchingCache.clear();
