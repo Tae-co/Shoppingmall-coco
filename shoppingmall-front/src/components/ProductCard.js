@@ -25,7 +25,15 @@ const ProductCard = ({ name, productSkinType, price, image, star_avg, reviewCoun
             )}
 
             {/* 상품 이미지 */}
-                <img src={image} alt="product_img" className="product_image" />
+                <img 
+                    src={image || '/prd_placeholder.png'} // 이미지가 null이면 기본 이미지
+                    alt="product_img" 
+                    className="product_image"
+                    onError={(e) => {
+                        e.target.onerror = null; // 무한 루프 방지
+                        e.target.src = '/prd_placeholder.png'; // 이미지 로드 실패 시 대체 이미지
+                    }}
+                />
             </div>
 
             {/* 상품 정보 */}

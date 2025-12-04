@@ -244,10 +244,13 @@ function AdminProductList() {
                     <td>{product.prdNo}</td>
                     <td>
                       <img
-                        src={product.imageUrl || '/placeholder.png'}
+                        src={product.imageUrl || '/prd_placeholder.png'}
                         alt="상품"
                         className="product-thumb"
-                        onError={(e) => e.target.src = '/placeholder.png'}
+                        onError={(e) => {
+                          e.target.onerror = null; // 무한 반복 방지
+                          e.target.src = '/prd_placeholder.png';
+                        }}
                       />
                     </td>
                     <td className="fw-bold">{product.prdName}</td>
