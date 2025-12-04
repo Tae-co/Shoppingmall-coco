@@ -36,9 +36,9 @@ const TAG_OPTIONS = {
     { id: 'elasticity', label: '탄력' }, { id: 'pores', label: '모공' }
   ],
   personalColors: [
-    { id: 'spring', label: '봄 웜톤' }, 
-    { id: 'summer', label: '여름 쿨톤' }, 
-    { id: 'autumn', label: '가을 웜톤' }, 
+    { id: 'spring', label: '봄 웜톤' },
+    { id: 'summer', label: '여름 쿨톤' },
+    { id: 'autumn', label: '가을 웜톤' },
     { id: 'winter', label: '겨울 쿨톤' }
   ]
 };
@@ -66,8 +66,8 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
   // 초기 데이터 로드 시 State 동기화
   useEffect(() => {
     if (initialData) {
-      setFormData(prev => ({ 
-        ...prev, 
+      setFormData(prev => ({
+        ...prev,
         ...initialData,
         skinType: initialData.skinTypes || [],
         skinConcern: initialData.skinConcerns || [],
@@ -155,8 +155,8 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
     e.preventDefault();
 
     // 기존 이미지 중 유지된 것과 새 이미지가 들어갈 자리를 마킹("NEW_FILE")하여 순서 리스트 생성
-    const imageOrderList = imageList.map(img => 
-        img.type === 'OLD' ? img.url : "NEW_FILE"
+    const imageOrderList = imageList.map(img =>
+      img.type === 'OLD' ? img.url : "NEW_FILE"
     );
 
     // 실제 업로드할 새 파일 객체만 추출
@@ -165,7 +165,7 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
       .map(img => img.file);
 
     const finalData = { ...formData, keptImageUrls: imageOrderList };
-    
+
     onSubmit(finalData, options, newFiles);
   };
 
@@ -270,19 +270,25 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
             {imageList.length > 0 ? (
               <div className="image-upload-container">
                 {imageList.map((img, idx) => (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     className={`image-preview-card ${idx === 0 ? 'is-main' : ''}`}
                     onClick={() => setAsMainImage(idx)}
                     title="클릭하여 대표 이미지로 설정"
                   >
-                    <img src={img.url} alt={`img-${idx}`} />
+                    <img
+                      src={img.url}
+                      alt={`img-${idx}`}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/prd_placeholder.png';
+                      }} />
                     {idx === 0 && <div className="main-badge">대표</div>}
                     {img.type === 'NEW' && <div className="new-badge">NEW</div>} {/* 새 이미지 표시 */}
-                    <button 
-                        type="button" 
-                        className="btn-remove-image" 
-                        onClick={(e) => { e.stopPropagation(); removeImage(idx); }}
+                    <button
+                      type="button"
+                      className="btn-remove-image"
+                      onClick={(e) => { e.stopPropagation(); removeImage(idx); }}
                     >✕</button>
                   </div>
                 ))}
@@ -291,12 +297,12 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
               <div className="no-image">등록된 이미지가 없습니다</div>
             )}
 
-            <input 
-              type="file" 
-              accept="image/*" 
+            <input
+              type="file"
+              accept="image/*"
               multiple /* 다중 선택 허용 */
-              onChange={handleFileChange} 
-              style={{ fontSize: '14px' }} 
+              onChange={handleFileChange}
+              style={{ fontSize: '14px' }}
             />
             <p className="image-help-text">
               * 이미지를 클릭하면 <strong>대표 이미지</strong>로 설정됩니다.<br />
