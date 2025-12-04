@@ -8,7 +8,7 @@ plugins {
 group = 'com.ShoppingMall-coco'
 version = '0.0.1-SNAPSHOT'
 description = 'shoppingmall-coco'
-
+""
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
