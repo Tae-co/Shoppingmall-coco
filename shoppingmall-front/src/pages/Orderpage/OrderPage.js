@@ -179,31 +179,35 @@ function OrderPage() {
               내 정보 불러오기
             </button>
           </div>
+           {/*  필수 입력 안내 문구 */}
+          <p className="required-note">
+            * 표시는 필수 입력 사항입니다.
+          </p>
 
           <form className="shipping-form">
             {/* 성/이름 입력 그룹 */}
             <div className="form-group-half">
               <div className="form-group">
-                <label htmlFor="last-name">성</label>
+                <label htmlFor="last-name">성 *</label>
                 <input type="text" id="last-name" placeholder="김"
                   value={lastName} onChange={(e) => setLastName(e.target.value)} />
               </div>
               <div className="form-group">
-                <label htmlFor="first-name">이름</label>
+                <label htmlFor="first-name">이름 *</label>
                 <input type="text" id="first-name" placeholder="민수"
                   value={firstName} onChange={(e) => setFirstName(e.target.value)} />
               </div>
             </div>
             {/* 휴대폰 번호 입력 그룹 */}
             <div className="form-group">
-              <label htmlFor="phone">휴대폰 번호</label>
+              <label htmlFor="phone">휴대폰 번호 *</label>
               <input type="text" id="phone" placeholder="010-1234-5678"
                 value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
             {/* 우편번호 및 주소 검색 버튼 그룹 */}
             <div className="form-group form-group-with-button">
               <div className="form-group">
-                <label htmlFor="postcode">우편번호</label>
+                <label htmlFor="postcode">우편번호 *</label>
                 <input type="text" id="postcode" placeholder="12345"
                   value={postcode} readOnly /> {/* 주소 검색으로만 입력 가능 */}
               </div>
@@ -213,13 +217,13 @@ function OrderPage() {
             </div>
             {/* 주소 입력 그룹 (검색 결과) */}
             <div className="form-group">
-              <label htmlFor="address">주소</label>
+              <label htmlFor="address">주소 *</label>
               <input type="text" id="address" placeholder="서울시 강남구 테헤란로 123"
                 value={address} readOnly /> {/* 주소 검색으로만 입력 가능 */}
             </div>
             {/* 상세 주소 입력 그룹 */}
             <div className="form-group">
-              <label htmlFor="address-detail">상세 주소</label>
+              <label htmlFor="address-detail">상세 주소 *</label>
               <input type="text" id="address-detail" placeholder="456호"
                 value={addressDetail} onChange={(e) => setAddressDetail(e.target.value)} />
             </div>
