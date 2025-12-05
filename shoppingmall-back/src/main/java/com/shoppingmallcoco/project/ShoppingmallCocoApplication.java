@@ -10,13 +10,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 public class ShoppingmallCocoApplication extends SpringBootServletInitializer {
 
+// properties 연결 필요
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(ShoppingmallCocoApplication.class);
     }
 
-	public static void main(String[] args) {
-		SpringApplication.run(ShoppingmallCocoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ShoppingmallCocoApplication.class, args);
+    }
 }
