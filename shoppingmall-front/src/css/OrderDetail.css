@@ -23,6 +23,11 @@
   height: 14px;
 }
 
+.order-header {
+  padding-left: 22px;
+  padding-right: 22px; 
+}
+
 .order-header h2 {
   font-size: 24px;
   font-weight: 700;
@@ -195,4 +200,10 @@
 .list-btn.cancel-btn:hover {
   background-color: #c82333;
   border-color: #c82333;
+}
+
+.order-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

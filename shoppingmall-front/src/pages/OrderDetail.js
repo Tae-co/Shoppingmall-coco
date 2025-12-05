@@ -9,7 +9,7 @@ function OrderDetail() {
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  
   const token = localStorage.getItem("token");
   useEffect(() => {
 
@@ -90,10 +90,15 @@ function OrderDetail() {
       </button>
 
       {/* 상단 주문 정보 */}
-      <div className="order-header">
+    <div className="order-header">
+
+      <div className="order-top-row">
         <h2>{order.orderDate?.slice(0, 10).replace(/-/g, ".")}</h2>
-        <p className="order-no">주문번호 {order.orderNo}</p>
+        <span className="order-status">{order.status}</span>
       </div>
+
+      <p className="order-no">주문번호 {order.orderNo}</p>
+    </div>
 
       {/* 배송지 정보 */}
       <div className="section-box">
