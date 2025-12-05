@@ -354,7 +354,7 @@ npm start
 
 <div align="center">
 
-**Made with ❤️ by Coco Team**
+**Made with by Coco Team**
 
 [Back to Top](#coco-shopping-mall)
 
