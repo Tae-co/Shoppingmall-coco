@@ -10,11 +10,12 @@ import lombok.*;
 public class MiniProfileDTO {
 	private Long memNo;
 	private String memNickname;
-	// private List<String> skinTypes;
+	private List<String> skinTags;
 	
 	private int followerCount;
 	private int reviewCount;
 	
 	private boolean isFollowing;
+	private Integer matchingRate;
 	
 }

@@ -2,16 +2,25 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.7'
 	id 'io.spring.dependency-management' version '1.1.7'
+    id 'war'
 }
 
 group = 'com.ShoppingMall-coco'
 version = '0.0.1-SNAPSHOT'
 description = 'shoppingmall-coco'
-
+""
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
+}
+
+
+bootWar {
+    enabled = true
+}
+bootJar {
+    enabled = false
 }
 
 configurations {
@@ -43,6 +52,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 }
 
 tasks.named('test') {

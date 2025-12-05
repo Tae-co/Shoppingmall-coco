@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ReviewDetail from "./ReviewDetail";
 import axios from "axios";
-import { getStoredMemberId } from "../utils/api";
 import "../css/reviewButton.css";
 
 function ProductReviews({ productNo }) {
@@ -16,7 +15,8 @@ function ProductReviews({ productNo }) {
     const [totalPages, setTotalPages] = useState(0);
     const [filtered, setFiltered] = useState("latest");
     const pageSize = 10;
-
+    
+    // 리뷰 삭제
     const handleDeleteReview = async (reviewNo) => {
         try {
             const token = localStorage.getItem('token');
@@ -35,6 +35,7 @@ function ProductReviews({ productNo }) {
         }
     };
 
+    // 리뷰 정렬 및 불러오기
     useEffect(() => {
         const fetchReviews = async () => {
             setLoading(true);
@@ -70,6 +71,7 @@ function ProductReviews({ productNo }) {
         fetchReviews();
     }, [productNo, page, filtered]);
 
+    // 주문 이력 불러오기
     const getOrerItemNo = async () => {
         setLoading(true);
         try {

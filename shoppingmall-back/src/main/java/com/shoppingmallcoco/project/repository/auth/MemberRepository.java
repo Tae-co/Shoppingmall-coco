@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -29,6 +30,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 검색: 아이디, 닉네임, 이메일, 이름으로 검색
     Page<Member> findByMemIdContainingOrMemNicknameContainingOrMemMailContainingOrMemNameContaining(
             String memId, String memNickname, String memMail, String memName, Pageable pageable);
+    
+    // 검색: 닉네임으로만 검색
+    List<Member> findByMemNicknameContainingIgnoreCase(String memNickname);
 
     // role별 회원 수 조회
     long countByRole(Member.Role role);

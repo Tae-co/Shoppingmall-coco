@@ -1,0 +1,50 @@
+section {
+    margin-bottom: 20px;
+}
+.recommend_wrapper {
+    margin-right: 50px;
+}
+.recommend_title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+.recommend_sub {
+    color: #777;
+}
+.recommend_grid_4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    padding: 20px 10px;
+}
+.recommend_prd_img {
+    width: 85%;
+    border-radius: 5px;
+}
+.prd_info {
+    margin: 5px 10px;
+}
+.recommend_prd_name {
+    font-weight: 500;
+    font-size: 15px;
+}
+.recommend_prd_price {
+    font-size: 15px;
+}
+.recommend_user_wrapper {
+    align-items: center;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px 5px;
+    width: 150px;
+    margin-bottom: 25px;
+}
+.recommend_user.profile_img {
+    width: 60px;
+    margin-bottom: 10px;
+}
+.recommend_user_nickname {
+    font-weight: 500;
+}

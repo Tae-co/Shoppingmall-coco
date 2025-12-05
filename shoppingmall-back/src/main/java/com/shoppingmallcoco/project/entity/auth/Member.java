@@ -92,6 +92,7 @@ public class Member {
                 .memAddress2(dto.getMemAddress2())
                 .build();
     }
+    
     //포인트 사용
     public void usePoints(Long pointsToUse) {
         if (this.point < pointsToUse) {
@@ -102,6 +103,14 @@ public class Member {
     //포인트 환불
     public void returnPoints(Long pointsToReturn) {
         this.point += pointsToReturn;
+    }
+    
+    /* 추천 시스템용 생성자 */
+    /* 팔로우/매칭률 기반 추천 로직에서 DTO 정보를 다루기 위해 사용 */
+    /* DB 저장x 임시객체 생성 */
+    public Member(Long memNo, String nickname) {
+        this.memNo = memNo;
+        this.memNickname = nickname;
     }
 }
 

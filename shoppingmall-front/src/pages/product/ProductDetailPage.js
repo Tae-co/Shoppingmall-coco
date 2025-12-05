@@ -37,16 +37,32 @@ function ProductDetailPage() {
       setIsLoading(true);
       try {
         const response = await axios.get(`http://localhost:8080/api/products/${productId}`);
-        setProduct(response.data);
+        const data = response.data;
+
+        // 데이터가 아예 없는 경우
+        if (!data) {
+            navigate('/not-found', { replace: true });
+            return;
+        }
+
+        // 판매 중지 상품 체크
+        if (data.status === 'STOP' || data.status === '판매중지') {
+            navigate('/product-stopped', { replace: true }); // 에러 페이지로 이동
+            return;
+        }
+
+        setProduct(data);
       } catch (error) {
         console.error(error);
+        // 상품이 없는 경우 (404 에러 등) -> NotFound 페이지로 이동
+        navigate('/not-found', { replace: true });
         setProduct(null);
       } finally {
         setIsLoading(false);
       }
     };
     fetchProductDetail();
-  }, [productId]);
+  }, [productId, navigate]);
 
   // 토스트 메시지 타이머
   useEffect(() => {
@@ -55,6 +71,19 @@ function ProductDetailPage() {
       return () => clearTimeout(timer);
     }
   }, [toastMessage]);
+
+  // 페이지 타이틀 동적 변경
+  useEffect(() => {
+    if (product) {
+      // 상품 정보가 로드되면 탭 제목을 "상품명 | 사이트명"으로 변경
+      document.title = `${product.prdName} | COCO`;
+    }
+
+    // cleanup: 페이지를 나갈 때 원래 제목으로 복구
+    return () => {
+      document.title = 'COCO'; 
+    };
+  }, [product]);
 
   const handleBack = () => {
     navigate(-1);
@@ -174,14 +203,7 @@ function ProductDetailPage() {
   }
 
   if (!product) {
-    return (
-      <div className="detail-container">
-        <div className="error-message-box">
-          <h3>상품을 찾을 수 없습니다</h3>
-          <button className="back-btn" onClick={handleBack}>목록으로 돌아가기</button>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (

@@ -16,12 +16,16 @@ const ProductImageGallery = ({ productName, imageUrls }) => {
 
   return (
     <div className="image-gallery-box">
-      <img 
+      <img
         className="main-image"
-        src={selectedImage} 
-        alt={productName} 
+        src={selectedImage}
+        alt={productName}
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = '/prd_placeholder.png';
+        }}
       />
-      
+
       {imageUrls.length > 1 && (
         <div className="thumbnail-container">
           {imageUrls.map((imgUrl, index) => (

@@ -58,7 +58,7 @@
     color: #444;
 }
 .review_content {
-    margin-bottom: 30px;
+    margin: 30px 10px;
 }
 .review_like_wrapper {
     display: flex;

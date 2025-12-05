@@ -61,7 +61,6 @@ function Home_Comate() {
             try {
                 const data = await getAllComates();
                 setComates(data);
-
                 // 팔로우 상태 초기화
                 const status = {};
                 data.forEach(c => {
@@ -132,9 +131,11 @@ function Home_Comate() {
                     <div key={comate.memNo}>
                         <ComateMiniProfile
                             nickname={comate.memNickname}
+                            skinTags={comate.skinTags}
                             followers={comate.followerCount}
                             reviews={comate.reviewCount}
                             isFollowing={followStatus[comate.memNo] || false}
+                            matchingRate={comate.matchingRate}
                             onClick={() => handleCardClick(comate.memNo)}
                             onFollowClick={() => handleFollowClick(comate)}
                         />

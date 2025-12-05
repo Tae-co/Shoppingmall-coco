@@ -24,7 +24,13 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 4px;
+    row-gap: 4px;
     margin-bottom: 12px;
+}
+.skin_types.mini {
+    min-height: 110px;
+    align-items: flex-start;
+    align-content: flex-start;
 }
 .skin_types span {
     background-color: #f5f5f5;
@@ -32,6 +38,10 @@
     border-radius: 6px;
     font-size: 12px;
     color: #555;
+}
+.skin_types.full {
+    width: 200px;
+    margin-bottom: 60px;
 }
 .stats_section {
     display: flex;
@@ -74,20 +84,16 @@
     font-size: 14px;
 }
 .follow_btn.mini {
-    background-color: #ff6b81;
+    background-color: #000;
     border-radius: 20px;
     color: #fff;
     padding: 8px 16px;
     font-size: 14px;
-    font-weight: 500px;
-}
-.follow_btn.mini:hover {
-    background-color: #ff5570;
 }
 .follow_btn.mini.active {
-    background-color: #FFFFFF;
-    color: #BFBFBF;
-    border: 1px solid #BFBFBF;
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #aaa;
 }
 
 .comate_card.full {
@@ -103,7 +109,6 @@
     font-size: 18px;
 }
 .stats_section.full {
-    margin-top: 60px;
     padding-top: 20px;
     border-top: 1px solid #eee;
     gap: 30px;
@@ -126,4 +131,34 @@
     background-color: #FFF;
     color: #000;
     border: 1px solid #aaa;
+}
+.matching_rate {
+    font-weight: 800;
+    font-size: 24px;
+    display: inline-flex;
+    align-items: baseline;
+}
+.matching_rate .percent {
+    font-size: 15px;
+    margin-left: 2%;
+}
+.low {      color: #bebebe;    }
+.medium {   color: #787878; }
+.high {     color: #ff6464; }
+.matching_wrapper {
+    margin: 10px 0;
+}
+.matching_title {
+    font-size: 12px;
+    color: #888;
+}
+.set_skinProfile_btn {
+    width: 100%;
+    background-color: #f0f0f0;
+    border: solid 1px #ddd;
+    border-radius: 5px;
+    color: #333;
+    padding: 13px 20px;
+    font-size: 16px;
+    margin-top: 20px;
 }

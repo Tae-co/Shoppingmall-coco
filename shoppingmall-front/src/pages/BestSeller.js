@@ -150,11 +150,13 @@ function MultipleItems() {
                                 image={p.imageUrl}
                                 star_avg={p.averageRating}
                                 reviewCount={p.reviewCount}
-                                onClick={() => handleProductClick(p.prdNo)}
+                                // 품절이면 onClick 이벤트를 전달하지 않음 (클릭 불가)
+                                onClick={isSoldOut ? undefined : () => handleProductClick(p.prdNo)}
                                 onAddToCart={(e) => handleAddToCart(e, p)}
-                                // 상태와 순위 정보만 넘겨줌
                                 isSoldOut={isSoldOut}
-                                rank={index + 1} 
+                                rank={index + 1}
+                                // ProductCard 내부 스타일 제어를 위해 style prop 전달 가능
+                                style={{ cursor: isSoldOut ? 'default' : 'pointer' }}
                             />
                         </div>
                     );

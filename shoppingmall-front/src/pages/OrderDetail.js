@@ -110,14 +110,14 @@ function OrderDetail() {
       <div className="section-box">
         <h3>주문 상품 {order.items.length}개</h3>
 
-        {order.items.map((item) => (
-          <div key={item.orderItemNo} className="product-card">
-            <img src={item.imageUrl} alt="" className="product-img" />
-            <div className="product-info">
-              <p className="product-name">{item.productName}</p>
-              <p className="product-detail">
-                {item.price?.toLocaleString() || 0}원 / {item.qty}개
-              </p>
+       {order.items.map((item, idx) => (
+           <div key={idx} className="product-card">
+          <img src={item.imageUrl} alt="" className="product-img"/>
+          <div className="product-info">
+            <p className="product-name">{item.productName}</p>
+            <p className="product-detail">
+              {item.price?.toLocaleString() || 0}원 / {item.qty}개
+            </p>
             </div>
             {order.status === "배송완료" && (
               <button

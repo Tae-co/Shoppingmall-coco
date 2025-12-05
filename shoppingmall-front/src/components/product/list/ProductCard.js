@@ -35,7 +35,11 @@ const ProductCard = ({ product, onAddToCart }) => {
   return (
     <Link to={linkTo} className="product-card-link" style={linkStyle}>
       <div className="product-card-img-wrapper">
-        <img className="product-card-img" src={product.imageUrl} alt={product.prdName} loading="lazy" />
+        <img className="product-card-img" src={product.imageUrl} alt={product.prdName} loading="lazy"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = '/prd_placeholder.png';
+          }} />
         {(isSoldOut || isStop) && (
           <div className="product-card-overlay">
             {isSoldOut ? 'SOLD OUT' : '판매 중지'}
@@ -48,7 +52,7 @@ const ProductCard = ({ product, onAddToCart }) => {
         <p className="product-card-rating">
           ⭐ {product.averageRating} ({product.reviewCount})
         </p>
-        
+
         <div className="product-card-tags">
           {product.skinTypes?.map(type => (
             <span key={type} className="product-card-tag" onClick={(e) => handleTagClick(e, skinTypeMap[type] || type)}>

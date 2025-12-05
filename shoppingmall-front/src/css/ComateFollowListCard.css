@@ -1,14 +1,23 @@
 .uc_wrapper {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    justify-content: space-between;
+    padding: 25px 10px;
     border-bottom: 1px solid #bbb;
+    gap: 18px;
 }
 .uc_wrapper:last-child {
     border-bottom: none;
 }
 .uc_info_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1; 
+    text-decoration: none;
+    color: inherit;
+}
+.left {
     display: flex;
     align-items: center;
     gap: 25px;
@@ -19,32 +28,47 @@
     margin-bottom: 0;
 }
 .uc_info {
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 .uc_info .nickname {
     margin-left: 3px;
     margin-bottom: 5px;
 }
 .uc_info .skin_types {
-    margin-bottom: 0;
+    display: flex;
+    gap: 5px;
 }
 .uc_info .skin_types span {
     border-radius: 10px;
 }
+.matching_rate.list {
+    margin: 0;
+    display: inline-flex;
+    align-items: baseline;
+}
 .uc_follow_btn {
+    margin-left: 10px;
     background-color: #000;
     border-radius: 25px;
     padding: 7px 20px;
     color: #fff;
     font-size: 15px;
     font-weight: 500;
+    white-space: nowrap;  /* 줄바꿈 방지 */
 }
 .uc_follow_btn.active {
     background-color: #fff;
     border: 1px solid #aaa;
     color: #000;
 }
-a {
-    text-decoration: none;
-    color: black;
+.right .matching_title {
+    text-align: right;
+}
+.skin_types.follow_list {
+    width: 300px;
+    justify-content: initial;
+    /* 클래스 이름 중복-> 다른 css 무효화 */
+    margin-bottom: 0px;
 }
