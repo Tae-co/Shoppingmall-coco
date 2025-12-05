@@ -8,6 +8,7 @@ import com.shoppingmallcoco.project.service.review.IReviewService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,8 +35,18 @@ public class AdminProductService {
 	private final ProductOptionRepository optionRepo;
 	private final CategoryRepository catRepo;
 	private final ProductImageRepository prdImgRepo;
-	private final String uploadDir = "C:/coco/uploads/";
 	private final IReviewService reviewService;
+	
+	@Value("${file.upload-dir}") // application.properties의 값 주입
+	private String rootDir;
+	
+	// 도메인 상수 정의
+	private final String DOMAIN = "http://localhost:8080";
+
+	// 상품 전용 업로드 폴더 경로
+	private String getProductUploadPath() {
+	    return rootDir + "products/";
+	}
 
 	/**
 	 * API: 관리자 상품 등록
@@ -143,8 +154,14 @@ public class AdminProductService {
 
 			// 로컬 파일 삭제
 			for (ProductImageEntity img : toDelete) {
+				// 파일명만 추출
 				String fileName = img.getImageUrl().substring(img.getImageUrl().lastIndexOf("/") + 1);
-				new File(uploadDir + fileName).delete();
+				
+				// 실제 삭제 경로
+				File fileToDelete = new File(getProductUploadPath() + fileName);
+				if (fileToDelete.exists()) {
+				    fileToDelete.delete();
+				}
 			}
 		}
 
@@ -196,21 +213,23 @@ public class AdminProductService {
 			throw new IllegalArgumentException("파일 크기는 10MB를 초과할 수 없습니다.");
 		}
 
-		File dir = new File(uploadDir);
-		if (!dir.exists())	dir.mkdirs();
+		// 폴더 생성 (products 폴더가 없으면 자동 생성)
+		File dir = new File(getProductUploadPath());
+		if (!dir.exists())	dir.mkdirs(); // mkdirs는 상위 폴더까지 생성함
 
+		// 파일명 생성 및 저장
 		String originalFilename = file.getOriginalFilename();
 		String uuid = UUID.randomUUID().toString();
 		String savedFileName = uuid + "_" + originalFilename;
 
-		File dest = new File(uploadDir + savedFileName);
+		File dest = new File(getProductUploadPath() + savedFileName);
 		file.transferTo(dest);
 
+		// DB에 경로로 저장
 		ProductImageEntity image = new ProductImageEntity();
 		image.setProduct(product);
-		image.setImageUrl("http://localhost:8080/images/uploads/" + savedFileName);
+		image.setImageUrl(DOMAIN + "/images/products/" + savedFileName);
 		image.setSortOrder(sortOrder);
-
 		prdImgRepo.save(image);
 	}
 

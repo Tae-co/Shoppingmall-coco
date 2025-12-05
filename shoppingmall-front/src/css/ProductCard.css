@@ -147,3 +147,14 @@
     z-index: 15; /* 뱃지보다는 아래, 내용보다는 위 */
     pointer-events: none; /* 클릭은 통과되게 */
 }
+
+/* 품절 상품일 때 스타일 */
+.product_card.sold-out {
+    cursor: default;
+    opacity: 0.7;
+}
+
+/* 품절 상품은 마우스 올려도 떠오르지 않게 막기 */
+.product_card.sold-out:hover {
+    transform: none;      
+}

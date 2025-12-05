@@ -43,8 +43,8 @@
 }
 
 .section-box p {
-  margin: 10px 0; 
-  line-height: 1.4; 
+  margin: 10px 0;
+  line-height: 1.4;
 }
 
 .section-box h3 {
@@ -133,7 +133,7 @@
 
 .status-actions {
   display: flex;
-  justify-content: center; 
+  justify-content: center;
   gap: 18px;
   margin: 25px 0 10px;
 }
@@ -151,7 +151,7 @@
   transition: 0.2s;
 }
 
-.action-btn:hover{
+.action-btn:hover {
   background-color: #222 !important;
   color: #fff !important;
 }
@@ -178,4 +178,21 @@
   border-top: 1px solid #eee;
   font-size: 16px;
   font-weight: 700;
+}
+
+.list-btn.cancel-btn {
+  background-color: #dc3545;
+  color: white;
+  border: 1px solid #dc3545;
+  margin-left: 10px;
+  cursor: pointer;
+  height: 40px;
+  padding: 0 15px;
+  border-radius: 4px;
+}
+
+/* 마우스 호버 시 스타일 */
+.list-btn.cancel-btn:hover {
+  background-color: #c82333;
+  border-color: #c82333;
 }

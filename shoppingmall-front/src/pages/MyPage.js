@@ -166,7 +166,7 @@ function MyPage() {
                   </p>
 
                   <p className="order-price">
-                    {order.totalPrice.toLocaleString()}원
+                    최종 결제 금액: {order.totalPrice.toLocaleString()}원
                   </p>
                 </div>
 

@@ -1,6 +1,7 @@
 package com.shoppingmallcoco.project.repository.comate;
 
 import com.shoppingmallcoco.project.dto.comate.FollowInfoDTO;
+import com.shoppingmallcoco.project.entity.auth.Member;
 import com.shoppingmallcoco.project.entity.comate.Follow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,6 +30,27 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     // 언팔로우
     void deleteByFollowerMemNoAndFollowingMemNo(Long followerNo, Long followingNo);
+   
+    /* 상품 추천 기능 구현 */
+    /* 비팔로우 사용자 조회 */
+    @Query("""
+    		SELECT m
+    		FROM Member m
+    		WHERE m.memNo <> :loginUserNo
+    		AND m.memNo NOT IN (
+    			SELECT f.following.memNo
+    			FROM Follow f
+    			WHERE f.follower.memNo = :loginUserNo
+    		)
+    	""")
+    List<Member> findNonFollowedMemNo(@Param("loginUserNo") Long loginUserNo);
 
-
+    /* 자신을 제외한 모든 회원목록 */
+    @Query("""
+    		SELECT m 
+    		FROM Member m 
+    		LEFT JOIN FETCH m.skin
+    		WHERE m.memNo <> :loginUserNo
+    		""")
+    List<Member> findAllMembersExcluding(@Param("loginUserNo") Long loginUserNo);
 }

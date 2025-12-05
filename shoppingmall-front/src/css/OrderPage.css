@@ -200,3 +200,9 @@
   background-color: #333; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 10px; }
 .btn-secondary { width: 100%; padding: 14px; font-size: 1rem; font-weight: 600; color: #333; 
   background-color: #fff; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+
+.required-note {
+    font-size: 0.9em;
+    color: #6c757d; 
+    margin-top: -10px; 
+}  

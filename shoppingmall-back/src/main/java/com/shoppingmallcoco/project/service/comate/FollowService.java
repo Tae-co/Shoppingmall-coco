@@ -1,14 +1,19 @@
 package com.shoppingmallcoco.project.service.comate;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.shoppingmallcoco.project.dto.comate.FollowInfoDTO;
 import com.shoppingmallcoco.project.entity.auth.Member;
 import com.shoppingmallcoco.project.entity.comate.Follow;
+import com.shoppingmallcoco.project.entity.mypage.SkinProfile;
 import com.shoppingmallcoco.project.repository.auth.MemberRepository;
 import com.shoppingmallcoco.project.repository.comate.FollowRepository;
+import com.shoppingmallcoco.project.repository.mypage.SkinRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.*;
@@ -19,41 +24,74 @@ public class FollowService {
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
+    private final SkinRepository skinRepository;
+    
+    private final MatchingService matchingService;
 
     /* 팔로워 목록 조회 */
     public List<FollowInfoDTO> getFollowers(Long targetMemNo, Long currentMemNo) {
         List<FollowInfoDTO> list = followRepository.findFollowerInfo(targetMemNo);
         
-        // isFollowing 체크 (로그인한 경우에만)
-        if (currentMemNo != null) {
-            list.forEach(item -> {
-                boolean isFollowing = followRepository
-                        .existsByFollowerMemNoAndFollowingMemNo(currentMemNo, item.getMemNo());
-                item.setFollowing(isFollowing);
-            });
-        } else {
-            // 로그인하지 않은 경우 모두 false
-            list.forEach(item -> item.setFollowing(false));
-        }
+        list.forEach(item -> {
+        	// skinTag
+        	SkinProfile skinProfile = skinRepository.findByMember_MemNo(item.getMemNo()).orElse(null);
+        	List<String> skinTags = new ArrayList<>();
+        	if (skinProfile != null) {
+        		if (skinProfile.getSkinType() != null) skinTags.add(skinProfile.getSkinType());
+        		if (skinProfile.getSkinConcern() != null) {
+        			skinTags.addAll(Arrays.stream(skinProfile.getSkinConcern().split(","))
+        					.map(String::trim)
+        					.collect(Collectors.toList()));
+        		}
+        		if (skinProfile.getPersonalColor() != null) skinTags.add(skinProfile.getPersonalColor());
+        	}
+        	item.setSkinTags(skinTags);
+        	
+        	// isFollowing
+        	boolean isFollowing = followRepository
+        			.existsByFollowerMemNoAndFollowingMemNo(currentMemNo, item.getMemNo());
+     	   	item.setFollowing(isFollowing);
+     	   	
+     	   	// 매칭률
+       		int matchRate = (currentMemNo != null)
+       				? matchingService.getUserMatch(currentMemNo, item.getMemNo())
+       				: -1;
+       		item.setMatchingRate(matchRate);
+        });
         
         return list;
     }
 
     /* 팔로잉 목록 조회 */
     public List<FollowInfoDTO> getFollowings(Long targetMemNo, Long currentMemNo) {
-       List<FollowInfoDTO> list = followRepository.findFollowingInfo(targetMemNo);
+    	List<FollowInfoDTO> list = followRepository.findFollowingInfo(targetMemNo);
        
-       // isFollowing 체크 (로그인한 경우에만)
-       if (currentMemNo != null) {
-           list.forEach(item -> {
-               boolean isFollowing = followRepository
-                       .existsByFollowerMemNoAndFollowingMemNo(currentMemNo, item.getMemNo());
-               item.setFollowing(isFollowing);
-           });
-       } else {
-           // 로그인하지 않은 경우 모두 false
-           list.forEach(item -> item.setFollowing(false));
-       }
+       	list.forEach(item -> {
+	    	// skinTag
+	       	SkinProfile skinProfile = skinRepository.findByMember_MemNo(item.getMemNo()).orElse(null);
+	       	List<String> skinTags = new ArrayList<>();
+	       	if (skinProfile != null) {
+	       		if (skinProfile.getSkinType() != null) skinTags.add(skinProfile.getSkinType());
+	       		if (skinProfile.getSkinConcern() != null) {
+	       			skinTags.addAll(Arrays.stream(skinProfile.getSkinConcern().split(","))
+	       					.map(String::trim)
+	       					.collect(Collectors.toList()));
+	       		}
+	       		if (skinProfile.getPersonalColor() != null) skinTags.add(skinProfile.getPersonalColor());
+	       	}
+	       	item.setSkinTags(skinTags);
+       	
+       		// isFollowing
+       		boolean isFollowing = followRepository
+       				.existsByFollowerMemNoAndFollowingMemNo(currentMemNo, item.getMemNo());
+       		item.setFollowing(isFollowing);
+       		
+       		// 매칭률
+       		int matchRate = (currentMemNo != null)
+       				? matchingService.getUserMatch(currentMemNo, item.getMemNo())
+       				: -1;
+       		item.setMatchingRate(matchRate);
+       });
        
        return list;
     }

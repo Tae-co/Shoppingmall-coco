@@ -1,7 +1,11 @@
 package com.shoppingmallcoco.project.repository.product;
 
+import java.util.List;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import com.shoppingmallcoco.project.entity.product.ProductEntity;
 
@@ -17,4 +21,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, J
 
 	// 상품 번호로 상세 조회
 	ProductEntity findProductEntityByPrdNo(Long prdNo);
+	
+	/* 최근 등록상품 조회 (Cold-start 용) */
+	@Query("SELECT p FROM ProductEntity p WHERE p.isDeleted = 'N' ORDER BY p.regDate DESC")
+	List<ProductEntity> findRecentProducts(Pageable pageable);
+	
 }

@@ -69,7 +69,7 @@ export const getFollowingList = async (memNo) => {
     return response.json();
 };
 
-// 팔로우
+/* 팔로우 */
 export const follow = async (targetMemNo) => {
     const response = await fetchWithAuth(`${API_BASE_URL}/follow/${targetMemNo}`, {
         method: "POST"
@@ -78,7 +78,7 @@ export const follow = async (targetMemNo) => {
     return response.text();
 };
 
-// 언팔로우
+/* 언팔로우 */
 export const unfollow = async (targetMemNo) => {
     const response = await fetchWithAuth(`${API_BASE_URL}/unfollow/${targetMemNo}`, {
         method: "DELETE"
@@ -87,11 +87,34 @@ export const unfollow = async (targetMemNo) => {
     return response.text();
 };
 
-
 /* 리뷰 좋아요 토글 */
 export const toggleLike = async (reviewNo) => {
-    const response = await fetchWithAuth(`/reviews/${reviewNo}/like`, {method: 'POST'});
+    const response = await fetchWithAuth(`/reviews/${reviewNo}/like`, {
+        method: "POST"
+    });
     if (!response.ok) throw new Error('좋아요 처리 실패');
     const result = await response.json();
     return result === 1;
 };
+
+/* 사용자 검색 */
+export const searchMembers = async (nickname, options = {}) => {
+    const encodedNickname = encodeURIComponent(nickname);
+    const response = await fetchWithAuth(
+        `${API_BASE_URL}/users/search?nickname=${encodedNickname}`,
+        { signal: options.signal }
+    );
+    
+    if (!response.ok) throw new Error('검색 실패');
+    return response.json();
+};
+
+/* 추천 상품/리뷰/유저 조회 */
+export const getRecommendation = async () => {
+    const response = await fetchWithAuth(`${API_BASE_URL}/recommend`, {
+        method: "GET"
+    });
+
+    if (!response.ok) throw new Error("추천 조회 실패");
+    return response.json();
+}

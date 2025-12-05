@@ -21,7 +21,7 @@ public class ProfileController {
 
     @PutMapping("/{memNo}")
     public ResponseEntity<?> updateProfile(
-            @PathVariable Long memNo,
+            @PathVariable("memNo") Long memNo,
             @RequestBody SkinProfileRequestDto dto,
             Authentication authentication) {
 
@@ -47,7 +47,7 @@ public class ProfileController {
 
     @GetMapping("/{memNo}")
     public ResponseEntity<?> getProfile(
-            @PathVariable Long memNo,
+            @PathVariable("memNo") Long memNo,
             Authentication authentication) {
 
         // 인증 체크

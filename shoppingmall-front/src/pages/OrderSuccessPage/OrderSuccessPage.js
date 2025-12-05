@@ -57,11 +57,35 @@ function OrderSuccessPage() {
           <span>결제 방법</span>
           <span>{paymentMethod}</span>
         </div>
-        {/* 총 결제 금액 최종 표시 */}
+        {/* --- 결제 금액 정보 박스 --- */}
+      <div className="result-box payment-info-box">
+        <h2>결제 정보</h2>
+        
+        {/* 상품 금액 (원가 합계) 표시 */}
+        <div className="info-row">
+            <span>상품 금액</span>
+            <span>₩{orderSubtotal.toLocaleString()}</span>
+        </div>
+
+        {/*  배송비 표시 */}
+        <div className="info-row">
+            <span>배송비</span>
+            <span>₩{shippingFee.toLocaleString()}</span>
+        </div>
+        
+        {/* 포인트 사용량 표시 */}
+        <div className="info-row">
+            <span>포인트 사용</span>
+            {/* 포인트는 차감되므로 마이너스 부호를 붙여줍니다. */}
+            <span>- ₩{pointsToUse.toLocaleString()}</span> 
+        </div>
+
+        {/* 최종 결제 금액 (finalAmount 변수 사용) */}
         <div className="info-total">
           <span>총 결제 금액</span>
           <span className="info-total-amount">₩{finalAmount.toLocaleString()}</span>
         </div>
+      </div>
       </div>
 
       {/* --- 다음 단계 안내 박스 --- */}

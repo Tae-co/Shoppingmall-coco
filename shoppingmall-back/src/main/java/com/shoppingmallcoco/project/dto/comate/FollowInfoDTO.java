@@ -1,5 +1,7 @@
 package com.shoppingmallcoco.project.dto.comate;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;
@@ -12,7 +14,10 @@ import lombok.*;
 public class FollowInfoDTO {
     private Long memNo;
     private String nickname;
+    private List<String> skinTags;
     private boolean isFollowing;
+    
+    private Integer matchingRate;
     
     public FollowInfoDTO(Long memNo, String nickname) {
         this.memNo = memNo;

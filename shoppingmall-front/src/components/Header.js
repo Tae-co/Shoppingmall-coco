@@ -241,7 +241,7 @@ const Header = () => {
                                         className={({ isActive }) =>
                                             isActive ? 'gnb_link active' : 'gnb_link'}>SHOP</NavLink></li>
                                     <li className="gnb_item"><NavLink
-                                        to="/comate/me/review"
+                                        to="/comate/me/recommend"
                                         className={({ isActive }) => {
                                             return window.location.pathname.startsWith('/comate') ? 'gnb_link active' : 'gnb_link'
                                         }}>CO-MATE</NavLink></li>
@@ -256,17 +256,6 @@ const Header = () => {
                         </div>
                         {/* 우측 기능 버튼 */}
                         <div className="header_right">
-                            {/* 검색 폼 수정*/}
-                            <div className="search_container">
-                                <form>
-                                    <input type="text" name="search" placeholder="검색어를 입력해보세요" autoComplete="off" />
-                                    <button type="submit" className="btn_search">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="" viewBox="0 0 24 24" width="20" height="20">
-                                            <path fill="#777777" fillRule="evenodd" d="M15.571 16.631a8.275 8.275 0 1 1 1.06-1.06l4.5 4.498-1.061 1.06-4.499-4.498Zm1.478-6.357a6.775 6.775 0 1 1-13.55 0 6.775 6.775 0 0 1 13.55 0Z" clipRule="evenodd"></path>
-                                        </svg>
-                                    </button>
-                                </form>
-                            </div>
                             {/* 장바구니 버튼 */}
                             <Link to="/cart" className="btn_cart">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="24" height="24">

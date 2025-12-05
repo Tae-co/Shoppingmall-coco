@@ -101,10 +101,10 @@ const ComateContent = ({
                     key={item.memNo}
                     memNo={item.memNo}
                     nickname={item.nickname}
-                    skinTypes={item.skinTypes}
+                    skinTags={item.skinTags}
                     isFollowing={item.following}
+                    matchingRate={item.matchingRate}
                     loginUserNo={loginUserNo}
-                    listType="follower"
                     onFollowChange = {(newState) => {
                         updateListState(setFollowerList, index, newState);
                         if (typeof onListFollowChange === "function")
@@ -121,10 +121,10 @@ const ComateContent = ({
                     key={item.memNo}
                     memNo={item.memNo}
                     nickname={item.nickname}
-                    skinTypes={item.skinTypes}
+                    skinTags={item.skinTags}
                     isFollowing={item.following}
+                    matchingRate={item.matchingRate}
                     loginUserNo={loginUserNo}
-                    listType="following"
                     onFollowChange = {(newState) => {
                         updateListState(setFollowingList, index, newState);
                         if (typeof onListFollowChange === "function")

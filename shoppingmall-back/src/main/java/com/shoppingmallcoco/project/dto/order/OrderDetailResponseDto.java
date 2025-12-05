@@ -24,6 +24,8 @@ public class OrderDetailResponseDto {
     private String orderAddress1;
     private String orderAddress2;
     private Long pointsUsed;
+    
+    private Long shippingFee;
 
     private List<OrderItemDto> items;
 

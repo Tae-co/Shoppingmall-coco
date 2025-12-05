@@ -2,7 +2,11 @@ package com.shoppingmallcoco.project.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,14 +21,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shoppingmallcoco.project.dto.comate.FollowInfoDTO;
 import com.shoppingmallcoco.project.dto.comate.LikedReviewDTO;
+import com.shoppingmallcoco.project.dto.comate.MemberSearchDTO;
 import com.shoppingmallcoco.project.dto.comate.MiniProfileDTO;
 import com.shoppingmallcoco.project.dto.comate.MyReviewDTO;
 import com.shoppingmallcoco.project.dto.comate.ProfileDTO;
+import com.shoppingmallcoco.project.dto.comate.RecommendPrdDTO;
+import com.shoppingmallcoco.project.dto.comate.RecommendResponseDTO;
 import com.shoppingmallcoco.project.entity.auth.Member;
 import com.shoppingmallcoco.project.repository.auth.MemberRepository;
+import com.shoppingmallcoco.project.service.auth.MemberService;
 import com.shoppingmallcoco.project.service.comate.CM_ReviewService;
 import com.shoppingmallcoco.project.service.comate.ComateService;
 import com.shoppingmallcoco.project.service.comate.FollowService;
+import com.shoppingmallcoco.project.service.comate.RecommendationService;
 import com.shoppingmallcoco.project.util.JwtUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,6 +47,10 @@ public class ComateController {
     private final ComateService comateService;
     private final FollowService followService;
     private final CM_ReviewService reviewService;
+    private final MemberService memberService;
+    
+    private final MemberRepository memberRepository;
+    private final RecommendationService recommendationService;
     
     private final JwtUtil jwtUtil;
     
@@ -165,11 +178,31 @@ public class ComateController {
     	Long currentMemNo = getCurrentMemNo(request);
         return reviewService.getLikedReviews(targetMemNo, currentMemNo, sort);
     }
-
+    
+    // 사용자 닉네임 검색
+    @GetMapping("/users/search")
+    public ResponseEntity<List<MemberSearchDTO>> searchMembers(@RequestParam("nickname") String nickname) {
+    	List<Member> members = memberRepository.findByMemNicknameContainingIgnoreCase(nickname);
+    	
+    	List<MemberSearchDTO> result = members.stream()
+    									.map(m -> new MemberSearchDTO(m.getMemNo(), m.getMemNickname()))
+    									.collect(Collectors.toList());
+    									
+     	return ResponseEntity.ok(result);
+    }
+    
     // 메인용 - 전체 회원 목록 조회
     @GetMapping("/users")
     public ResponseEntity<List<MiniProfileDTO>> getAllComates(HttpServletRequest request) {
     	Long currentMemNo = getCurrentMemNo(request);
     	return ResponseEntity.ok(comateService.getAllComates(currentMemNo));
+    }
+    
+    // 추천 상품/리뷰/유저 조회
+    @GetMapping("/recommend")
+    public RecommendResponseDTO getRecommendation(HttpServletRequest request) {
+    	Long loginUserNo = getCurrentMemNo(request);
+    	
+    	return recommendationService.recommendAll(loginUserNo);
     }
 }
