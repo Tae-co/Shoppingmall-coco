@@ -268,3 +268,16 @@
   user-select: none;
   align-self: center; /* 세로 중앙 정렬 */
 }
+
+/* 숫자 입력창 화살표 제거 */
+/* Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
