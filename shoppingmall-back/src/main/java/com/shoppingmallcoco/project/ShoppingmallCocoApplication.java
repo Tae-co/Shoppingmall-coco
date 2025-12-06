@@ -11,7 +11,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 @SpringBootApplication
 @PropertySources({
-    @PropertySource(value = {"file: c:/springBootWorkspace/webservice/configure.properties",
+    @PropertySource(value = {
+        "file:/Users/sintaeyub/tomcat/apache-tomcat-10.1.49/webapps/ROOT/configure.properties",
         "file:/usr/local/project/properties/configure.properties",},
         ignoreResourceNotFound = true)
 })
