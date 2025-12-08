@@ -9,6 +9,7 @@ import '../../../css/product/ProductDetailPage.css';
  */
 const RecentProductSidebar = ({ currentProduct }) => {
   const [recentItems, setRecentItems] = useState([]);
+  const [showTopBtn, setShowTopBtn] = useState(false); // 스크롤 감지용 상태
 
   useEffect(() => {
     if (!currentProduct) return;
@@ -31,29 +32,62 @@ const RecentProductSidebar = ({ currentProduct }) => {
     setRecentItems(items);
   }, [currentProduct]);
 
+  // 스크롤 감지하여 TOP 버튼 표시 여부 결정
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowTopBtn(true);
+      } else {
+        setShowTopBtn(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   return (
-    <aside className="right-sidebar">
-      <div className="sticky-box">
-        <h3>최근 본 상품</h3>
-        {recentItems.length === 0 ? (
-          <p className="empty-msg">내역 없음</p>
-        ) : (
-          <div className="recent-list">
-            {recentItems.map((item) => (
-              <Link to={`/products/${item.prdNo}`} key={item.prdNo} className="recent-item">
-                <img src={item.imageUrl} alt={item.prdName} />
-                <div className="recent-info">
-                  <span className="name">{item.prdName}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-        <button className="top-btn" onClick={scrollToTop}>TOP ▲</button>
-      </div>
-    </aside>
+    <>
+      <aside className="right-sidebar">
+        <div className="sticky-box">
+          <h3>최근 본 상품</h3>
+          {recentItems.length === 0 ? (
+            <p className="empty-msg">내역 없음</p>
+          ) : (
+            <div className="recent-list">
+              {recentItems.map((item) => (
+                <Link to={`/products/${item.prdNo}`} key={item.prdNo} className="recent-item">
+                  <img src={item.imageUrl} alt={item.prdName} />
+                  <div className="recent-info">
+                    <span className="name">{item.prdName}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </aside>
+
+      {/* TOP 버튼: 사이드바와 별개로 렌더링 */}
+      {showTopBtn && (
+        <button className="fixed-top-btn" onClick={scrollToTop} aria-label="맨 위로 이동">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M18 15l-6-6-6 6" />
+          </svg>
+        </button>
+      )}
+    </>
   );
 };
 
