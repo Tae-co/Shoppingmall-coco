@@ -292,6 +292,7 @@ const Comate = () => {
 
                     onFollowClick={handleFollowClick}
                     onTabClick={handleTabClick}
+                    userType={userType}
                 />
                 {/* 탭 별 컨텐츠 */}
                 { activeTab === 'recommend' ? (
