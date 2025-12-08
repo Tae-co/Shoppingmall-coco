@@ -14,6 +14,7 @@ function Home_Comate() {
     const navigate = useNavigate();
 
     const settings = {
+        accessibility: false,
         className: "center",
         centerMode: true,
         infinite: true,
