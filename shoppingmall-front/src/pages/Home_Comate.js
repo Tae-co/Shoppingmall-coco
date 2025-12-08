@@ -24,7 +24,39 @@ function Home_Comate() {
         autoplay: true,
         autoplaySpeed: 3000,
         arrows: true,
-        focusOnSelect: true
+        focusOnSelect: true,
+        // 반응형 설정
+        responsive: [
+            {
+                breakpoint: 1280, // 큰 화면 ↓ (보통 4개가 안정적)
+                settings: {
+                    slidesToShow: 4,
+                    centerPadding: "35px",
+                },
+            },
+            {
+                breakpoint: 1024, // 보통 노트북 ↓
+                settings: {
+                    slidesToShow: 3,
+                    centerPadding: "30px",
+                },
+            },
+            {
+                breakpoint: 768, // 태블릿 ↓
+                settings: {
+                    slidesToShow: 2,
+                    centerPadding: "25px",
+                },
+            },
+            {
+                breakpoint: 480, // 모바일 ↓
+                settings: {
+                    slidesToShow: 1,
+                    centerMode: true,
+                    centerPadding: "20px",
+                },
+            },
+        ]
     };
 
     // 전체 회원 목록
