@@ -235,6 +235,7 @@ public class ReviewController {
         return reviewService.toggleLike(reviewNo, member.getMemNo());
     }
 
+    // 리뷰 페이징 및 정렬
     @GetMapping("/products/{prdNo}/reviewPages")
     public Page<ReviewDTO> getReviewPages(@PathVariable("prdNo") Long prdNo,
         @RequestParam(defaultValue = "0") int page,
@@ -253,20 +254,5 @@ public class ReviewController {
         }
         return reviewService.getReviewPage(prdNo, memNo, page, size, filterType);
     }
-
-//    // 리뷰 co-mate 필터
-//    @GetMapping("/products/{prdNo}/reviews/comate")
-//    public List<ReviewDTO> getProductReviews(@PathVariable Long prdNo,
-//        Authentication authentication) {
-//        if (authentication == null || authentication.getName() == null) {
-//            throw new RuntimeException("인증이 필요합니다.");
-//        }
-//
-//        Member member = memberRepository.findByMemId(authentication.getName())
-//            .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
-//
-//        Long memNo = member.getMemNo();
-//        return reviewService.getCoMateReviews(prdNo, memNo);
-//    }
 
 }
