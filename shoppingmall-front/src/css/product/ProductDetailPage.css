@@ -95,6 +95,33 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
+/* TOP 버튼 스타일 - 화면 우측 하단 고정 */
+.fixed-top-btn {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 50px;
+  height: 50px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.2s, background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fixed-top-btn:hover {
+  background-color: #000;
+  transform: translateY(-3px);
+}
+
 .sticky-box h3 {
   font-size: 13px;
   font-weight: 700;
@@ -161,5 +188,17 @@
   .detail-container {
     margin: 0 auto;
     padding: 40px 20px;
+  }
+
+  .fixed-top-btn {
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+  }
+  
+  .fixed-top-btn svg {
+      width: 20px;
+      height: 20px;
   }
 }
