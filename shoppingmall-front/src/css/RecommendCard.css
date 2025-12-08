@@ -38,11 +38,11 @@ section {
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 15px 5px;
-    width: 150px;
     margin-bottom: 25px;
 }
 .recommend_user.profile_img {
-    width: 60px;
+    width: clamp(40px, 10vw, 60px);
+    height: auto;
     margin-bottom: 10px;
 }
 .recommend_user_nickname {
@@ -70,4 +70,8 @@ section {
     padding: 10px;
     margin-top: 5px;
     cursor: pointer;
+}
+
+@media (max-width: 960px) {
+
 }

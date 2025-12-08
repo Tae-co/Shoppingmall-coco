@@ -105,3 +105,60 @@
     color: #999;
     white-space: pre-line;
 }
+
+@media (max-width: 960px) {
+
+    /* 메인 구조: 세로로 나누기 */
+    .comate_main {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    /* 풀프로필 width 100% */
+    .comate_full_profile {
+        width: 100% !important;
+    }
+
+    /* 컨텐츠도 자연스럽게 100% */
+    .comate_content {
+        margin: auto;
+        width: 100% !important;
+    }
+
+    /* 검색창: 좌우 여백 축소 */
+    .comate_top {
+        padding: 0 12px;
+    }
+
+    .comate_search_container input {
+        font-size: 14px;
+    }
+
+    /* 프로필 내 닉네임, 매칭률 등 글자 축소 */
+    .comate_full_profile .nickname {
+        font-size: 18px;
+    }
+
+    /* 태그/리뷰/팔로워 숫자 부분 줄이기 */
+    .comate_full_profile .counts span {
+        font-size: 14px;
+    }
+
+    /* 탭 메뉴 줄바꿈 방지 + 크기 축소 */
+    .comate_tabs {
+        justify-content: space-between;
+    }
+    .comate_tabs li {
+        font-size: 14px;
+        padding: 8px 4px;
+    }
+
+    .comate_card_wrapper {
+        margin: auto;
+        position: static !important;
+        top: auto !important;
+    }
+    .comate_content_wrapper, .recommend_wrapper {
+        margin: 20px 10px;
+    }
+}
