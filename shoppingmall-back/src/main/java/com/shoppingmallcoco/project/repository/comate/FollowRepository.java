@@ -53,4 +53,26 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     		WHERE m.memNo <> :loginUserNo
     		""")
     List<Member> findAllMembersExcluding(@Param("loginUserNo") Long loginUserNo);
+    
+    /* 전체 회원 중 랜덤 10명 조회 (로그인한 사용자 제외) */
+    @Query(value = """
+            SELECT *
+            FROM member
+            WHERE mem_no <> :loginUserNo
+            ORDER BY DBMS_RANDOM.VALUE
+            FETCH FIRST 10 ROWS ONLY
+            """,
+            nativeQuery = true)
+    List<Member> findRandomMembers(@Param("loginUserNo") Long loginUserNo);
+    
+    /* 전체 회원 중 랜덤 10명 조회 (로그인 하지 않은 경우) */
+    @Query(value = """
+            SELECT *
+            FROM member
+            ORDER BY DBMS_RANDOM.VALUE
+            FETCH FIRST 10 ROWS ONLY
+            """, 
+           nativeQuery = true)
+    List<Member> findRandomMembersForGuest();
+
 }

@@ -80,12 +80,12 @@ public class ComateService {
                 .build();
     }
     
-    // 메인용 - 전체 회원 목록 조회
-    public List<MiniProfileDTO> getAllComates(Long currentMemNo) {
+    // 메인용 - 랜덤 사용자 10명 조회
+    public List<MiniProfileDTO> getRandomComates(Long currentMemNo) {
     	
     	List<Member> members = (currentMemNo == null)
-    			? memberRepository.findAll()
-    			:followRepository.findAllMembersExcluding(currentMemNo);
+    			? followRepository.findRandomMembersForGuest()
+    			:followRepository.findRandomMembers(currentMemNo);
     	
     	// 팔로우 중인 회원번호 한번에 조회-> N+1 방지
     	Set<Long> followingList = (currentMemNo != null) 

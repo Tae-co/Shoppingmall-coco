@@ -8,7 +8,7 @@ import '../css/Home_Comate.css';
 
 import ComateMiniProfile from "../components/ComateMiniProfile";
 import { getCurrentMember } from '../utils/api'; 
-import { getAllComates, follow, unfollow } from "../utils/comate_api"; 
+import { getRandomComates, follow, unfollow } from "../utils/comate_api"; 
 
 function Home_Comate() {
     const navigate = useNavigate();
@@ -59,8 +59,9 @@ function Home_Comate() {
     useEffect(() => {
         const loadComates = async () => {
             try {
-                const data = await getAllComates();
+                const data = await getRandomComates();
                 setComates(data);
+                console.log(data);
                 // 팔로우 상태 초기화
                 const status = {};
                 data.forEach(c => {
