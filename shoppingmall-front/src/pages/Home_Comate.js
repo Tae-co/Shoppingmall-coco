@@ -94,7 +94,6 @@ function Home_Comate() {
             try {
                 const data = await getRandomComates();
                 setComates(data);
-                console.log(data);
                 // 팔로우 상태 초기화
                 const status = {};
                 data.forEach(c => {
