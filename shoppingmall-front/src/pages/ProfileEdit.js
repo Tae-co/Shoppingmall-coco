@@ -26,7 +26,7 @@ function ProfileEdit() {
 
     const headers = getAuthHeaders();
     axios
-      .get(`http://localhost:8080/api/coco/members/profile/${memNo}`, { headers })
+      .get(`http://13.231.28.89:18080/api/coco/members/profile/${memNo}`, { headers })
       .then((res) => {
         const data = res.data;
         console.log("프로필 조회 성공:", data);
@@ -72,7 +72,7 @@ function ProfileEdit() {
     const headers = getAuthHeaders();
     axios
       .put(
-        `http://localhost:8080/api/coco/members/profile/${memNo}`,
+        `http://13.231.28.89:18080/api/coco/members/profile/${memNo}`,
         requestBody,
         { headers }
       )

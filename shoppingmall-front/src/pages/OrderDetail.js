@@ -15,7 +15,7 @@ function OrderDetail() {
 
     if (!orderNo || !token) return;
     axios
-      .get(`http://localhost:8080/api/orders/${orderNo}`, {
+      .get(`http://13.231.28.89:18080/api/orders/${orderNo}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -48,7 +48,7 @@ function OrderDetail() {
     if (window.confirm("정말로 주문을 취소하시겠습니까?")) {
       try {
         await axios.post(
-          `http://localhost:8080/api/orders/${orderNo}/cancel`, // 백엔드 API 호출
+          `http://13.231.28.89:18080/api/orders/${orderNo}/cancel`, // 백엔드 API 호출
           null,
           {
             headers: {

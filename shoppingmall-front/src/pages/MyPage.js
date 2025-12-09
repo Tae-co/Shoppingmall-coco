@@ -57,7 +57,7 @@ function MyPage() {
     if (!token) return; // 토큰 없으면 요청x
 
     axios
-      .get("http://localhost:8080/api/orders/my", {
+      .get("http://13.231.28.89:18080/api/orders/my", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
