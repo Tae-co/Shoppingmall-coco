@@ -7,12 +7,16 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.shoppingmallcoco.project.dto.product.ProductDetailResponseDTO;
 import com.shoppingmallcoco.project.dto.product.ProductListResponseDTO;
+import com.shoppingmallcoco.project.entity.auth.Member;
 import com.shoppingmallcoco.project.entity.product.ProductEntity;
+import com.shoppingmallcoco.project.repository.auth.MemberRepository;
 import com.shoppingmallcoco.project.service.product.ProductService;
 
 /**
@@ -29,6 +33,7 @@ public class ProductApiController {
     @Autowired
     private ProductService prdService;
     private final ReviewService reviewService;
+    private final MemberRepository memberRepository;
 
     /**
      * 상품 목록 조회 API (GET /api/products)
@@ -97,24 +102,38 @@ public class ProductApiController {
      * [구매 경고/추천 알림] 유사 피부 타입 사용자 통계 조회
      * 현재 보고 있는 상품에 대해, 나와 같은 피부 타입을 가진 다른 사용자들이
      * 어떤 태그(장점/단점)를 많이 선택했는지 통계 정보를 제공
+     * 
+     * 보안: 인증된 사용자의 memberNo만 사용하여 다른 사용자의 정보 노출 방지
      */
     @GetMapping("/products/{prdNo}/similar-skin-tags")
     public ResponseEntity<SimilarSkinStatsDTO> getSimilarSkinTagStats(
-        @PathVariable Long prdNo, @RequestParam("memberNo") Long memberNo) {
+        @PathVariable Long prdNo, 
+        Authentication authentication) {
+        
+        // 인증 체크
+        if (authentication == null || authentication.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         
         // 입력 검증
         if (prdNo == null || prdNo <= 0) {
-            return ResponseEntity.badRequest().build();
-        }
-        if (memberNo == null || memberNo <= 0) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
         try {
+            // 현재 로그인한 사용자의 memberNo 조회
+            Member member = memberRepository.findByMemId(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+            
+            // 인증된 사용자의 memberNo만 사용
+            Long memberNo = member.getMemNo();
+            
             SimilarSkinStatsDTO result = reviewService.getSimilarSkinStats(prdNo, memberNo);
             return ResponseEntity.ok(result);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

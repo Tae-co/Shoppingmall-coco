@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = 'http://13.231.28.89:18080/api';
 
 // 상수 정의
 export const STORAGE_KEYS = {
@@ -130,7 +130,7 @@ export const checkSkinProfile = async (memNo) => {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await axios.get(`http://localhost:8080/api/coco/members/profile/${memNo}`, { headers });
+    const response = await axios.get(`http://13.231.28.89:18080/api/coco/members/profile/${memNo}`, { headers });
     const profile = response.data;
     // skinType이 없거나 빈 값이면 프로필이 없는 것으로 간주
     return profile && profile.skinType && profile.skinType.trim() !== '';
