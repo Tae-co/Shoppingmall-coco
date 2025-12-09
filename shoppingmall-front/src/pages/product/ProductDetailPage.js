@@ -36,7 +36,7 @@ function ProductDetailPage() {
     const fetchProductDetail = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(`http://localhost:8080/api/products/${productId}`);
+        const response = await axios.get(`http://13.231.28.89:18080/api/products/${productId}`);
         const data = response.data;
 
         // 데이터가 아예 없는 경우
@@ -124,7 +124,7 @@ function ProductDetailPage() {
     try {
       const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
       await axios.post(
-        'http://localhost:8080/api/coco/members/cart/items',
+        'http://13.231.28.89:18080/api/coco/members/cart/items',
         {
           memNo: member.memNo,
           optionNo: optionNoToUse,

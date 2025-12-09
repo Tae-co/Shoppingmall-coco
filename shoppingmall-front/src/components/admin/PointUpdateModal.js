@@ -25,7 +25,7 @@ const PointUpdateModal = ({ isOpen, onClose, member, onSuccess }) => {
 
     try {
       const response = await axios.put(
-        `http://localhost:8080/api/member/admin/${member.memNo}/point`,
+        `http://13.231.28.89:18080/api/member/admin/${member.memNo}/point`,
         { point: newPoint },
         { headers: getAuthHeaders() }
       );

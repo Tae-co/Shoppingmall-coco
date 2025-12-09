@@ -67,7 +67,7 @@ function ProductListPage() {
         const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
 
         // 헤더에 Authorization 추가하여 요청
-        const response = await axios.get(`http://localhost:8080/api/coco/members/profile/${member.memNo}`, {
+        const response = await axios.get(`http://13.231.28.89:18080/api/coco/members/profile/${member.memNo}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -149,7 +149,7 @@ function ProductListPage() {
       setIsLoading(true);
       try {
         const queryString = searchParams.toString();
-        const response = await axios.get(`http://localhost:8080/api/products?${queryString}`, {
+        const response = await axios.get(`http://13.231.28.89:18080/api/products?${queryString}`, {
           signal: controller.signal
         });
 
@@ -259,7 +259,7 @@ function ProductListPage() {
       const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
       // axios.post 사용
       await axios.post(
-        'http://localhost:8080/api/coco/members/cart/items',
+        'http://13.231.28.89:18080/api/coco/members/cart/items',
         {
           memNo: member.memNo,
           optionNo: product.defaultOptionNo,

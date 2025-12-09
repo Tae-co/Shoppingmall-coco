@@ -44,7 +44,7 @@ function AdminProductList() {
 
   // 카테고리 로드
   useEffect(() => {
-    axios.get('http://localhost:8080/api/categories')
+    axios.get('http://13.231.28.89:18080/api/categories')
       .then(res => setCategories(res.data))
       .catch(err => console.error("카테고리 로드 실패:", err));
   }, []);
@@ -68,12 +68,12 @@ function AdminProductList() {
         const token = localStorage.getItem('token');
 
         // 상품 목록 요청
-        const productRes = await axios.get('http://localhost:8080/api/products', { params });
+        const productRes = await axios.get('http://13.231.28.89:18080/api/products', { params });
         setProducts(productRes.data.content);
         setTotalPages(productRes.data.totalPages);
 
         // 통계 요청
-        const statsRes = await axios.get('http://localhost:8080/api/admin/stats', {
+        const statsRes = await axios.get('http://13.231.28.89:18080/api/admin/stats', {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -106,7 +106,7 @@ function AdminProductList() {
         // 토큰 가져오기
         const token = localStorage.getItem('token');
 
-        await axios.delete(`http://localhost:8080/api/admin/products/${product.prdNo}`, {
+        await axios.delete(`http://13.231.28.89:18080/api/admin/products/${product.prdNo}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 

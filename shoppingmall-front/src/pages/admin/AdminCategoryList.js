@@ -25,7 +25,7 @@ function AdminCategoryList() {
   // 목록 조회
   const loadCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/categories');
+      const response = await axios.get('http://13.231.28.89:18080/api/categories');
       setCategories(response.data);
     } catch (error) {
       console.error(error);
@@ -95,11 +95,11 @@ function AdminCategoryList() {
 
       if (editId) {
         // 수정 (PUT)
-        await axios.put(`http://localhost:8080/api/admin/categories/${editId}`, categoryData, config);
+        await axios.put(`http://13.231.28.89:18080/api/admin/categories/${editId}`, categoryData, config);
         toast.success('수정되었습니다.');
       } else {
         // 추가 (POST)
-        await axios.post('http://localhost:8080/api/admin/categories', categoryData, config);
+        await axios.post('http://13.231.28.89:18080/api/admin/categories', categoryData, config);
         toast.success('추가되었습니다.');
       }
 
@@ -135,7 +135,7 @@ function AdminCategoryList() {
         // 토큰 가져오기
         const token = localStorage.getItem('token');
 
-        await axios.delete(`http://localhost:8080/api/admin/categories/${category.categoryNo}`, {
+        await axios.delete(`http://13.231.28.89:18080/api/admin/categories/${category.categoryNo}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
