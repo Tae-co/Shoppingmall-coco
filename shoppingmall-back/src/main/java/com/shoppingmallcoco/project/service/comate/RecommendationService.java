@@ -3,6 +3,7 @@ package com.shoppingmallcoco.project.service.comate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import com.shoppingmallcoco.project.entity.auth.Member;
 import com.shoppingmallcoco.project.entity.product.ProductEntity;
 import com.shoppingmallcoco.project.entity.product.ProductImageEntity;
 import com.shoppingmallcoco.project.entity.review.Review;
+import com.shoppingmallcoco.project.repository.auth.MemberRepository;
 import com.shoppingmallcoco.project.repository.comate.FollowRepository;
 import com.shoppingmallcoco.project.repository.mypage.SkinRepository;
 import com.shoppingmallcoco.project.repository.order.OrderRepository;
@@ -39,6 +41,7 @@ public class RecommendationService {
     private final ProductRepository productRepository;
     private final ReviewRepository reviewRepository;
     private final LikeRepository likeRepository;
+    private final MemberRepository memberRepository;
     
     private final MatchingService matchingService;
     
@@ -285,6 +288,8 @@ public class RecommendationService {
         candidates.addAll(mediumMatch);
         Collections.shuffle(candidates);
         
+        if (candidates.size() < RANDOM_USER)	return fallbackUsers();
+        
         return candidates.stream()
                 .limit(RANDOM_USER)
                 .map(u -> new RecommendUserDTO(
@@ -292,6 +297,31 @@ public class RecommendationService {
                         u.getMemNickname(),
                         matchingService.getUserMatch(loginUserNo, u.getMemNo())))
                 .collect(Collectors.toList());
+    }
+    
+    /* 유저 추천 fallback */
+    private List<RecommendUserDTO> fallbackUsers() {
+    	
+    	// 1 리뷰 작성 개수가 많은 유저
+    	List<Member> reviewRank = memberRepository.findUsersOrderByReviewCount(PageRequest.of(0, 5));
+    	// 2 팔로워 많은 유저
+    	List<Member> followerRank = followRepository.findUsersOrderByFollowerCount(PageRequest.of(0, 5));
+    	// 3 최근 가입 유저
+    	List<Member> recentJoin = memberRepository.findRecentUsers(PageRequest.of(0,  5));
+    	
+    	LinkedHashSet<Member> merged = new LinkedHashSet<>();
+    	merged.addAll(reviewRank);
+    	merged.addAll(followerRank);
+    	merged.addAll(recentJoin);
+    	
+    	return merged.stream()
+    			.limit(RANDOM_USER)
+    			.map(member -> new RecommendUserDTO(
+    					member.getMemNo(),
+    					member.getMemNickname(),
+    					null
+    			))
+    			.toList();
     }
     
     /* 상품 썸네일 가져오기 */

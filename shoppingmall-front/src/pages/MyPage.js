@@ -7,6 +7,13 @@ import { getStoredMember, getCurrentMember } from "../utils/api";
 function MyPage() {
   const navigate = useNavigate();
 
+  const statusMap = {
+  배송완료: "배송완료",
+  배송중: "배송중",
+  상품준비중: "상품준비중",
+  취소됨: "취소됨",
+};
+
   // 관리자 체크 - 관리자는 관리자 페이지로 리다이렉트
   useEffect(() => {
     const checkAdminRole = async () => {
@@ -50,7 +57,7 @@ function MyPage() {
     if (!token) return; // 토큰 없으면 요청x
 
     axios
-      .get("http://localhost:8080/api/orders/my", {
+      .get("http://13.231.28.89:18080/api/orders/my", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -152,7 +159,14 @@ function MyPage() {
                 {/* 내용 영역 */}
                 <div className="order-content">
                   <p className="order-date">
-                    {order.orderDate} <span>주문번호: {order.orderNo}</span>
+                    <span className="left">
+                      {order.orderDate}
+                    <span className="order-no">주문번호: {order.orderNo}</span>
+                    </span>
+
+                     <span className="order-status">
+                      {statusMap[order.status] || order.status}
+                     </span>
                   </p>
 
                   <p className="order-title">

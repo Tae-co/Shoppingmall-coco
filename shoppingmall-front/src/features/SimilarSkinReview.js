@@ -16,7 +16,7 @@ function SimilarSkinReview({ productId }) {
             if (!productId || !memberNo) return;
 
             try {
-                const response = await fetch(`http://localhost:8080/api/products/${productId}/similar-skin-tags?memberNo=${memberNo}`);
+                const response = await fetch(`http://13.231.28.89:18080/api/products/${productId}/similar-skin-tags?memberNo=${memberNo}`);
                 if (!response.ok) throw new Error('통계 데이터 불러오기 실패');
                 const stats = await response.json();
                 console.log(stats)

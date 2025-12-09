@@ -3,7 +3,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import Pagination from '../../components/admin/Pagination';
 import Spinner from '../../components/admin/Spinner';
-import { fetchWithAuth, getAuthHeaders } from '../../utils/api';
+import PointUpdateModal from '../../components/admin/PointUpdateModal';
+import { fetchWithAuth } from '../../utils/api';
 import '../../css/admin/AdminProductList.css'; 
 import '../../css/admin/AdminComponents.css';
 import editIcon from '../../images/edit.svg';
@@ -33,6 +34,10 @@ function AdminMemberList() {
     naverCount: 0,
     googleCount: 0
   });
+
+  // 포인트 수정 모달 상태
+  const [selectedMember, setSelectedMember] = useState(null); // 모달에 넘겨줄 멤버 객체
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const loadMembers = useCallback(async () => {
     setIsLoading(true);
@@ -94,32 +99,21 @@ function AdminMemberList() {
     setCurrentPage(1);
   };
 
-  // 포인트 수정 핸들러
-  const handleUpdatePoint = async (memNo, currentPoint, memName) => {
-    const newPointStr = window.prompt(`'${memName}' 회원의 포인트를 수정합니다.\n(현재: ${currentPoint})`, currentPoint);
-    
-    if (newPointStr === null) return; // 취소
-    
-    const newPoint = Number(newPointStr);
-    if (isNaN(newPoint) || newPoint < 0) {
-        alert("올바른 숫자를 입력해주세요.");
-        return;
-    }
+  // 모달 열기
+  const handleOpenModal = (member) => {
+    setSelectedMember(member);
+    setIsModalOpen(true);
+  };
 
-    try {
-        const response = await axios.put(`http://localhost:8080/api/member/admin/${memNo}/point`, 
-            { point: newPoint }, 
-            { headers: getAuthHeaders() }
-        );
+  // 모달 닫기
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMember(null);
+  };
 
-        if(response.status === 200) {
-            toast.success("포인트가 수정되었습니다.");
-            loadMembers(); // 목록 새로고침
-        }
-    } catch (error) {
-        console.error(error);
-        toast.error("포인트 수정 실패");
-    }
+  // 모달에서 수정 성공 시 호출될 콜백
+  const handleUpdateSuccess = () => {
+    loadMembers(); // 목록 새로고침
   };
 
   const formatDate = (dateString) => {
@@ -285,13 +279,13 @@ function AdminMemberList() {
                       </span>
                     </td>
 
-                    {/* 포인트 수정 영역 */}
+                    {/* 버튼 클릭 시 분리된 모달 열기 핸들러 호출 */}
                     <td style={{whiteSpace: 'nowrap'}}>
                         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px'}}>
                             <span>{member.point?.toLocaleString()} P</span>
                             <button 
                                 className="icon-btn edit" 
-                                onClick={() => handleUpdatePoint(member.memNo, member.point, member.memName)}
+                                onClick={() => handleOpenModal(member)} 
                                 title="포인트 수정"
                             >
                                 <img src={editIcon} alt="수정" />
@@ -315,6 +309,15 @@ function AdminMemberList() {
           onPageChange={setCurrentPage}
         />
       </div>
+    
+    {/* 분리된 모달 컴포넌트 사용 */}
+      <PointUpdateModal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        member={selectedMember}
+        onSuccess={handleUpdateSuccess}
+      />
+
     </div>
   );
 }

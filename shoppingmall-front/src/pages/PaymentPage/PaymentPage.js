@@ -201,8 +201,14 @@ function PaymentPage() {
         } else {
           // --- 결제 실패 ---
           console.log("결제 실패:", rsp.error_msg);
-          alert(`결제에 실패하였습니다. 에러 내용: ${rsp.error_msg}`);
-          navigate('/order-fail'); 
+          let message = "결제 승인 과정에서 오류가 발생했습니다.";
+          if (rsp.error_msg.includes("취소") || rsp.error_msg.includes("포기")) {
+             message = "사용자가 결제를 취소했습니다.";
+          }
+
+          alert(message); 
+          //  실패 메시지를 state에 담아 전달
+          navigate('/order-fail', { state: { failMessage: message } });
         }
       });
 
@@ -215,7 +221,7 @@ function PaymentPage() {
       }
 
       console.log("현재 '신용/체크카드 직접 입력'은 지원하지 않습니다. 실패 처리합니다.");
-      navigate('/order-fail'); 
+      navigate('/order-fail', { state: { failMessage: "지원하지 않는 결제 방식이거나 카드 정보가 올바르지 않습니다." } });
     }
   };
 

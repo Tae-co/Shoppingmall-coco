@@ -66,7 +66,7 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
                     headers['Authorization'] = `Bearer ${token}`;
                 }
 
-                await axios.delete(`http://localhost:8080/api/reviews/${reviewNo}`, { headers });
+                await axios.delete(`http://13.231.28.89:18080/api/reviews/${reviewNo}`, { headers });
                 onDelete(reviewNo);
             } catch (error) {
                 console.error("리뷰 삭제에 실패했습니다:", error);
@@ -82,7 +82,7 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
         }
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:8080/api/reviews/${reviewNo}/like`, {
+            const response = await fetch(`http://13.231.28.89:18080/api/reviews/${reviewNo}/like`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -105,7 +105,7 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
     useEffect(() => {
         const getBuyCount = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/api/products/${productNo}/countReviews/${reviewNo}`);
+                const response = await axios.get(`http://13.231.28.89:18080/api/products/${productNo}/countReviews/${reviewNo}`);
                 setBuyCount(response.data);
             } catch (error) {
                 console.log("재구매 횟수 불러오기 실패", error);

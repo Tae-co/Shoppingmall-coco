@@ -1,11 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import '../../css/OrderResultPage.css'; // 주문 성공/실패 페이지 공용 CSS 사용
 
 // 주문 실패를 사용자에게 안내하고 해결 방법을 제공하는 컴포넌트
 function OrderFailPage() {
-  
-  
+  const location = useLocation();
+
+  // PaymentPage에서 전달받은 실패 메시지 (없으면 기본값 사용)
+  const failMessage = location.state?.failMessage || "결제 승인 과정에서 오류가 발생했습니다.";
+ 
 
   return (
     <div className="order-result-page">
@@ -25,7 +28,7 @@ function OrderFailPage() {
       <div className="error-alert-box">
         <span className="icon">⚠️</span>
         <div>
-          <strong>카드사에서 결제를 승인하지 않았습니다.</strong>
+          <strong>{failMessage}</strong>
         </div>
       </div>
 

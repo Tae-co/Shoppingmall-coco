@@ -212,6 +212,18 @@ function ProductListPage() {
     setIsProfileMode(false);
   };
 
+  // handleFilterGroupChange (그룹 전체 변경 - 전체 선택용)
+  const handleFilterGroupChange = (category, newValues) => {
+    const params = new URLSearchParams(searchParams);
+    // 해당 카테고리의 기존 값 모두 제거
+    params.delete(category);
+    // 새로운 리스트 값들 추가
+    newValues.forEach(val => params.append(category, val));
+    params.set('page', '1');
+    setSearchParams(params);
+    setIsProfileMode(false);
+  };
+
   const handleSearchChange = (e) => updateSearchParams({ q: e.target.value });
   const handleSortChange = (e) => updateSearchParams({ sort: e.target.value });
   const handlePageChange = (pageNumber) => {
@@ -277,6 +289,7 @@ function ProductListPage() {
         closeButtonRef={closeButtonRef}
         activeFilters={activeFilters}
         onFilterChange={handleFilterChange}
+        onFilterGroupChange={handleFilterGroupChange}
         isLoggedIn={isLoggedIn()}
         isProfileMode={isProfileMode}
         onProfileToggle={handleProfileToggle}

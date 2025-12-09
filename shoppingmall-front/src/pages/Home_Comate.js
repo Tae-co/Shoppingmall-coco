@@ -8,12 +8,13 @@ import '../css/Home_Comate.css';
 
 import ComateMiniProfile from "../components/ComateMiniProfile";
 import { getCurrentMember } from '../utils/api'; 
-import { getAllComates, follow, unfollow } from "../utils/comate_api"; 
+import { getRandomComates, follow, unfollow } from "../utils/comate_api"; 
 
 function Home_Comate() {
     const navigate = useNavigate();
 
     const settings = {
+        accessibility: false,
         className: "center",
         centerMode: true,
         infinite: true,
@@ -24,7 +25,39 @@ function Home_Comate() {
         autoplay: true,
         autoplaySpeed: 3000,
         arrows: true,
-        focusOnSelect: true
+        focusOnSelect: true,
+        // 반응형 설정
+        responsive: [
+            {
+                breakpoint: 1280, // 큰 화면 ↓ (보통 4개가 안정적)
+                settings: {
+                    slidesToShow: 4,
+                    centerPadding: "35px",
+                },
+            },
+            {
+                breakpoint: 1024, // 보통 노트북 ↓
+                settings: {
+                    slidesToShow: 3,
+                    centerPadding: "30px",
+                },
+            },
+            {
+                breakpoint: 768, // 태블릿 ↓
+                settings: {
+                    slidesToShow: 2,
+                    centerPadding: "25px",
+                },
+            },
+            {
+                breakpoint: 480, // 모바일 ↓
+                settings: {
+                    slidesToShow: 1,
+                    centerMode: true,
+                    centerPadding: "20px",
+                },
+            },
+        ]
     };
 
     // 전체 회원 목록
@@ -59,7 +92,7 @@ function Home_Comate() {
     useEffect(() => {
         const loadComates = async () => {
             try {
-                const data = await getAllComates();
+                const data = await getRandomComates();
                 setComates(data);
                 // 팔로우 상태 초기화
                 const status = {};

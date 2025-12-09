@@ -3,6 +3,8 @@ package com.shoppingmallcoco.project.repository.comate;
 import com.shoppingmallcoco.project.dto.comate.FollowInfoDTO;
 import com.shoppingmallcoco.project.entity.auth.Member;
 import com.shoppingmallcoco.project.entity.comate.Follow;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -53,4 +55,35 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     		WHERE m.memNo <> :loginUserNo
     		""")
     List<Member> findAllMembersExcluding(@Param("loginUserNo") Long loginUserNo);
+    
+    /* 전체 회원 중 랜덤 10명 조회 (로그인한 사용자 제외) */
+    @Query(value = """
+            SELECT *
+            FROM member
+            WHERE memNo <> :loginUserNo
+            ORDER BY DBMS_RANDOM.VALUE
+            FETCH FIRST 10 ROWS ONLY
+            """,
+            nativeQuery = true)
+    List<Member> findRandomMembers(@Param("loginUserNo") Long loginUserNo);
+    
+    /* 전체 회원 중 랜덤 10명 조회 (로그인 하지 않은 경우) */
+    @Query(value = """
+            SELECT *
+            FROM member
+            ORDER BY DBMS_RANDOM.VALUE
+            FETCH FIRST 10 ROWS ONLY
+            """, 
+           nativeQuery = true)
+    List<Member> findRandomMembersForGuest();
+
+    /* 팔로워 수 많은 유저 조회 */
+    @Query("""
+    	    SELECT f.following
+    	    FROM Follow f
+    	    GROUP BY f.following
+    	    ORDER BY COUNT(f.follower) DESC
+	""")
+	List<Member> findUsersOrderByFollowerCount(Pageable pageable);
+
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import skincareImg from '../images/category/category_skincare.png';
 import makeupImg from '../images/category/category_makeup.png';
@@ -83,7 +83,6 @@ const Home = () => {
                         <h2>CO-MATE</h2>
                         <div className="sub_title_wrapper">
                             <div className="sub_title">신뢰할 수 있는 뷰티 전문가들을 팔로우하세요</div>
-                            <div className="sub_title"><Link to="/comate" className="more">더보기</Link></div>
                         </div>
                     </div>
                     <div className="comate_list">
