@@ -293,3 +293,36 @@ ul {
     padding: 0;
     cursor: pointer;
 }
+
+@media (max-width: 822px) {
+    .logo {
+        width: 110px;
+    }
+    .gnb_item {
+        margin-right: 15px;
+    }
+    .header_main .main_inner {
+        padding: 20px 12px;
+    }
+    .header_center {
+        margin: 0 20px;
+    }
+}
+@media (max-width: 600px) {
+    .logo {
+        width: 95px;
+    }
+    .gnb_list {
+        gap: 4px;
+    }
+    .gnb_list .gnb_link {
+        font-size: 16px;
+        padding: 0 6px;
+    }
+    .gnb_item {
+        margin-right: 5px;
+    }
+    .header_center {
+        margin: 0 10px;
+    }
+}

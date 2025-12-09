@@ -26,7 +26,7 @@ function OrderHistory() {
     setLoading(true);
 
     axios
-      .get(`http://localhost:8080/api/orders/my`, {
+      .get(`http://13.231.28.89:18080/api/orders/my`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

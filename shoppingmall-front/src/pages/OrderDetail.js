@@ -9,13 +9,13 @@ function OrderDetail() {
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  
   const token = localStorage.getItem("token");
   useEffect(() => {
 
     if (!orderNo || !token) return;
     axios
-      .get(`http://localhost:8080/api/orders/${orderNo}`, {
+      .get(`http://13.231.28.89:18080/api/orders/${orderNo}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -48,7 +48,7 @@ function OrderDetail() {
     if (window.confirm("정말로 주문을 취소하시겠습니까?")) {
       try {
         await axios.post(
-          `http://localhost:8080/api/orders/${orderNo}/cancel`, // 백엔드 API 호출
+          `http://13.231.28.89:18080/api/orders/${orderNo}/cancel`, // 백엔드 API 호출
           null,
           {
             headers: {
@@ -90,10 +90,15 @@ function OrderDetail() {
       </button>
 
       {/* 상단 주문 정보 */}
-      <div className="order-header">
+    <div className="order-header">
+
+      <div className="order-top-row">
         <h2>{order.orderDate?.slice(0, 10).replace(/-/g, ".")}</h2>
-        <p className="order-no">주문번호 {order.orderNo}</p>
+        <span className="order-status">{order.status}</span>
       </div>
+
+      <p className="order-no">주문번호 {order.orderNo}</p>
+    </div>
 
       {/* 배송지 정보 */}
       <div className="section-box">

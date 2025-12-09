@@ -1,3 +1,4 @@
+
 .review-list-container {
   max-width: 1100px;
   margin: 0 auto;
@@ -17,6 +18,11 @@
   padding: 0;
 }
 
+.filter {
+  color: black;
+  font-size: 15px;
+}
+
 .filter-container button:hover {
   color: blue;
   text-decoration: underline;
@@ -25,9 +31,14 @@
 }
 
 .filter-container {
+  margin-left: 10px;
   padding-top: 30px;
 }
 
 .review-btn {
   margin-bottom: 20px;   /* 양수면 아래로, 음수면 위로 올라감 */
+}
+
+.error{
+  padding-left: 30px;
 }

@@ -4,6 +4,7 @@ import com.shoppingmallcoco.project.entity.auth.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -36,6 +37,25 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // role별 회원 수 조회
     long countByRole(Member.Role role);
+    
+    // 최근 가입 유저
+    @Query("""
+        SELECT m
+        FROM Member m
+        ORDER BY m.memJoindate DESC
+    """)
+    List<Member> findRecentUsers(Pageable pageable);
+    
+    // 리뷰를 많이 작성한 유저 조회
+    @Query("""
+        SELECT m
+        FROM Member m
+        LEFT JOIN Review r ON r.orderItem.order.member.memNo = m.memNo
+        GROUP BY m
+        ORDER BY COUNT(r) DESC
+    """)
+    List<Member> findUsersOrderByReviewCount(Pageable pageable);
+
 }
 
 

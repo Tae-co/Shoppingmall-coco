@@ -25,6 +25,7 @@ public class MemberResponseDto {
     private LocalDateTime memJoindate;
     private String role;
     private Long point;
+    private String loginType; // "일반", "카카오", "네이버", "구글"
     private String token;  // JWT 토큰
     private Boolean needsAdditionalInfo;  // 추가 정보 입력 필요 여부 (카카오 로그인용)
 }

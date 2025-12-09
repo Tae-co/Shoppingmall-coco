@@ -75,7 +75,7 @@ const Comate = () => {
         }
 
         initUser();
-    }, [memNo]);
+    }, [memNo, navigate]);
 
     /* 회원 기본정보 조회 */
     useEffect(() => {
@@ -202,7 +202,7 @@ const Comate = () => {
     useEffect(() => {
         if (tab && tab !== activeTab) setActiveTab(tab);
         window.scrollTo({ top: 0, behavior: 'smooth'});
-    }, [tab]);
+    }, [tab, activeTab]);
 
     /* 탭 클릭 */
     const handleTabClick = (tabName) => {
@@ -265,7 +265,7 @@ const Comate = () => {
                                     <li key={user.memNo}
                                         onClick={() => handleSelectMember(user.memNo)}
                                     >
-                                        <img src={sampleImg_profile} className="search_result_profile"></img>
+                                        <img src={sampleImg_profile} className="search_result_profile" alt={`${user.memNo}_profile`} />
                                         <span>{user.memNickname}</span>
                                     </li>
                                 ))}
@@ -292,6 +292,7 @@ const Comate = () => {
 
                     onFollowClick={handleFollowClick}
                     onTabClick={handleTabClick}
+                    userType={userType}
                 />
                 {/* 탭 별 컨텐츠 */}
                 { activeTab === 'recommend' ? (

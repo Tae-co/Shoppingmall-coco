@@ -90,7 +90,9 @@ public class WebSecurityConfig {
 				// 관리자만 접근할 수 있는 API
 				.requestMatchers("/api/member/admin/**").authenticated()
 				.requestMatchers("/api/admin/**").authenticated()
-				// 상품 조회는 공개
+				// 상품 유사 피부 타입 통계는 인증 필요 (개인정보 포함)
+				.requestMatchers(HttpMethod.GET, "/api/products/*/similar-skin-tags").authenticated()
+				// 상품 조회는 공개 (위의 인증 필요한 엔드포인트 제외)
 				.requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
 				// 나머지 요청은 인증 필요

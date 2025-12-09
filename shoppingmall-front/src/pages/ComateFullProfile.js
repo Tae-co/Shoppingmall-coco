@@ -12,11 +12,11 @@ const ComateFullProfile = ({
     followers, 
     following, 
     onFollowClick, 
-    onClick, 
     isMine, 
     isFollowing,
     matchingRate,
-    onTabClick 
+    onTabClick,
+    userType
 }) => {
     const navigate = useNavigate();
 
@@ -27,12 +27,20 @@ const ComateFullProfile = ({
     };
 
     return (
-        <div className="comate_card_wrapper" onClick={onClick}>
+        <div className="comate_card_wrapper">
+            {userType !== 'me' && (
+                <button 
+                    className="back_to_me_btn"
+                    onClick={() => navigate('/comate/me/recommend')}
+                >
+                    <svg class="arrow-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    <span>CO-MATE 메인으로</span>
+                </button>
+            )}
             <div className="comate_card full">
             <div className="profile_section full">
-                <img src={sampleImg_profile} alt="user_profile" className="profile_img full"
-                onClick={(e) => { e.stopPropagation(); onTabClick('review'); }} />
-                <div className="nickname full" onClick={(e) => { e.stopPropagation(); onTabClick('review'); }}>{nickname}</div>
+                <img src={sampleImg_profile} alt="user_profile" className="profile_img full" />
+                <div className="nickname full">{nickname}</div>
                 <div className="skin_types full">
                     {skinTags?.map((type, index) => (
                         <span key={index}>{type}</span>

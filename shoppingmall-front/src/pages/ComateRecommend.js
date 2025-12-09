@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import '../css/RecommendCard.css';
 
@@ -8,6 +9,8 @@ import RecommendPrdCard from './RecommendPrdCard';
 import { getRecommendation } from '../utils/comate_api';
 
 const ComateRecommend = ({ loginUserNo }) => {
+    const navigate = useNavigate();
+
     const [recommendData, setRecommendData] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -34,6 +37,12 @@ const ComateRecommend = ({ loginUserNo }) => {
                 <div>
                     <div className="recommend_title">추천 CO-MATE</div>
                     <div className="recommend_sub">CO-MATE 를 팔로우하고 맞춤 서비스를 받아보세요</div>
+                    {recommendData?.users?.some((user) => user.matchingRate === null) && (
+                        <div className="recommend_sub fallback" 
+                            onClick={(e) => {e.stopPropagation(); navigate("/profile-edit");}}>
+                            피부 프로필을 등록하고 더 똑똑해진 CO-MATE 추천을 받아보세요!
+                        </div>
+                    )}
                 </div>
                 <div className="recommend_grid_4">
                 {recommendData?.users?.map((user) => (

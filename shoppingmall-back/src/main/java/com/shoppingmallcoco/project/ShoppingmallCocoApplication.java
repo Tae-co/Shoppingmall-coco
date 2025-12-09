@@ -4,19 +4,26 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
 @SpringBootApplication
+@PropertySources({
+    @PropertySource(value = {
+        "file:/Users/sintaeyub/tomcat/apache-tomcat-10.1.49/webapps/ROOT/configure.properties",
+        "file:/usr/local/project/properties/configure.properties",},
+        ignoreResourceNotFound = true)
+})
 public class ShoppingmallCocoApplication extends SpringBootServletInitializer {
-
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(ShoppingmallCocoApplication.class);
     }
 
-	public static void main(String[] args) {
-		SpringApplication.run(ShoppingmallCocoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ShoppingmallCocoApplication.class, args);
+    }
 }

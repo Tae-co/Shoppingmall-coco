@@ -162,3 +162,17 @@
     font-size: 16px;
     margin-top: 20px;
 }
+.back_to_me_btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    color: #666;
+    background-color: #f0f0f0;
+    padding: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+.back_to_me_btn .arrow-icon {
+    width: 20px;
+    height: 20px;
+}

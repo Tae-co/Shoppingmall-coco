@@ -137,7 +137,23 @@ public class ReviewController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
             for (MultipartFile file : files) {
+                if (file.isEmpty()) {
+                    continue;
+                }
+                // 파일 크기 검증
                 if (file.getSize() > 10 * 1024 * 1024) { // 10MB
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                }
+                // 파일 타입 검증 (이미지 파일만 허용)
+                String contentType = file.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                }
+                // 허용된 이미지 타입만 허용
+                List<String> allowedTypes = Arrays.asList(
+                    "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"
+                );
+                if (!allowedTypes.contains(contentType.toLowerCase())) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
                 }
             }
@@ -235,15 +251,17 @@ public class ReviewController {
         return reviewService.toggleLike(reviewNo, member.getMemNo());
     }
 
+    // 리뷰 페이징 및 정렬
     @GetMapping("/products/{prdNo}/reviewPages")
     public Page<ReviewDTO> getReviewPages(@PathVariable("prdNo") Long prdNo,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
-        @RequestParam(defaultValue = "latest") String filterType,
+        @RequestParam(defaultValue = "latest") String sortType,
+        @RequestParam(required = false) Boolean coMate,
         Authentication authentication) {
 
         Long memNo = null;
-        if ("co-mate".equals(filterType)) {
+        if (Boolean.TRUE.equals(coMate)) {
             if (authentication == null || authentication.getName() == null) {
                 throw new RuntimeException("Co-mate는 로그인이 필요합니다.");
             }
@@ -251,22 +269,7 @@ public class ReviewController {
                 .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
             memNo = member.getMemNo();
         }
-        return reviewService.getReviewPage(prdNo, memNo, page, size, filterType);
+        return reviewService.getReviewPage(prdNo, memNo, page, size, sortType, coMate);
     }
-
-//    // 리뷰 co-mate 필터
-//    @GetMapping("/products/{prdNo}/reviews/comate")
-//    public List<ReviewDTO> getProductReviews(@PathVariable Long prdNo,
-//        Authentication authentication) {
-//        if (authentication == null || authentication.getName() == null) {
-//            throw new RuntimeException("인증이 필요합니다.");
-//        }
-//
-//        Member member = memberRepository.findByMemId(authentication.getName())
-//            .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
-//
-//        Long memNo = member.getMemNo();
-//        return reviewService.getCoMateReviews(prdNo, memNo);
-//    }
 
 }

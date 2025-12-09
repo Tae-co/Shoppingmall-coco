@@ -75,7 +75,7 @@ function UpdateReview() {
         const loadAllTags = async () => {
             setLoadingTags(true);
             try {
-                const response = await axios.get(`http://localhost:8080/api/tags`);
+                const response = await axios.get(`http://13.231.28.89:18080/api/tags`);
                 setTags(response.data);
             } catch (error) {
                 console.error("태그 목록 로딩 실패:", error);
@@ -187,7 +187,7 @@ function UpdateReview() {
                             {previewFiles.map(preview => (
                                 <div key={preview.id} className="preview-component">
                                     <img
-                                        src={preview.file ? URL.createObjectURL(preview.file) : `http://localhost:8080/images/${preview.url}`}
+                                        src={preview.file ? URL.createObjectURL(preview.file) : `http://13.231.28.89:18080/images/${preview.url}`}
                                         alt="미리보기"
                                         className="preview-image"
                                     />

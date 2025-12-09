@@ -18,15 +18,21 @@ const RecommendUserCard = ({
     return (
         <div className="recommend_user_wrapper">
         <Link to={`/comate/user/${memNo}/review`}>
-            <img src={sampleImg_profile} className="profile_img recommend_user"/>
+            <img src={sampleImg_profile} className="profile_img recommend_user" alt={`${memNo}_profile`} />
             <div className="user_info">
                 <div className="recommend_user_nickname">{nickname}</div>
                 <div className="matching_wrapper">
                     <div className="matching_title">궁합도</div>
-                    <div className={`matching_rate  ${getMatchClass(matchingRate)}`}>
-                        {matchingRate}
-                        <span className="percent">%</span>
-                    </div>
+                    {matchingRate === null ? (
+                        <div className="matching_rate low">
+                            ??
+                        </div>
+                    ) : (
+                        <div className={`matching_rate ${getMatchClass(matchingRate)}`}>
+                            {matchingRate}
+                            <span className="percent">%</span>
+                        </div>
+                    )}
                 </div>
             </div>
         </Link>

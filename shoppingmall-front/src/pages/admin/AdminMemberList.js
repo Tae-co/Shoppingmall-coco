@@ -3,7 +3,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import Pagination from '../../components/admin/Pagination';
 import Spinner from '../../components/admin/Spinner';
-import { fetchWithAuth, getAuthHeaders } from '../../utils/api';
+import PointUpdateModal from '../../components/admin/PointUpdateModal';
+import { fetchWithAuth } from '../../utils/api';
 import '../../css/admin/AdminProductList.css'; 
 import '../../css/admin/AdminComponents.css';
 import editIcon from '../../images/edit.svg';
@@ -17,6 +18,7 @@ function AdminMemberList() {
   // 검색 상태
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('ALL');
+  const [selectedLoginType, setSelectedLoginType] = useState('ALL');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -25,8 +27,17 @@ function AdminMemberList() {
   const [dashboardStats, setDashboardStats] = useState({
     totalMembers: 0,
     adminCount: 0,
-    userCount: 0
+    userCount: 0,
+    normalCount: 0,
+    socialCount: 0,
+    kakaoCount: 0,
+    naverCount: 0,
+    googleCount: 0
   });
+
+  // 포인트 수정 모달 상태
+  const [selectedMember, setSelectedMember] = useState(null); // 모달에 넘겨줄 멤버 객체
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const loadMembers = useCallback(async () => {
     setIsLoading(true);
@@ -47,12 +58,26 @@ function AdminMemberList() {
       const data = await response.json();
 
       if (response.ok) {
-        setMembers(data.members || []);
+        let filteredMembers = data.members || [];
+        
+        // 로그인 타입 필터링 (프론트엔드에서)
+        if (selectedLoginType && selectedLoginType !== 'ALL') {
+          filteredMembers = filteredMembers.filter(member => 
+            member.loginType === selectedLoginType
+          );
+        }
+        
+        setMembers(filteredMembers);
         setTotalPages(data.totalPages || 0);
         setDashboardStats(data.stats || {
           totalMembers: 0,
           adminCount: 0,
-          userCount: 0
+          userCount: 0,
+          normalCount: 0,
+          socialCount: 0,
+          kakaoCount: 0,
+          naverCount: 0,
+          googleCount: 0
         });
       } else {
         throw new Error(data.message || '회원 목록을 불러오는데 실패했습니다.');
@@ -62,7 +87,7 @@ function AdminMemberList() {
       toast.error(error.message || "회원 목록을 불러오는 데 실패했습니다.");
     }
     setIsLoading(false);
-  }, [currentPage, searchTerm, selectedRole]);
+  }, [currentPage, searchTerm, selectedRole, selectedLoginType]);
 
   // useEffect에서는 loadMembers만 호출
   useEffect(() => {
@@ -74,32 +99,21 @@ function AdminMemberList() {
     setCurrentPage(1);
   };
 
-  // 포인트 수정 핸들러
-  const handleUpdatePoint = async (memNo, currentPoint, memName) => {
-    const newPointStr = window.prompt(`'${memName}' 회원의 포인트를 수정합니다.\n(현재: ${currentPoint})`, currentPoint);
-    
-    if (newPointStr === null) return; // 취소
-    
-    const newPoint = Number(newPointStr);
-    if (isNaN(newPoint) || newPoint < 0) {
-        alert("올바른 숫자를 입력해주세요.");
-        return;
-    }
+  // 모달 열기
+  const handleOpenModal = (member) => {
+    setSelectedMember(member);
+    setIsModalOpen(true);
+  };
 
-    try {
-        const response = await axios.put(`http://localhost:8080/api/member/admin/${memNo}/point`, 
-            { point: newPoint }, 
-            { headers: getAuthHeaders() }
-        );
+  // 모달 닫기
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMember(null);
+  };
 
-        if(response.status === 200) {
-            toast.success("포인트가 수정되었습니다.");
-            loadMembers(); // 목록 새로고침
-        }
-    } catch (error) {
-        console.error(error);
-        toast.error("포인트 수정 실패");
-    }
+  // 모달에서 수정 성공 시 호출될 콜백
+  const handleUpdateSuccess = () => {
+    loadMembers(); // 목록 새로고침
   };
 
   const formatDate = (dateString) => {
@@ -130,8 +144,12 @@ function AdminMemberList() {
             <p className="dash-value">{dashboardStats.totalMembers}명</p>
           </div>
         <div className="dash-card">
-          <p className="dash-title">일반 회원</p>
-          <p className="dash-value">{dashboardStats.userCount}명</p>
+          <p className="dash-title">일반 로그인</p>
+          <p className="dash-value">{dashboardStats.normalCount}명</p>
+        </div>
+        <div className="dash-card">
+          <p className="dash-title">소셜 로그인</p>
+          <p className="dash-value">{dashboardStats.socialCount}명</p>
         </div>
         <div className="dash-card">
           <p className="dash-title">관리자</p>
@@ -162,6 +180,18 @@ function AdminMemberList() {
             <option value="ADMIN">관리자</option>
           </select>
 
+          <select 
+            className="filter-select"
+            value={selectedLoginType}
+            onChange={(e) => { setSelectedLoginType(e.target.value); setCurrentPage(1); }}
+          >
+            <option value="ALL">전체 로그인 타입</option>
+            <option value="일반">일반 로그인</option>
+            <option value="카카오">카카오</option>
+            <option value="네이버">네이버</option>
+            <option value="구글">구글</option>
+          </select>
+
           <input
             type="text"
             className="search-input"
@@ -182,6 +212,7 @@ function AdminMemberList() {
                 <th style={{width: '80px'}}>이름</th>
                 <th style={{width: '80px'}}>이메일</th>
                 <th style={{width: '100px'}}>전화번호</th>
+                <th style={{width: '80px'}}>로그인 타입</th>
                 <th style={{width: '80px'}}>권한</th>
                 <th style={{width: '80px'}}>포인트</th>
                 <th style={{width: '80px'}}>가입일</th>
@@ -189,7 +220,7 @@ function AdminMemberList() {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr><td colSpan="9" className="loading-cell"><Spinner /></td></tr>
+                <tr><td colSpan="10" className="loading-cell"><Spinner /></td></tr>
               ) : members.length > 0 ? (
                 members.map((member) => (
                   <tr key={member.memNo}>
@@ -227,6 +258,20 @@ function AdminMemberList() {
                     <td>
                       <span className={`status-tag`} 
                             style={{
+                              backgroundColor: 
+                                member.loginType === '카카오' ? '#FEE500' :
+                                member.loginType === '네이버' ? '#03C75A' :
+                                member.loginType === '구글' ? '#4285F4' :
+                                '#6c757d',
+                              color: member.loginType === '카카오' ? '#000' : '#fff',
+                              fontSize: '11px'
+                              }}>
+                        {member.loginType || '일반'}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`status-tag`} 
+                            style={{
                               backgroundColor: member.role === 'ADMIN' ? '#dc3545' : '#28a745',
                               fontSize: '11px'
                               }}>
@@ -234,13 +279,13 @@ function AdminMemberList() {
                       </span>
                     </td>
 
-                    {/* 포인트 수정 영역 */}
+                    {/* 버튼 클릭 시 분리된 모달 열기 핸들러 호출 */}
                     <td style={{whiteSpace: 'nowrap'}}>
                         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px'}}>
                             <span>{member.point?.toLocaleString()} P</span>
                             <button 
                                 className="icon-btn edit" 
-                                onClick={() => handleUpdatePoint(member.memNo, member.point, member.memName)}
+                                onClick={() => handleOpenModal(member)} 
                                 title="포인트 수정"
                             >
                                 <img src={editIcon} alt="수정" />
@@ -252,7 +297,7 @@ function AdminMemberList() {
                   </tr>
                 ))
               ) : (
-                <tr><td colSpan="9" className="empty-cell">검색 결과가 없습니다.</td></tr>
+                <tr><td colSpan="10" className="empty-cell">검색 결과가 없습니다.</td></tr>
               )}
             </tbody>
           </table>
@@ -264,6 +309,15 @@ function AdminMemberList() {
           onPageChange={setCurrentPage}
         />
       </div>
+    
+    {/* 분리된 모달 컴포넌트 사용 */}
+      <PointUpdateModal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        member={selectedMember}
+        onSuccess={handleUpdateSuccess}
+      />
+
     </div>
   );
 }

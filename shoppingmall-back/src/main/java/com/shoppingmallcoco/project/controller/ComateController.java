@@ -195,7 +195,7 @@ public class ComateController {
     @GetMapping("/users")
     public ResponseEntity<List<MiniProfileDTO>> getAllComates(HttpServletRequest request) {
     	Long currentMemNo = getCurrentMemNo(request);
-    	return ResponseEntity.ok(comateService.getAllComates(currentMemNo));
+    	return ResponseEntity.ok(comateService.getRandomComates(currentMemNo));
     }
     
     // 추천 상품/리뷰/유저 조회

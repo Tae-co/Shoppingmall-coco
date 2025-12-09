@@ -74,7 +74,7 @@ function useSubmit(
                     headers['Authorization'] = `Bearer ${token}`;
                 }
 
-                await axios.put(`http://localhost:8080/api/reviews/${reviewNo}`, formData, { headers });
+                await axios.put(`http://13.231.28.89:18080/api/reviews/${reviewNo}`, formData, { headers });
                 alert("리뷰가 수정되었습니다.");
             } else {
                 // 리뷰 작성 (인증 필요)
@@ -85,7 +85,7 @@ function useSubmit(
                     headers['Authorization'] = `Bearer ${token}`;
                 }
 
-                await axios.post('http://localhost:8080/api/reviews', formData, { headers });
+                await axios.post('http://13.231.28.89:18080/api/reviews', formData, { headers });
                 alert("리뷰가 등록되었습니다.");
             }
             navigate('/'); // (TODO: 성공 후 상품 상세 페이지로 이동)

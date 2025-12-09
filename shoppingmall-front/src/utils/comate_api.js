@@ -3,7 +3,7 @@ import { fetchWithAuth } from "./api";
 const API_BASE_URL = '/comate';
 
 /* 메인 화면용 - 전체 회원 목록 조회 */
-export const getAllComates = async() => {
+export const getRandomComates = async() => {
     const response = await fetchWithAuth(`${API_BASE_URL}/users`, {
         method : "GET"
     });
