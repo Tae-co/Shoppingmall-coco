@@ -240,11 +240,12 @@ public class ReviewController {
     public Page<ReviewDTO> getReviewPages(@PathVariable("prdNo") Long prdNo,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
-        @RequestParam(defaultValue = "latest") String filterType,
+        @RequestParam(defaultValue = "latest") String sortType,
+        @RequestParam(required = false) Boolean coMate,
         Authentication authentication) {
 
         Long memNo = null;
-        if ("co-mate".equals(filterType)) {
+        if (Boolean.TRUE.equals(coMate)) {
             if (authentication == null || authentication.getName() == null) {
                 throw new RuntimeException("Co-mate는 로그인이 필요합니다.");
             }
@@ -252,7 +253,7 @@ public class ReviewController {
                 .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
             memNo = member.getMemNo();
         }
-        return reviewService.getReviewPage(prdNo, memNo, page, size, filterType);
+        return reviewService.getReviewPage(prdNo, memNo, page, size, sortType, coMate);
     }
 
 }
