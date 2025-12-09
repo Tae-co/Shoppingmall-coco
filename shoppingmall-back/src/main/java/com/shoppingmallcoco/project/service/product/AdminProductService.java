@@ -7,7 +7,6 @@ import com.shoppingmallcoco.project.service.review.IReviewService;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +43,7 @@ public class AdminProductService {
 	private String rootDir;
 	
 	// 도메인 상수 정의
-	private final String DOMAIN = "http://localhost:8080";
+	private final String DOMAIN = "http://13.231.28.89:18080";
 
 	// 상품 전용 업로드 폴더 경로
 	private String getProductUploadPath() {
