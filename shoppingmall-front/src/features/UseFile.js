@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid"; 
 function useFile() {
     const ref = useRef(null);
     const [previewFiles, setPreviewFiles] = useState([]); // {id, url} 객체 배열
@@ -12,7 +13,7 @@ function useFile() {
 
             reader.onload = (event) => {
                 resolve({
-                    id: crypto.randomUUID(), // 고유 ID
+                    id: uuidv4(), // 고유 ID
                     url: event.target.result, // 미리보기 URL
                     file: file
                 });
