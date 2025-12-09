@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getStoredMemberId } from "../utils/api";
+import { getStoredMemberId, getAuthHeaders } from "../utils/api";
 import '../css/Similar.css';
 function SimilarSkinReview({ productId }) {
     const [skinStats, setSkinStats] = useState(null);
@@ -11,19 +11,19 @@ function SimilarSkinReview({ productId }) {
         const fetchSkinStats = async () => {
             // 회원 정보 아이디
             const memberNo = await getStoredMemberId();
-            console.log('fetchSkinStats memberNo:', memberNo);
-            console.log('produtId', productId);
             if (!productId || !memberNo) return;
 
             try {
-                const response = await fetch(`http://13.231.28.89:18080/api/products/${productId}/similar-skin-tags?memberNo=${memberNo}`);
+                const response = await fetch(`http://13.231.28.89:18080/api/products/${productId}/similar-skin-tags?memberNo=${memberNo}`, {
+                    headers: getAuthHeaders(),
+                });
                 if (!response.ok) throw new Error('통계 데이터 불러오기 실패');
                 const stats = await response.json();
-                console.log(stats)
                 setSkinStats(stats);
+                setError(false);
             } catch (e) {
                 setSkinStats(null);
-                setError(false);
+                setError(true);
             }
         };
         fetchSkinStats();
