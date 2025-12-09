@@ -137,7 +137,9 @@ function PaymentPage() {
             orderAddress2: addressDetail,
             deliveryMessage: deliveryMessage || "조심해서 배송해 주세요.",
             //포인트
-            pointsUsed: pointsToUse
+            pointsUsed: pointsToUse,
+            // 백엔드 검증/취소용 결제 고유 ID 전송
+            impUid: rsp.imp_uid
             
           };
 

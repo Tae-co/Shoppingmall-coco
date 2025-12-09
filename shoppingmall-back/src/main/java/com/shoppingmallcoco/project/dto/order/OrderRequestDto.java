@@ -24,6 +24,9 @@ public class OrderRequestDto {
     // 결제 정보
     private Long pointsUsed;
 
+    // 포트원 결제 고유 ID (결제 검증 및 취소용)
+    private String impUid;
+
 
     /**
      * 개별 상품 DTO (Inner Class)

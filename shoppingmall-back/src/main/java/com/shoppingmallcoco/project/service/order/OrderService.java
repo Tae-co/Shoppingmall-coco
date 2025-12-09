@@ -9,6 +9,13 @@ import com.shoppingmallcoco.project.repository.order.OrderRepository;
 import com.shoppingmallcoco.project.repository.auth.MemberRepository;
 import com.shoppingmallcoco.project.repository.product.ProductOptionRepository;
 
+import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.request.CancelData;
+import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
+import java.io.IOException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +34,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
     private final ProductOptionRepository productOptionRepository;
+    private final IamportClient iamportClient; 
 
     private static final long SHIPPING_FEE = 3000L;
     private static final long FREE_SHIPPING_THRESHOLD = 30000L;
@@ -91,25 +99,45 @@ public class OrderService {
 
         long finalTotalPrice = totalOrderPrice + shippingFee - pointsToUse;
 
-        Order order = new Order();
-        order.setMember(member);
-        order.setOrderDate(LocalDate.now());
-        order.setStatus("PAID");
-        order.setTotalPrice(finalTotalPrice);
+        //  [트랜잭션 시작] 결제 검증 및 주문 저장
+        try {
+            // 1. PG사에 결제된 금액과 서버에서 계산한 금액이 일치하는지 검증
+            // impUid가 null이 아닐 때만 검증 (PG 결제일 경우)
+            if (requestDto.getImpUid() != null) {
+                validatePayment(requestDto.getImpUid(), finalTotalPrice);
+            }
 
-        order.setRecipientName(requestDto.getRecipientName());
-        order.setRecipientPhone(requestDto.getRecipientPhone());
-        order.setOrderZipcode(requestDto.getOrderZipcode());
-        order.setOrderAddress1(requestDto.getOrderAddress1());
-        order.setOrderAddress2(requestDto.getOrderAddress2());
-        order.setDeliveryMessage(requestDto.getDeliveryMessage());
-        order.setPointsUsed(pointsToUse);
+            // 2. 주문 엔티티 생성 및 DB 저장을 시도합니다.
 
-        for (OrderItem orderItem : orderItems) {
-            order.addOrderItem(orderItem);
+            Order order = new Order();
+            order.setMember(member);
+            order.setOrderDate(LocalDate.now());
+            order.setStatus("PAID"); 
+            order.setTotalPrice(finalTotalPrice);
+ 
+
+            order.setRecipientName(requestDto.getRecipientName());
+            order.setRecipientPhone(requestDto.getRecipientPhone());
+            order.setOrderZipcode(requestDto.getOrderZipcode());
+            order.setOrderAddress1(requestDto.getOrderAddress1());
+            order.setOrderAddress2(requestDto.getOrderAddress2());
+            order.setDeliveryMessage(requestDto.getDeliveryMessage());
+            order.setPointsUsed(pointsToUse);
+           
+
+            for (OrderItem orderItem : orderItems) {
+                order.addOrderItem(orderItem);
+            }
+
+            return orderRepository.save(order).getOrderNo();
+
+        } catch (RuntimeException | IOException | IamportResponseException e) {
+            // 3. 예외 발생 시: 보상 트랜잭션 (결제 취소)
+            if (requestDto.getImpUid() != null) {
+                cancelPayment(requestDto.getImpUid(), "주문 저장 실패/오류로 인한 자동 취소");
+            }
+            throw new RuntimeException("주문 처리 중 오류 발생: " + e.getMessage());
         }
-
-        return orderRepository.save(order).getOrderNo();
     }
 
     /**
@@ -139,7 +167,7 @@ public class OrderService {
             throw new RuntimeException("권한 없음");
         }
 
-        if (!"PAID".equals(order.getStatus()) && !"PENDING".equals(order.getStatus())) {
+        if (!"PAID".equals(order.getStatus())) {
             throw new RuntimeException("현재 상태[" + order.getStatus() + "]는 취소할 수 없습니다. (PAID 또는 PENDING 상태에서만 가능)");
         }
 
@@ -215,4 +243,43 @@ public class OrderService {
                 .items(items)
                 .build();
     }
+    /**
+     * 포트원 결제 금액 검증 로직
+     * 서버에서 계산한 최종 금액과 PG사에 실제로 결제된 금액이 일치하는지 확인
+     */
+    private void validatePayment(String impUid, long serverCalculatedPrice) 
+        throws IamportResponseException, IOException {
+        
+        IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(impUid);
+        
+        // 1. 결제 상태 확인: 'paid'인지 확인
+        if (!"paid".equals(iamportResponse.getResponse().getStatus())) {
+            throw new RuntimeException("결제가 완료되지 않았습니다. (Status: " + iamportResponse.getResponse().getStatus() + ")");
+        }
+
+        // 2. 금액 검증
+        long paidAmount = iamportResponse.getResponse().getAmount().longValue();
+
+        if (paidAmount != serverCalculatedPrice) {
+            cancelPayment(impUid, "결제 금액 불일치로 인한 자동 취소");
+            throw new RuntimeException("결제 금액 불일치 (해킹 시도 의심)");
+        }
+    }
+
+    /**
+     * 포트원 결제 취소 요청 (보상 트랜잭션)
+     */
+    private void cancelPayment(String impUid, String reason) {
+        try {
+            CancelData cancelData = new CancelData(impUid, true); // 전액 취소
+            cancelData.setReason(reason);
+            iamportClient.cancelPaymentByImpUid(cancelData);
+            System.out.println("결제 취소 완료: " + impUid + ", 사유: " + reason);
+        } catch (Exception e) {
+            // 취소 실패 시 관리자에게 알림
+            System.err.println("결제 취소 실패! 관리자 확인 필요. impUid: " + impUid + ", 원인: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 }
