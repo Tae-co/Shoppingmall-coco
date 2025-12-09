@@ -95,8 +95,8 @@ public class WebSecurityConfig {
 				// 상품 조회는 공개 (위의 인증 필요한 엔드포인트 제외)
 				.requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
-				// 나머지 요청은 인증 필요
-				.anyRequest().authenticated()
+				// 나머지 요청은 모두 허용
+                .anyRequest().permitAll()
 			)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 			// 보안 헤더 설정
