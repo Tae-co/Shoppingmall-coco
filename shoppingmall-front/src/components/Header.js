@@ -70,7 +70,7 @@ const Header = () => {
                     return;
                 }
 
-                const res = await axios.get("http://localhost:8080/api/coco/members/cart/items",
+                const res = await axios.get("http://13.231.28.89:18080/api/coco/members/cart/items",
                     {
                     headers: {
                         Authorization: `Bearer ${token}`, // JWT 인증 필요
@@ -139,7 +139,7 @@ const Header = () => {
         const fetchCategories = async () => {
             try {
                 // 모든 카테고리 조회
-                const response = await axios.get('http://localhost:8080/api/categories');
+                const response = await axios.get('http://13.231.28.89:18080/api/categories');
                 const allCategories = response.data;
 
                 // 대분류(부모)와 소분류(자식) 분리
