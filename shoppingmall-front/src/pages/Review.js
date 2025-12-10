@@ -62,7 +62,7 @@ function Review() {
     const { starTotal, clicked, starScore, starArray, setRating } = UseStarRating(0);
     const { ptagsClicked, ntagsClicked, pWarnMsg, nWarnMsg, ptoggleActive, ntoggleActive, ptagsList, ntagsList } = UseTag(tags);
     const { previewFiles, setPreviewFiles, handleDelete, handleAddImageClick, handleFileChange, ref, fileError } = UseFile();
-    const { handleSubmit } = UseSubmit(
+    const { handleSubmit, submitting } = UseSubmit(
         ptagsList, ntagsList,
         ptagsClicked, ntagsClicked,
         content,
@@ -227,7 +227,7 @@ function Review() {
                         {/* 취소 선택시 상품 페이지로 */}
                         {/* 리뷰 등록 선택시 리뷰 등록 후 상품 페이지로 */}
                         <button type="button" onClick={handleCancel}>취소</button>
-                        <button type="submit">리뷰등록</button>
+                        <button type="submit" disabled={submitting}>{submitting ? "등록 중..." : "리뷰등록"}</button>
                     </div>
                 </form >
             </div>

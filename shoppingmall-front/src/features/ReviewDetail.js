@@ -12,7 +12,7 @@ import { isLoggedIn, getStoredMember, storage, STORAGE_KEYS } from '../utils/api
 import axios from 'axios'
 function ReviewDetail({ reviewData, onDelete, productNo }) {
     const navigate = useNavigate();
-    
+
     const {
         reviewNo,
         userNickname,
@@ -88,7 +88,7 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
-            });         
+            });
             if (response.ok) {
                 const updatedLikeCount = await response.json();
                 setlike(updatedLikeCount);
@@ -112,7 +112,7 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
             }
         }
         getBuyCount();
-        
+
     }, [productNo])
 
 
@@ -145,7 +145,12 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
             </div>
             <div className='imgBox'>
                 {reviewImages && reviewImages.map((img, i) => (
-                    <img className="tag" key={i} src={img.imageUrl} alt="리뷰 이미지" />
+                    <img
+                        className="tag"
+                        key={i}
+                        src={`http://13.231.28.89:18080${img.imageUrl}`}
+                        alt="리뷰 이미지"
+                    />
                 ))}
             </div>
             <div className="tagBox">

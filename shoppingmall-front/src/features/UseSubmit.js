@@ -1,5 +1,6 @@
 import axios from "axios";
 import { storage, STORAGE_KEYS } from "../utils/api";
+import { useState } from "react";
 
 function useSubmit(
     ptagsList,
@@ -14,9 +15,12 @@ function useSubmit(
     reviewNo
 
 ) {
+    const [submitting, setSubmitting] = useState(false);
     const handleSubmit = async (event) => {
 
         event.preventDefault();
+        if (submitting) return;
+        setSubmitting(true);
 
         const formData = new FormData();
         const positiveTags = ptagsList.filter((tag, index) => ptagsClicked[index]);
@@ -69,7 +73,7 @@ function useSubmit(
                 // 리뷰 수정 (인증 필요)
                 const token = storage.get(STORAGE_KEYS.TOKEN);
                 const headers = { 'Content-Type': 'multipart/form-data' };
-                
+
                 if (token) {
                     headers['Authorization'] = `Bearer ${token}`;
                 }
@@ -80,7 +84,7 @@ function useSubmit(
                 // 리뷰 작성 (인증 필요)
                 const token = storage.get(STORAGE_KEYS.TOKEN);
                 const headers = { 'Content-Type': 'multipart/form-data' };
-                
+
                 if (token) {
                     headers['Authorization'] = `Bearer ${token}`;
                 }
@@ -92,12 +96,14 @@ function useSubmit(
         } catch (error) {
             console.error("리뷰 등록/수정 실패:", error);
             alert(error.message || "리뷰 처리 중 오류가 발생했습니다.");
+        } finally {
+            setSubmitting(false);
         }
 
     };
 
     return {
-        handleSubmit
+        handleSubmit, submitting
     }
 }
 
