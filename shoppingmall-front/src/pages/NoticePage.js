@@ -57,7 +57,18 @@ function NoticePage() {
           <div key={notice.id} className={`notice-item ${openId === notice.id ? 'active' : ''}`}>
 
             {/* 제목 줄 (클릭 영역) */}
-            <div className="notice-summary" onClick={() => toggleNotice(notice.id)}>
+            <div
+              className="notice-summary"
+              onClick={() => toggleNotice(notice.id)}
+              // 접근성 오류 해결을 위한 속성
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  toggleNotice(notice.id);
+                }
+              }}
+            >
               <span className="col-id">{notice.id}</span>
               <span className="col-title">{notice.title}</span>
               <span className="col-date">{notice.date}</span>

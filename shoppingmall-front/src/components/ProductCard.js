@@ -1,14 +1,21 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import '../css/ProductCard.css';
 
 import starIcon from '../images/review_rate_icon_star.png';
 
-const ProductCard = ({ name, productSkinType, price, image, star_avg, reviewCount, onClick, onAddToCart, isSoldOut, rank }) => {
+const ProductCard = ({ name, productSkinType, price, image, star_avg, reviewCount, onClick, onAddToCart, isSoldOut, rank, style }) => {
     return (
-        <div className={`product_card ${isSoldOut ? 'sold-out' : ''}`}>
+        <div className={`product_card ${isSoldOut ? 'sold-out' : ''}`} style={style}>
             {/* 이미지 영역 (이미지 + 뱃지 + 품절오버레이) */}
-            <div className="img_wrapper" onClick={onClick}>
+            <div 
+                className="img_wrapper" 
+                onClick={onClick}
+                role="button" // 접근성 오류(Visible, non-interactive...) 해결용
+                tabIndex={0}  // 접근성 오류 해결용
+                onKeyDown={(e) => { if (e.key === 'Enter') onClick && onClick(); }} // 접근성 오류 해결용
+            >
 
             {/* 랭킹 뱃지 */}
             {rank && (
@@ -65,6 +72,20 @@ const ProductCard = ({ name, productSkinType, price, image, star_avg, reviewCoun
             </div>
         </div>
     );
+};
+
+// Props 타입 정의
+ProductCard.propTypes = {
+    name: PropTypes.string,
+    productSkinType: PropTypes.arrayOf(PropTypes.string),
+    price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    star_avg: PropTypes.number,
+    reviewCount: PropTypes.number,
+    onClick: PropTypes.func,
+    onAddToCart: PropTypes.func,
+    isSoldOut: PropTypes.bool,
+    rank: PropTypes.number,
+    style: PropTypes.object
 };
 
 export default ProductCard;

@@ -55,7 +55,7 @@ function UpdateReview() {
     const { starTotal, clicked, starScore, starArray, setRating } = UseStarRating(0);
     const { ptagsClicked, ntagsClicked, pWarnMsg, nWarnMsg, ptoggleActive, ntoggleActive, setPtagsClicked, setNtagsClicked, ptagsList, ntagsList } = UseTag(tags);
     const { previewFiles, setPreviewFiles, handleDelete, handleAddImageClick, handleFileChange, ref, fileError } = usefile();
-    const { handleSubmit } = UseSubmut(
+    const { handleSubmit, submitting} = UseSubmut(
         ptagsList, ntagsList,
         ptagsClicked, ntagsClicked,
         content,
@@ -187,7 +187,7 @@ function UpdateReview() {
                             {previewFiles.map(preview => (
                                 <div key={preview.id} className="preview-component">
                                     <img
-                                        src={preview.file ? URL.createObjectURL(preview.file) : `http://13.231.28.89:18080/images/${preview.url}`}
+                                        src={preview.file ? URL.createObjectURL(preview.file) : `http://13.231.28.89:18080${preview.url}`}
                                         alt="미리보기"
                                         className="preview-image"
                                     />
@@ -232,7 +232,7 @@ function UpdateReview() {
                         {/* 취소 선택시 상품 페이지로 */}
                         {/* 리뷰 등록 선택시 리뷰 등록 후 상품 페이지로 */}
                         <button type="button" onClick={handleCancel}>취소</button>
-                        <button type="submit">리뷰수정</button>
+                        <button type="submit" disabled={submitting}>{submitting ? "수정 중..." : "리뷰수정"}</button>
                     </div>
                 </form >
             </div>

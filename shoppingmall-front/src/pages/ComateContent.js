@@ -10,13 +10,13 @@ const ComateContent = ({
     likeList,
     followerList,
     followingList,
-    loginUserNo,
     setReviewList,
     setLikeList,
     setFollowerList,
     setFollowingList,
     onListFollowChange,
     onLikeChange,
+    loginUserNo,
     targetMemNo
 }) => {
 
@@ -57,18 +57,32 @@ const ComateContent = ({
         }
     };
 
-    const emptyMessages = {
-        review: "아직 기록한 리뷰가 없어요.\n나만의 뷰티 경험을 공유해보세요!",
-        like: "마음에 든 리뷰에 좋아요를 눌러보세요!",
-        follower: "아직 팔로워가 없어요.\n리뷰와 활동을 통해 나를 알려보세요!",
-        following: "아직 팔로우한 메이트가 없어요.\n취향이 맞는 유저를 팔로우해보세요!"
-    };
+    const getEmptyMessage = (tab) => {
+        const isMyPage = loginUserNo === targetMemNo;
+    
+        const messages = {
+            review: isMyPage
+                ? "아직 작성한 리뷰가 없어요.\n나만의 뷰티 경험을 공유해보세요!"
+                : "아직 작성한 리뷰가 없어요.",
+            like: isMyPage
+                ? "좋아요한 리뷰가 아직 없어요.\n마음에 드는 리뷰에 좋아요를 눌러보세요!"
+                : "좋아요한 리뷰가 없습니다.",
+            follower: isMyPage
+                ? "아직 팔로워가 없어요.\n리뷰와 활동을 통해 나를 알려보세요!"
+                : "아직 팔로워가 없어요.",
+            following: isMyPage
+                ? "아직 팔로우한 메이트가 없어요.\n취향이 맞는 유저를 팔로우해보세요!"
+                : "팔로잉한 유저가 없습니다."
+        };
+    
+        return messages[tab];
+    };    
 
     switch(activeTab) {
         case 'review':
             title = "누적 리뷰";
             if (reviewList.length === 0) {
-                content = <div className="empty_state">{emptyMessages.review}</div>;
+                content = <div className="empty_state">{getEmptyMessage('review')}</div>;
                 break;
             }
             content = reviewList.map((item) => <ComateReviewCard 
@@ -91,7 +105,7 @@ const ComateContent = ({
         case 'like':
             title = "좋아요";
             if (likeList.length === 0) {
-                content = <div className="empty_state">{emptyMessages.like}</div>;
+                content = <div className="empty_state">{getEmptyMessage('like')}</div>;
                 break;
             }
             content = likeList.map((item) => <ComateReviewCard 
@@ -112,7 +126,7 @@ const ComateContent = ({
         case 'follower':
             title = "팔로워";
             if (followerList.length === 0) {
-            content = <div className="empty_state">{emptyMessages.follower}</div>;
+            content = <div className="empty_state">{getEmptyMessage('follower')}</div>;
             break;
         }
             content = followerList.map((item, index) => (
@@ -136,7 +150,7 @@ const ComateContent = ({
         case 'following':
             title = "팔로잉";
             if (followingList.length === 0) {
-                content = <div className="empty_state">{emptyMessages.following}</div>;
+                content = <div className="empty_state">{getEmptyMessage('following')}</div>;
                 break;
             }
             content = followingList.map((item, index) => (

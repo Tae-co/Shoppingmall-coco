@@ -60,10 +60,10 @@ const Header = () => {
                 setUserRole('');
             }
         };
-         // 장바구니 개수 동기화 함수
+        // 장바구니 개수 동기화 함수
         const syncCartCount = async () => {
-              try {
-                const token = localStorage.getItem("token"); 
+            try {
+                const token = localStorage.getItem("token");
 
                 if (!token) {
                     setCartCount(0);
@@ -72,9 +72,9 @@ const Header = () => {
 
                 const res = await axios.get("http://13.231.28.89:18080/api/coco/members/cart/items",
                     {
-                    headers: {
-                        Authorization: `Bearer ${token}`, // JWT 인증 필요
-                            },
+                        headers: {
+                            Authorization: `Bearer ${token}`, // JWT 인증 필요
+                        },
                     }
                 );
                 setCartCount(res.data.length);  // 장바구니 아이템 개수
@@ -117,16 +117,6 @@ const Header = () => {
     const handleLogout = () => {
         logout();
         navigate('/');
-    };
-
-    // 마이페이지 클릭 핸들러 (관리자는 관리자 페이지로 이동)
-    const handleMyPageClick = (e) => {
-        e.preventDefault();
-        if (userRole === 'ADMIN' || userRole === 'admin') {
-            navigate('/admin');
-        } else {
-            navigate('/mypage');
-        }
     };
 
     const location = useLocation(); // 현재 페이지 확인용
@@ -201,9 +191,12 @@ const Header = () => {
                             )}
                             <li className="top_item">고객센터</li>
                             <li className="top_item">
-                                <a href="#" className="top_item" onClick={handleMyPageClick}>
-                                    {userRole === 'ADMIN' || userRole === 'admin' ? '관리자 페이지' : '마이페이지'}
-                                </a>
+                                <Link
+                                    to={(userRole === 'ADMIN' || userRole === 'admin') ? '/admin' : '/mypage'}
+                                    className="top_item"
+                                >
+                                    {(userRole === 'ADMIN' || userRole === 'admin') ? '관리자 페이지' : '마이페이지'}
+                                </Link>
                             </li>
                             <li className="top_item">알림</li>
                             <li className="top_item">
@@ -246,10 +239,10 @@ const Header = () => {
                                             return window.location.pathname.startsWith('/comate') ? 'gnb_link active' : 'gnb_link'
                                         }}>CO-MATE</NavLink></li>
                                     <li className="gnb_item"><NavLink
-                                            to="/event"
-                                            className={({ isActive }) =>
-                                                isActive ? 'gnb_link active' : 'gnb_link'}
-                                        >EVENT</NavLink>
+                                        to="/event"
+                                        className={({ isActive }) =>
+                                            isActive ? 'gnb_link active' : 'gnb_link'}
+                                    >EVENT</NavLink>
                                     </li>
                                 </ul>
                             </nav>
@@ -287,15 +280,15 @@ const Header = () => {
                                 </h3>
                                 <ul>
                                     {category.items.map((item) => (
-                                <li key={item.id}>
-                                    {/* 텍스트 검색(?q=) 대신 카테고리 번호(?categoryNo=)로 이동 */}
-                                    <Link 
-                                        to={`/product?categoryNo=${item.id}`} 
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        {item.name}
-                                    </Link>
-                                </li>
+                                        <li key={item.id}>
+                                            {/* 텍스트 검색(?q=) 대신 카테고리 번호(?categoryNo=)로 이동 */}
+                                            <Link
+                                                to={`/product?categoryNo=${item.id}`}
+                                                onClick={() => setIsMenuOpen(false)}
+                                            >
+                                                {item.name}
+                                            </Link>
+                                        </li>
                                     ))}
                                 </ul>
                             </div>
@@ -305,7 +298,20 @@ const Header = () => {
             </header>
 
             {/* 메뉴 열렸을 때 뒷배경 어둡게 처리 (오버레이) */}
-            {isMenuOpen && <div className="menu-overlay" onClick={() => setIsMenuOpen(false)}></div>}
+            {isMenuOpen && (
+                <div
+                    className="menu-overlay"
+                    onClick={() => setIsMenuOpen(false)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            setIsMenuOpen(false);
+                        }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="메뉴 닫기" // 스크린 리더 사용자를 위한 설명 추가
+                ></div>
+            )}
         </div>
     );
 }

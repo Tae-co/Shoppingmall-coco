@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ShopSearchBar from './ShopSearchBar';
 import '../../../css/product/ProductListHeader.css';
 
@@ -46,6 +47,26 @@ const ProductListHeader = ({
       </div>
     </div>
   );
+};
+
+// Props 타입 정의
+ProductListHeader.propTypes = {
+  searchTerm: PropTypes.string,          // 검색어
+  onSearchChange: PropTypes.func,        // 검색어 변경 핸들러
+  totalElements: PropTypes.number,       // 총 상품 수
+  sortOrder: PropTypes.string,           // 정렬 기준
+  onSortChange: PropTypes.func,          // 정렬 변경 핸들러
+  onFilterToggle: PropTypes.func         // 필터 토글 핸들러
+};
+
+// 기본값 설정
+ProductListHeader.defaultProps = {
+  searchTerm: '',
+  totalElements: 0,
+  sortOrder: 'popularity',
+  onSearchChange: () => {},
+  onSortChange: () => {},
+  onFilterToggle: () => {}
 };
 
 export default ProductListHeader;

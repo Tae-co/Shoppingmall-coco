@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import ProductButton from '../ProductButton';
 import SimilarSkinReview from '../../../features/SimilarSkinReview';
@@ -40,6 +41,24 @@ const ProductInfoBox = ({
 
   const navigate = useNavigate();
   const handleTagClick = (keyword) => navigate(`/product?q=${encodeURIComponent(keyword)}`);
+
+  // 태그 렌더링 헬퍼 함수
+  const renderTag = (key, label) => (
+    <span 
+      key={key} 
+      className="tag-badge" 
+      onClick={() => handleTagClick(label)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          handleTagClick(label);
+        }
+      }}
+    >
+      # {label}
+    </span>
+  );
 
   return (
     <div className="info-box">
@@ -120,6 +139,31 @@ const ProductInfoBox = ({
       </div>
     </div>
   );
+};
+
+// Props 타입 정의
+ProductInfoBox.propTypes = {
+  product: PropTypes.shape({
+    prdNo: PropTypes.number,
+    prdName: PropTypes.string,
+    status: PropTypes.string,
+    averageRating: PropTypes.number,
+    reviewCount: PropTypes.number,
+    prdPrice: PropTypes.number,
+    options: PropTypes.arrayOf(PropTypes.shape({
+      optionNo: PropTypes.number,
+      addPrice: PropTypes.number
+    })),
+    skinTypes: PropTypes.arrayOf(PropTypes.string),
+    skinConcerns: PropTypes.arrayOf(PropTypes.string),
+    personalColors: PropTypes.arrayOf(PropTypes.string)
+  }).isRequired,
+  selectedOption: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setSelectedOption: PropTypes.func.isRequired,
+  quantity: PropTypes.number.isRequired,
+  setQuantity: PropTypes.func.isRequired,
+  handleAddToCart: PropTypes.func.isRequired,
+  handleBuyNow: PropTypes.func.isRequired
 };
 
 export default ProductInfoBox;

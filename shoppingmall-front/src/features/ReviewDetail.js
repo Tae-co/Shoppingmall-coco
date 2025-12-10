@@ -28,6 +28,7 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
 
     const [like, setlike] = useState(likeCount || 0);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [imagesLoaded, setImagesLoaded] = useState(false);
 
     // 현재 로그인한 사용자 정보
     const currentMember = getStoredMember();
@@ -115,6 +116,30 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
 
     }, [productNo])
 
+    const preloadImage = (src) => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = resolve;
+            img.onerror = reject;
+        });
+    };
+
+    useEffect(() => {
+        if (!reviewImages || reviewImages.length === 0) {
+            setImagesLoaded(true);
+            return;
+        }
+
+        const urls = reviewImages.map(
+            (img) => `http://13.231.28.89:18080${img.imageUrl}`
+        );
+
+        Promise.all(urls.map((url) => preloadImage(url)))
+            .catch((e) => console.error("preload 실패", e))
+            .finally(() => setImagesLoaded(true));
+    }, [reviewImages]);
+
 
 
     return (
@@ -144,7 +169,7 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
                 </div>
             </div>
             <div className='imgBox'>
-                {reviewImages && reviewImages.map((img, i) => (
+                {imagesLoaded && reviewImages?.map((img, i) => (
                     <img
                         className="tag"
                         key={i}

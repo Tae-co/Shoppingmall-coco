@@ -103,9 +103,10 @@ public class OrderService {
         try {
             // 1. PG사에 결제된 금액과 서버에서 계산한 금액이 일치하는지 검증
             // impUid가 null이 아닐 때만 검증 (PG 결제일 경우)
-            if (requestDto.getImpUid() != null) {
-                validatePayment(requestDto.getImpUid(), finalTotalPrice);
+            if (requestDto.getImpUid() == null || requestDto.getImpUid().isEmpty()) {
+                throw new RuntimeException("결제 고유 번호(impUid)가 누락되었습니다. 주문을 진행할 수 없습니다.");
             }
+            validatePayment(requestDto.getImpUid(), finalTotalPrice); // 검증 실행
 
             // 2. 주문 엔티티 생성 및 DB 저장을 시도합니다.
 
@@ -168,7 +169,7 @@ public class OrderService {
         }
 
         if (!"PAID".equals(order.getStatus())) {
-            throw new RuntimeException("현재 상태[" + order.getStatus() + "]는 취소할 수 없습니다. (PAID 또는 PENDING 상태에서만 가능)");
+            throw new RuntimeException("현재 상태[" + order.getStatus() + "]는 취소할 수 없습니다. (PAID 상태에서만 가능)");
         }
 
         for (OrderItem item : order.getOrderItems()) {
