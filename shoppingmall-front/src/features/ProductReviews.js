@@ -18,22 +18,10 @@ function ProductReviews({ productNo }) {
     const pageSize = 10;
 
     // 리뷰 삭제
-    const handleDeleteReview = async (reviewNo) => {
-        try {
-            const token = localStorage.getItem('token');
-            const headers = {};
-
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
-
-            await axios.delete(`http://13.231.28.89:18080/api/reviews/${reviewNo}`, { headers });
-            setReviews(currentReviews =>
-                currentReviews.filter(review => review.reviewNo !== reviewNo))
-        } catch (error) {
-            console.error("리뷰 삭제에 실패했습니다:", error);
-            alert("리뷰 삭제 중 오류가 발생했습니다.");
-        }
+    const handleDeleteReview = (reviewNo) => {
+        setReviews(currentReviews =>
+            currentReviews.filter(review => review.reviewNo !== reviewNo)
+        );
     };
 
     // 리뷰 정렬 및 불러오기
