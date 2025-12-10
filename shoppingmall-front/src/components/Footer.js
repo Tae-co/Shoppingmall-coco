@@ -17,6 +17,13 @@ const Footer = () => {
         navigate(`/terms/${type}`);
     };
 
+    // handleCategoryClick 함수가 Enter 키를 눌렀을 때도 실행되도록 핸들러를 추가
+    const handleKeyDown = (e, categoryNo) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            handleCategoryClick(categoryNo);
+        }
+    };
+
     return (
         <div>
             <div className="footer">
@@ -24,24 +31,46 @@ const Footer = () => {
                     <div className="service_area">
                         <div className="footer_menu">
                             <div className="logo_box">
-                                <img src={Logo} alt="logo.png" className="footer_logo"/>
+                                <img src={Logo} alt="logo.png" className="footer_logo" />
                                 <div className="footer_logo_content">리뷰로 시작하는 스마트한 뷰티 쇼핑</div>
                             </div>
                             <div className="menu_box">
                                 <strong className="menu_title">쇼핑</strong>
                                 <ul className="menu_list">
-                                    <li className="menu_item" onClick={() => handleCategoryClick(1)}>
+                                    <li
+                                        className="menu_item"
+                                        onClick={() => handleCategoryClick(1)}
+                                        onKeyDown={(e) => handleKeyDown(e, 1)} // 키보드 이벤트 추가
+                                        role="button" // 스크린 리더에게 버튼임을 알림
+                                        tabIndex={0}  // 탭 키로 포커스 가능하게 설정
+                                    >
                                         <div>스킨케어</div>
                                     </li>
-                                    <li className="menu_item" onClick={() => handleCategoryClick(2)}>
+                                    <li
+                                        className="menu_item"
+                                        onClick={() => handleCategoryClick(2)}
+                                        onKeyDown={(e) => handleKeyDown(e, 2)}
+                                        role="button"
+                                        tabIndex={0}
+                                    >
                                         <div>메이크업</div>
                                     </li>
-                                    {/* 홈에 맞춰 클렌징' -> 바디/헤어로 변경 */}
-                                    <li className="menu_item" onClick={() => handleCategoryClick(3)}>
+                                    <li
+                                        className="menu_item"
+                                        onClick={() => handleCategoryClick(3)}
+                                        onKeyDown={(e) => handleKeyDown(e, 3)}
+                                        role="button"
+                                        tabIndex={0}
+                                    >
                                         <div>바디/헤어</div>
                                     </li>
-                                    {/* 홈에 맞춰 마스크팩 -> 옴므로 변경 */}
-                                    <li className="menu_item" onClick={() => handleCategoryClick(4)}>
+                                    <li
+                                        className="menu_item"
+                                        onClick={() => handleCategoryClick(4)}
+                                        onKeyDown={(e) => handleKeyDown(e, 4)}
+                                        role="button"
+                                        tabIndex={0}
+                                    >
                                         <div>옴므</div>
                                     </li>
                                 </ul>
@@ -67,7 +96,7 @@ const Footer = () => {
                         <div className="customer_service">
                             <strong className="service_title">고객센터</strong>
                             <div className="service_time">
-                                운영시간 평일 10:00 - 18:00 (토∙일, 공휴일 휴무) <br/>
+                                운영시간 평일 10:00 - 18:00 (토∙일, 공휴일 휴무) <br />
                                 점심시간 평일 13:00 - 14:00
                             </div>
                             <div className="service_note">1:1 문의하기는 앱에서만 가능합니다.</div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import '../../../css/product/Pagination.css';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
@@ -35,6 +36,13 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       </button>
     </div>
   );
+};
+
+// Props 타입 정의
+Pagination.propTypes = {
+  currentPage: PropTypes.number.isRequired, // 현재 페이지 번호
+  totalPages: PropTypes.number.isRequired,  // 전체 페이지 수
+  onPageChange: PropTypes.func.isRequired   // 페이지 변경 핸들러
 };
 
 export default Pagination;

@@ -16,7 +16,7 @@
 /* 화살표 아이콘 (폰트/색상/크기) */
 .slider-container .slick-prev:before,
 .slider-container .slick-next:before {
-    font-family: 'slick';
+    font-family: 'slick', sans-serif;
     font-size: 40px;      /* CO-MATE 처럼 큼직하게 */
     color: #d9d9d9;       /* 기본 연한 회색 */
     opacity: 1;

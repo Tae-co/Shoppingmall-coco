@@ -1,6 +1,7 @@
 import React from 'react';
-import '../../css/admin/CategoryTable.css';
+import PropTypes from 'prop-types';
 
+import '../../css/admin/CategoryTable.css';
 import editIcon from '../../images/edit.svg';
 import deleteIcon from '../../images/delete.svg';
 
@@ -84,5 +85,11 @@ function CategoryTable({ categories, onEdit, onDelete }) {
     </div>
   );
 }
+
+CategoryTable.propTypes = {
+  categories: PropTypes.array,
+  onEdit: PropTypes.func,
+  onDelete: PropTypes.func
+};
 
 export default CategoryTable;
