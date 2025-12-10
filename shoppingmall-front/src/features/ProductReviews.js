@@ -8,7 +8,6 @@ function ProductReviews({ productNo }) {
 
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [orderItemNo, setOrderItemNo] = useState(0);
     const navigate = useNavigate();
 
     const [page, setPage] = useState(0);
@@ -73,7 +72,6 @@ function ProductReviews({ productNo }) {
             }
             const response = await axios.get(`http://13.231.28.89:18080/api/reviews/${productNo}/getOrderItemNo`, { headers: { Authorization: `Bearer ${token}` } });
             const orderItemNoFromApi = response.data;
-            setOrderItemNo(orderItemNoFromApi);
             return navigate(`/reviews/${orderItemNoFromApi}`);
         } catch (error) {
             console.log("orderItemNo를 불러오지 못 했습니다.", error);
@@ -113,6 +111,7 @@ function ProductReviews({ productNo }) {
                                 setPage(0);
                             }}
                         />
+                        {' '}
                         Co-mate만 보기
                     </label>
                 </div>

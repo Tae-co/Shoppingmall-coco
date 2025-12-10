@@ -11,7 +11,7 @@ function useStarRating(initScore = 0) {
         let stars = [...starArray];
 
         for (let i = 0; i < 5; i++) {
-            stars[i] = i <= index ? true : false;
+            stars[i] = i <= index;
         }
         setClicked(stars);
 
