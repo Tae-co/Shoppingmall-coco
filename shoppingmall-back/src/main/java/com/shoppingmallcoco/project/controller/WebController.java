@@ -12,19 +12,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public class WebController implements ErrorController {
 
     // 에러 페이지 처리 (404 등) - WebMvcConfig에서 처리되지 않은 경우에만 여기로 옴
-    @RequestMapping("/error")
-    public String handleError(HttpServletRequest request) {
-        Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-        
-        if (status != null) {
-            Integer statusCode = Integer.valueOf(status.toString());
-            
-            // 404 에러면 index.html로 포워드하여 React Router가 처리하도록
-            if (statusCode == HttpStatus.NOT_FOUND.value()) {
-                return "forward:/index.html";
-            }
-        }
-        
+    // /api/**, /images/**, /css/**, /js/** 등은 제외하고 나머지는 전부 index.html로
+    @RequestMapping(value = {
+        "/{path:^(?!api|images|css|js|webjars|favicon\\.ico$).*$}",
+        "/**/{path:^(?!api|images|css|js|webjars).*$}"
+    })
+    public String forwardSpa() {
         return "forward:/index.html";
     }
 }
