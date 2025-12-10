@@ -18,11 +18,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 이미지 파일 경로 설정
+        // 이미지 파일 경로 설정 (업로드된 파일 서빙)
         registry.addResourceHandler("/images/**") // 웹 접근 경로
             .addResourceLocations("file:///" + uploadDir);
-
-        // React 빌드 파일 서빙 설정
+        
+        // React 정적 리소스 서빙 (우선순위 높게 설정)
+        registry.addResourceHandler("/static/**", "/favicon.ico", "/manifest.json", "/logo*.png", "/robots.txt", "/asset-manifest.json", "/prd_placeholder.png")
+            .addResourceLocations("classpath:/static/")
+            .resourceChain(true);
+        
+        // 모든 경로에 대해 index.html fallback 설정 (정적 리소스가 없을 때)
         registry.addResourceHandler("/**")
             .addResourceLocations("classpath:/static/")
             .resourceChain(true)
@@ -31,17 +36,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 protected Resource getResource(String resourcePath, Resource location) throws IOException {
                     Resource requestedResource = location.createRelative(resourcePath);
                     
-                    // 요청된 리소스가 존재하고 파일인 경우 반환
-                    if (requestedResource.exists() && requestedResource.isReadable()) {
-                        return requestedResource;
-                    }
-                    
-                    // API 경로는 제외 (실제 API 요청인 경우)
+                    // API 경로는 제외
                     if (resourcePath.startsWith("api/")) {
                         return null;
                     }
                     
-                    // 그 외 모든 경로는 index.html로 fallback (SPA 라우팅 지원)
+                    // 요청된 리소스가 존재하면 반환
+                    if (requestedResource.exists() && requestedResource.isReadable()) {
+                        return requestedResource;
+                    }
+                    
+                    // 그 외 모든 경로는 index.html로 fallback (SPA 라우팅)
                     return new ClassPathResource("/static/index.html");
                 }
             });
