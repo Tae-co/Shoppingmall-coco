@@ -128,6 +128,7 @@ function PaymentPage() {
                   prdNo: Number(item.prdNo),       
                   optionNo: Number(item.optionNo),    
                   orderQty: Number(item.cartQty), 
+                  impUid: rsp.imp_uid
               })),
             // 배송지 정보
             recipientName: lastName + firstName, 
