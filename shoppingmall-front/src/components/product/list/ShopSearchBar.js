@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import '../../../css/product/ShopSearchBar.css'; // 전용 CSS 파일
 
 const ShopSearchBar = ({ searchTerm, onSearchChange }) => {
@@ -46,6 +47,18 @@ const ShopSearchBar = ({ searchTerm, onSearchChange }) => {
       </div>
     </div>
   );
+};
+
+// Props 타입 정의
+ShopSearchBar.propTypes = {
+  searchTerm: PropTypes.string,    // 검색어
+  onSearchChange: PropTypes.func   // 핸들러
+};
+
+// 기본값 설정
+ShopSearchBar.defaultProps = {
+  searchTerm: '',
+  onSearchChange: () => {}
 };
 
 export default ShopSearchBar;

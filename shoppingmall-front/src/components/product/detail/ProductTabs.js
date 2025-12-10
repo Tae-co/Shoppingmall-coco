@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import ProductReviews from '../../../features/ProductReviews';
 import '../../../css/product/ProductTabs.css';
 
@@ -70,6 +71,16 @@ const ProductTabs = ({ product }) => {
       </div>
     </div>
   );
+};
+
+// Props 타입 정의
+ProductTabs.propTypes = {
+  product: PropTypes.shape({
+    reviewCount: PropTypes.number,
+    description: PropTypes.string,
+    prdNo: PropTypes.number,
+    howToUse: PropTypes.string
+  }).isRequired
 };
 
 export default ProductTabs;
