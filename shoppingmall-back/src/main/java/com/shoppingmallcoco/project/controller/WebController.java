@@ -10,22 +10,15 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class WebController implements ErrorController {
-    
-    @GetMapping("/")
-    public String viewIndex() {
-        return "index";
-    }
-    
-    @RequestMapping("/error")
-    public String errorHandle(HttpServletRequest request) {
-        String returnView = "";
-        Object statusCode = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-        
-        if (statusCode != null && statusCode.toString().equals("404")) {
-            returnView = "index";
-        }
-        
-        return returnView;
+
+    // 에러 페이지 처리 (404 등) - WebMvcConfig에서 처리되지 않은 경우에만 여기로 옴
+    // /api/**, /images/**, /css/**, /js/** 등은 제외하고 나머지는 전부 index.html로
+    @RequestMapping(value = {
+        "/{path:^(?!api|images|css|js|webjars|favicon\\.ico$).*$}",
+        "/**/{path:^(?!api|images|css|js|webjars).*$}"
+    })
+    public String forwardSpa() {
+        return "forward:/index.html";
     }
 }
 
