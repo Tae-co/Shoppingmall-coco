@@ -187,7 +187,7 @@ function UpdateReview() {
                             {previewFiles.map(preview => (
                                 <div key={preview.id} className="preview-component">
                                     <img
-                                        src={preview.file ? URL.createObjectURL(preview.file) : `http://13.231.28.89:18080/images/${preview.url}`}
+                                        src={preview.file ? URL.createObjectURL(preview.file) : `http://13.231.28.89:18080${preview.url}`}
                                         alt="미리보기"
                                         className="preview-image"
                                     />

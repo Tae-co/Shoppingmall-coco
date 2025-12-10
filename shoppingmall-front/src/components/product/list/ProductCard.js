@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
 import ProductButton from '../ProductButton';
 import '../../../css/product/ProductCard.css';
@@ -28,6 +29,13 @@ const ProductCard = ({ product, onAddToCart }) => {
     navigate(`/product?q=${encodeURIComponent(keyword)}`);
   };
 
+  // 키보드 엔터키 지원 (접근성)
+  const handleTagKeyDown = (e, keyword) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      handleTagClick(e, keyword);
+    }
+  };
+
   // 품절/판매중지 시 링크 비활성화
   const linkTo = (isSoldOut || isStop) ? '#' : `/products/${product.prdNo}`;
   const linkStyle = (isSoldOut || isStop) ? { cursor: 'default' } : {};
@@ -55,17 +63,38 @@ const ProductCard = ({ product, onAddToCart }) => {
 
         <div className="product-card-tags">
           {product.skinTypes?.map(type => (
-            <span key={type} className="product-card-tag" onClick={(e) => handleTagClick(e, skinTypeMap[type] || type)}>
+            <span 
+              key={type} 
+              className="product-card-tag" 
+              onClick={(e) => handleTagClick(e, skinTypeMap[type] || type)}
+              onKeyDown={(e) => handleTagKeyDown(e, skinTypeMap[type] || type)}
+              role="button"
+              tabIndex={0}
+            >
               # {skinTypeMap[type] || type}
             </span>
           ))}
           {product.skinConcerns?.map(concern => (
-            <span key={concern} className="product-card-tag" onClick={(e) => handleTagClick(e, skinConcernMap[concern] || concern)}>
+            <span 
+              key={concern} 
+              className="product-card-tag" 
+              onClick={(e) => handleTagClick(e, skinConcernMap[concern] || concern)}
+              onKeyDown={(e) => handleTagKeyDown(e, skinConcernMap[concern] || concern)}
+              role="button"
+              tabIndex={0}
+            >
               # {skinConcernMap[concern] || concern}
             </span>
           ))}
           {product.personalColors?.map(color => (
-            <span key={color} className="product-card-tag" onClick={(e) => handleTagClick(e, personalColorMap[color] || color)}>
+            <span 
+              key={color} 
+              className="product-card-tag" 
+              onClick={(e) => handleTagClick(e, personalColorMap[color] || color)}
+              onKeyDown={(e) => handleTagKeyDown(e, personalColorMap[color] || color)}
+              role="button"
+              tabIndex={0}
+            >
               # {personalColorMap[color] || color}
             </span>
           ))}
@@ -92,6 +121,23 @@ const ProductCard = ({ product, onAddToCart }) => {
       </div>
     </Link>
   );
+};
+
+// Props 타입 정의
+ProductCard.propTypes = {
+  product: PropTypes.shape({
+    prdNo: PropTypes.number,
+    status: PropTypes.string,
+    imageUrl: PropTypes.string,
+    prdName: PropTypes.string,
+    averageRating: PropTypes.number,
+    reviewCount: PropTypes.number,
+    skinTypes: PropTypes.arrayOf(PropTypes.string),
+    skinConcerns: PropTypes.arrayOf(PropTypes.string),
+    personalColors: PropTypes.arrayOf(PropTypes.string),
+    prdPrice: PropTypes.number
+  }).isRequired,
+  onAddToCart: PropTypes.func
 };
 
 export default ProductCard;

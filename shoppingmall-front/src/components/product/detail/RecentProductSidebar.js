@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import '../../../css/product/ProductDetailPage.css';
 
@@ -89,6 +90,21 @@ const RecentProductSidebar = ({ currentProduct }) => {
       )}
     </>
   );
+};
+
+// Props 타입 정의
+RecentProductSidebar.propTypes = {
+  currentProduct: PropTypes.shape({
+    prdNo: PropTypes.number,
+    prdName: PropTypes.string,
+    imageUrls: PropTypes.arrayOf(PropTypes.string),
+    prdPrice: PropTypes.number
+  })
+};
+
+// 기본값 설정
+RecentProductSidebar.defaultProps = {
+  currentProduct: null
 };
 
 export default RecentProductSidebar;

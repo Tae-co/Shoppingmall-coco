@@ -13,7 +13,7 @@ public class WebController implements ErrorController {
 
     @GetMapping("/")
     public String viewIndex() {
-        return "index";
+        return "forward:/index.js";
     }
 
     @RequestMapping("/error")
@@ -22,7 +22,7 @@ public class WebController implements ErrorController {
         Object statusCode = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
 
         if (statusCode != null && statusCode.toString().equals("404")) {
-            returnView = "index";
+            returnView = "forward:/index.js";
         }
 
         return returnView;

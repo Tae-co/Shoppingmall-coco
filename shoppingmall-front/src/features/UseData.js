@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 function useData(setContent, setRating, ptagsList, setPtagsClicked, ntagsList, setNtagsClicked, setPreviewFiles) {
     const [loading, setLoading] = useState(false);
@@ -33,7 +34,7 @@ function useData(setContent, setRating, ptagsList, setPtagsClicked, ntagsList, s
 
             if (data.reviewImages && data.reviewImages.length > 0) {
                 const loadedImages = data.reviewImages.map(imgObject => ({
-                    id: crypto.randomUUID(),
+                    id: uuidv4(),
                     url: imgObject.imageUrl,
                     file: null
                 }));

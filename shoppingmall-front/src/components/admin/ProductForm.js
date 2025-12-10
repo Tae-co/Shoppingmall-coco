@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TagCheckboxGroup from './TagCheckboxGroup';
+import PropTypes from 'prop-types';
 import '../../css/admin/ProductForm.css';
 
 /**
@@ -187,15 +188,38 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
             <h3 className="section-title">기본 정보</h3>
             <div className="form-group">
               <label className="form-label">상품명 *</label>
-              <input className="form-input" name="prdName" value={formData.prdName} onChange={handleChange} required placeholder="상품명을 입력하세요" />
+              <input
+                id="prdName" // id 추가 (htmlFor와 동일하게)
+                className="form-input"
+                name="prdName"
+                value={formData.prdName}
+                onChange={handleChange}
+                required
+                placeholder="상품명을 입력하세요"
+              />
             </div>
             <div className="form-group">
               <label className="form-label">상품 설명</label>
-              <textarea className="form-textarea" name="description" value={formData.description} onChange={handleChange} placeholder="상세 설명을 입력하세요" />
+              <textarea
+                id="description"
+                className="form-textarea"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="상세 설명을 입력하세요"
+              />
             </div>
             <div className="form-group">
               <label className="form-label">사용 방법</label>
-              <textarea className="form-textarea" style={{ minHeight: '100px' }} name="howToUse" value={formData.howToUse} onChange={handleChange} placeholder="사용 방법을 입력하세요" />
+              <textarea
+                id="howToUse"
+                className="form-textarea"
+                style={{ minHeight: '100px' }}
+                name="howToUse"
+                value={formData.howToUse}
+                onChange={handleChange}
+                placeholder="사용 방법을 입력하세요"
+              />
             </div>
           </div>
 
@@ -234,7 +258,13 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
             <h3 className="section-title">구성</h3>
             <div className="form-group">
               <label className="form-label">판매 상태</label>
-              <select className="form-select" name="status" value={formData.status} onChange={handleChange}>
+              <select
+                id="status"
+                className="form-select"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+              >
                 <option value="SALE">판매중</option>
                 <option value="SOLD_OUT">품절</option>
                 <option value="STOP">판매중지</option>
@@ -242,7 +272,14 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
             </div>
             <div className="form-group">
               <label className="form-label">카테고리 *</label>
-              <select className="form-select" name="categoryNo" value={formData.categoryNo} onChange={handleChange} required>
+              <select
+                id="categoryNo"
+                className="form-select"
+                name="categoryNo"
+                value={formData.categoryNo}
+                onChange={handleChange}
+                required
+              >
                 <option value="" disabled>카테고리 선택</option>
                 {sortedCategories.map(cat => (
                   <option
@@ -258,7 +295,15 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
             </div>
             <div className="form-group">
               <label className="form-label">기본 가격 *</label>
-              <input className="form-input" type="number" name="prdPrice" value={formData.prdPrice} onChange={handleChange} required />
+              <input
+                id="prdPrice"
+                className="form-input"
+                type="number"
+                name="prdPrice"
+                value={formData.prdPrice}
+                onChange={handleChange}
+                required
+              />
             </div>
           </div>
 
@@ -316,4 +361,41 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
   );
 }
 
+ProductForm.propTypes = {
+  // initialData 객체의 내부 구조(Shape)를 상세히 정의
+  initialData: PropTypes.shape({
+    prdNo: PropTypes.number,
+    prdName: PropTypes.string,
+    description: PropTypes.string,
+    categoryNo: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    prdPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    status: PropTypes.string,
+    howToUse: PropTypes.string,
+
+    // 오류가 발생했던 배열 필드들 정의
+    skinTypes: PropTypes.arrayOf(PropTypes.string),
+    skinConcerns: PropTypes.arrayOf(PropTypes.string),
+    personalColors: PropTypes.arrayOf(PropTypes.string),
+    imageUrls: PropTypes.arrayOf(PropTypes.string),
+
+    // 옵션 배열 정의
+    options: PropTypes.arrayOf(PropTypes.shape({
+      optionName: PropTypes.string,
+      optionValue: PropTypes.string,
+      addPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      stock: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    }))
+  }),
+  categories: PropTypes.array,
+  onSubmit: PropTypes.func,
+  isEdit: PropTypes.bool
+};
+
+// 기본값 설정 (안전성 강화)
+ProductForm.defaultProps = {
+  initialData: null,
+  categories: [],
+  onSubmit: () => { },
+  isEdit: false
+};
 export default ProductForm;

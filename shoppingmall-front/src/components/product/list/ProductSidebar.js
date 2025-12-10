@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import '../../../css/product/ProductSidebar.css';
 
 // 필터 옵션 상수 데이터 (키워드 매핑용 ID 포함)
@@ -73,7 +74,15 @@ const ProductSidebar = ({
       {/* 모바일용 배경 오버레이 (클릭 시 닫힘) */}
       <div 
         className={`backdrop ${isOpen ? 'open' : ''}`} 
-        onClick={onClose} 
+        onClick={onClose}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            onClose();
+          }
+        }}
+        aria-label="필터 닫기" 
       />
       
       {/* 사이드바 본체 */}
@@ -186,6 +195,38 @@ const ProductSidebar = ({
       </aside>
     </>
   );
+};
+
+// Props 타입 정의
+ProductSidebar.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  closeButtonRef: PropTypes.oneOfType([
+    PropTypes.func, 
+    PropTypes.shape({ current: PropTypes.any })
+  ]),
+  activeFilters: PropTypes.shape({
+    skinTypes: PropTypes.arrayOf(PropTypes.string),
+    skinConcerns: PropTypes.arrayOf(PropTypes.string),
+    personalColors: PropTypes.arrayOf(PropTypes.string)
+  }).isRequired,
+  onFilterChange: PropTypes.func.isRequired,
+  onFilterGroupChange: PropTypes.func.isRequired,
+  isLoggedIn: PropTypes.bool,
+  isProfileMode: PropTypes.bool,
+  onProfileToggle: PropTypes.func
+};
+
+// 기본값 설정
+ProductSidebar.defaultProps = {
+  activeFilters: {
+    skinTypes: [],
+    skinConcerns: [],
+    personalColors: []
+  },
+  isLoggedIn: false,
+  isProfileMode: false,
+  onProfileToggle: () => {}
 };
 
 export default ProductSidebar;

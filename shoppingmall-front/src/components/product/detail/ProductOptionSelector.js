@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * [상품 옵션 선택기]
@@ -51,6 +52,24 @@ const ProductOptionSelector = ({ options, selectedOption, onSelect }) => {
       )}
     </div>
   );
+};
+
+// Props 타입 정의
+ProductOptionSelector.propTypes = {
+  options: PropTypes.arrayOf(PropTypes.shape({
+    optionNo: PropTypes.number,
+    optionValue: PropTypes.string,
+    addPrice: PropTypes.number,
+    stock: PropTypes.number
+  })),
+  selectedOption: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onSelect: PropTypes.func.isRequired
+};
+
+// 기본값 설정
+ProductOptionSelector.defaultProps = {
+  options: [],
+  selectedOption: ''
 };
 
 export default ProductOptionSelector;

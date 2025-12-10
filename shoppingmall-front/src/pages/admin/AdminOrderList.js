@@ -30,18 +30,18 @@ function AdminOrderList() {
   // 상태별 텍스트 색상 반환 함수
   const getStatusColor = (status) => {
     switch (status) {
-      case 'CANCELLED': 
+      case 'CANCELLED':
         return '#dc3545'; // 빨강 (취소)
-      case 'DELIVERED': 
+      case 'DELIVERED':
         return '#28a745'; // 초록 (완료)
-      case 'PAID': 
+      case 'PAID':
         return '#007bff'; // 파랑 (결제완료 -> 관리자 작업 시작)
       case 'PREPARING':
-      case 'SHIPPING': 
+      case 'SHIPPING':
         return '#fd7e14'; // 주황 (진행중)
-      case 'PENDING': 
+      case 'PENDING':
         return '#6c757d'; // 회색 (대기)
-      default: 
+      default:
         return '#333';    // 기본 검정
     }
   };
@@ -78,7 +78,7 @@ function AdminOrderList() {
 
   // useEffect 의존성에 fetchOrders 추가
   useEffect(() => {
-    fetchOrders(); 
+    fetchOrders();
   }, [fetchOrders]);
 
   // 검색 버튼 핸들러
@@ -135,8 +135,8 @@ function AdminOrderList() {
         </div>
 
         {/* 검색 및 필터 영역 */}
-        <div className="filter-container" style={{marginBottom: '20px', display: 'flex', gap: '10px'}}>
-          <select 
+        <div className="filter-container" style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+          <select
             className="filter-select"
             value={searchStatus}
             onChange={(e) => setSearchStatus(e.target.value)}
@@ -147,16 +147,16 @@ function AdminOrderList() {
             ))}
           </select>
 
-          <input 
-            type="text" 
+          <input
+            type="text"
             className="search-input"
-            placeholder="주문번호 또는 주문자명 검색" 
+            placeholder="주문번호 또는 주문자명 검색"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
           />
 
-          <button 
+          <button
             className="btn-search"
             onClick={handleSearch}
           >
@@ -231,8 +231,28 @@ function AdminOrderList() {
 
       {/* --- 주문 상세 모달 --- */}
       {selectedOrder && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <div
+          className="modal-overlay"
+          onClick={closeModal}
+          // 배경: 버튼 역할 명시 및 키보드로 닫기 기능 추가
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              closeModal();
+            }
+          }}
+          aria-label="모달 닫기"
+        >
+          <div
+            className="modal-content"
+            onClick={e => e.stopPropagation()}
+            // 내용: 키보드 이벤트 전파 방지
+            onKeyDown={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            tabIndex={-1}
+          >
             <div className="modal-header">
               <h3>주문 상세 정보 (No. {selectedOrder.orderNo})</h3>
               <button className="btn-close" onClick={closeModal}>×</button>
