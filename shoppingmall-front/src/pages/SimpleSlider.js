@@ -27,8 +27,8 @@ function SimpleSlider() {
         {
             id: 'skincare',
             bg: bannerImgSkincare,
-            title: <>촉촉하게 차오르는<br/>수분 광채</>,
-            desc: <>건조한 피부에 즉각적인 생기를 더하는<br/>코코의 수분 솔루션</>,
+            title: <>촉촉하게 차오르는<br />수분 광채</>,
+            desc: <>건조한 피부에 즉각적인 생기를 더하는<br />코코의 수분 솔루션</>,
             link: '/product?categoryNo=1',
             btnText: '스킨케어 라인 보기 >',
             contentClass: 'align-right theme-skincare',
@@ -37,8 +37,8 @@ function SimpleSlider() {
         {
             id: 'makeup',
             bg: bannerImgMakeup,
-            title: <>설렘 가득,<br/>메이크업</>,
-            desc: <>당신의 일상을 화사하게 밝혀줄<br/>코코의 로맨틱 컬렉션</>,
+            title: <>설렘 가득,<br />메이크업</>,
+            desc: <>당신의 일상을 화사하게 밝혀줄<br />코코의 로맨틱 컬렉션</>,
             link: '/product?categoryNo=2',
             btnText: '메이크업 라인 보기 >',
             contentClass: 'align-right theme-makeup',
@@ -48,8 +48,8 @@ function SimpleSlider() {
         {
             id: 'body',
             bg: bannerImgBody,
-            title: <>일상 속 작은 쉼표,<br/>내추럴 바디 케어</>,
-            desc: <>지친 몸과 마음에 전하는<br/>자연의 깊은 위로</>,
+            title: <>일상 속 작은 쉼표,<br />내추럴 바디 케어</>,
+            desc: <>지친 몸과 마음에 전하는<br />자연의 깊은 위로</>,
             link: '/product?categoryNo=3',
             btnText: '바디/헤어 라인 보기 >',
             contentClass: 'align-right theme-body',
@@ -59,7 +59,7 @@ function SimpleSlider() {
         {
             id: 'homme',
             bg: bannerImgHomme,
-            title: <>그 남자의 관리법,<br/>코코 옴므</>,
+            title: <>그 남자의 관리법,<br />코코 옴므</>,
             desc: '복잡한 단계 없이, 심플하고 완벽하게',
             link: '/product?categoryNo=4',
             btnText: '옴므 라인 보기 >',
@@ -69,11 +69,11 @@ function SimpleSlider() {
     ];
 
     return (
-       <div className="slider_container">
+        <div className="slider_container">
             <Slider {...settings}>
-                {slides.map((slide, index) => (
-                    <div key={index}>
-                        <div 
+                {slides.map((slide) => (
+                    <div key={slide.id}>
+                        <div
                             className="slide"
                             style={{ backgroundImage: `url(${slide.bg})` }}
                         >
