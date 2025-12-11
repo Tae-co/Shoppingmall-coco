@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import net.coobird.thumbnailator.Thumbnails;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -225,7 +227,17 @@ public class AdminProductService {
 		String savedFileName = uuid + "_" + originalFilename;
 
 		File dest = new File(getProductUploadPath() + savedFileName);
-		file.transferTo(dest);
+		
+		// 원본 그대로 저장하지 않고, 리사이징 및 압축 후 저장
+		try {
+			Thumbnails.of(file.getInputStream())
+				.size(1000, 1000)   // 최대 너비/높이를 1000px로 제한 (비율 유지)
+				.outputQuality(0.8) // 이미지 품질을 80%로 설정 (용량 대폭 감소, 화질은 유지)
+				.toFile(dest);
+		} catch (IOException e) {
+			// 만약 변환 중 에러가 나면 원본이라도 저장하도록 처리
+			file.transferTo(dest);
+		}
 
 		// DB에 경로로 저장
 		ProductImageEntity image = new ProductImageEntity();
