@@ -22,6 +22,7 @@ function SimilarSkinReview({ productId }) {
                 setSkinStats(stats);
                 setError(false);
             } catch (e) {
+                console.error('통계 데이터 로딩 에러:', e);
                 setSkinStats(null);
                 setError(true);
             }
@@ -45,7 +46,7 @@ function SimilarSkinReview({ productId }) {
             {Array.isArray(skinStats.topTags) && skinStats.topTags.length > 0 ? (
                 <>
                     <p className="similar-review-text">
-                        {skinStats.skinType} 타입 사용자 <strong>{skinStats.topTags[0].percentage}%</strong>가
+                        {skinStats.skinType} 타입 사용자 <strong>{skinStats.topTags[0].percentage}%</strong>가{' '}
                         <span className={
                             "similar-tag-chip " +
                             (skinStats.topTags[0].tagStatus === "POSITIVE"
@@ -59,11 +60,7 @@ function SimilarSkinReview({ productId }) {
                         {skinStats.topTags.map(tag => (
                             <span key={tag.tagName} className={
                                 "similar-tag-chip " +
-                                (tag.tagStatus === "POSITIVE"
-                                    ? "positive"
-                                    : tag.tagStatus === "NEGATIVE"
-                                        ? "negative"
-                                        : "")
+                                (tag.tagStatus === "POSITIVE" ? "positive" : tag.tagStatus === "NEGATIVE" ? "negative" : "")
                             }>{tag.tagName} ({tag.percentage}%)</span>
                         ))}
                     </div>

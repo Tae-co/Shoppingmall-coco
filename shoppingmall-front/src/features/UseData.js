@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 
@@ -18,17 +18,17 @@ function useData(setContent, setRating, ptagsList, setPtagsClicked, ntagsList, s
             setContent(data.content);
             setRating(data.rating);
 
-            const goodTagNames = (data.prosTags || []).map(tag => tag.tagName);
-            const badTagNames = (data.consTags || []).map(tag => tag.tagName);
+            const goodTagNames = new Set((data.prosTags || []).map(tag => tag.tagName));
+            const badTagNames = new Set((data.consTags || []).map(tag => tag.tagName));
 
             const newPtagClicked = ptagsList.map((tag) => {
-                return goodTagNames.includes(tag.tagName);
+                return goodTagNames.has(tag.tagName);
             });
 
             setPtagsClicked(newPtagClicked);
 
             const newNtagClicked = ntagsList.map((tag) => {
-                return badTagNames.includes(tag.tagName);
+                return badTagNames.has(tag.tagName);
             })
             setNtagsClicked(newNtagClicked);
 

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid"; 
+import { v4 as uuidv4 } from "uuid";
 function useFile() {
     const ref = useRef(null);
     const [previewFiles, setPreviewFiles] = useState([]); // {id, url} 객체 배열
@@ -21,7 +21,9 @@ function useFile() {
             // 파일이 성공적으로 입력이 되었을 때 id, url, file를 만든다.
 
             // 에러가 발생시 error 메시지 만든다.
-            reader.onerror = (error) => reject(error);
+            reader.onerror = (event) => {
+                reject(new Error('파일 읽기 실패'));
+            }
 
             //파일을 읽는 작업 실행 
             reader.readAsDataURL(file);
@@ -67,7 +69,7 @@ function useFile() {
         }
     };
 
-    return{
+    return {
         previewFiles,
         setPreviewFiles,
         handleDelete,

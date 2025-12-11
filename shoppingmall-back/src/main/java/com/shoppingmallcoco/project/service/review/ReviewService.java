@@ -121,18 +121,12 @@ public class ReviewService implements IReviewService {
 
         findReview.update(reviewDTO.getRating(), reviewDTO.getContent());
 
-        List<ReviewImage> findImage = reviewImageRepository.findByReview(findReview);
-
-        if (findImage != null && !findImage.isEmpty()) {
-            for (ReviewImage image : findImage) {
-                fileUploadService.delete(image.getImageUrl());
-            }
-        }
-        reviewImageRepository.deleteByReview(findReview);
-
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
-                String imageUrl = fileUploadService.upload(file);
+                String storedFileName = fileUploadService.upload(file);
+
+                String imageUrl = "/images/" + storedFileName;
+
                 ReviewImage reviewImage = ReviewImage.toEntity(imageUrl, findReview);
                 reviewImageRepository.save(reviewImage);
             }
@@ -330,7 +324,7 @@ public class ReviewService implements IReviewService {
     // Review 페이징
     @Transactional(readOnly = true)
     public Page<ReviewDTO> getReviewPage(Long productNo, Long memNo, int page, int size,
-        String sortType,  Boolean coMate) {
+        String sortType, Boolean coMate) {
         Sort sort = switch (sortType) {
             case "oldest" -> Sort.by(Sort.Direction.ASC, "createdAt");
             default -> Sort.by(Sort.Direction.DESC, "createdAt");

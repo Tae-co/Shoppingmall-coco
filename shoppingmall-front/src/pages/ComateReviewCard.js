@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 import '../css/ComateReviewCard.css';
 
 import sampleImg_profile from '../images/sampleImg_profile.png'; // 임시 프로필 이미지
-import sampleImg_product from '../images/sampleImg_product.png'; // 임시 상품 이미지
 import starIcon from '../images/review_rate_icon_star.png';
 import { toggleLike } from '../utils/comate_api';
 

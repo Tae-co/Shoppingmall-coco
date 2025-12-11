@@ -1,0 +1,6 @@
+projectKey=shoppingMallcoco-front
+serverUrl=http://localhost:9000
+serverVersion=25.10.0.114319
+dashboardUrl=http://localhost:9000/dashboard?id=shoppingMallcoco-front
+ceTaskId=5b307135-f996-4d37-a210-6f52b92a3a8a
+ceTaskUrl=http://localhost:9000/api/ce/task?id=5b307135-f996-4d37-a210-6f52b92a3a8a

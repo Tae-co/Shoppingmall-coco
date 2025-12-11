@@ -37,7 +37,7 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
     // 리뷰 작성자와 현재 로그인한 사용자가 일치하는지 확인
     const isReviewAuthor = isLoggedIn() && currentMemNo && reviewAuthorMemNo && currentMemNo === reviewAuthorMemNo;
 
-    const { starTotal, clicked, starArray, setRating } = UseStarRating(0);
+    const { clicked, starArray, setRating } = UseStarRating(0);
 
     const [buyCount, setBuyCount] = useState(0);
 
@@ -150,10 +150,11 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
                     <span className='username'>{userNickname}</span>
                     <div className='resale'>{buyCount}번째 구매 </div>
                     <div className='stars'>
-                        {starArray.map((stars, i) => (
+                        {starArray.map((star, i) => (
                             <img
                                 key={i}
                                 src={clicked[i] ? yellowStar : greyStar}
+                                alt='별점 이미지'
                             />
                         ))}
                     </div>
@@ -162,8 +163,21 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
                     <span className='date'>{createdAt ? createdAt.split('T')[0] : ''}</span>
                     {isReviewAuthor && (
                         <>
-                            <img className="icon-btn" src={edit} onClick={updateReview} />
-                            <img className="icon-btn" src={del} onClick={handleDeleteReview} />
+                            <button
+                                type="button"
+                                className="icon-btn"
+                                onClick={updateReview}
+                                aria-label="리뷰 수정"
+                            > <img src={edit} alt="" />
+                            </button>
+                            <button
+                                type="button"
+                                className="icon-btn"
+                                onClick={handleDeleteReview}
+                                aria-label="리뷰 삭제"
+                            >
+                                <img src={del} alt="" />
+                            </button>
                         </>
                     )}
                 </div>
@@ -179,11 +193,11 @@ function ReviewDetail({ reviewData, onDelete, productNo }) {
                 ))}
             </div>
             <div className="tagBox">
-                {prosTags && prosTags.map((ptag, i) => (
-                    <span key={`p-${i}`}>{ptag.tagName}</span>
+                {prosTags?.map((ptag) => (
+                    <span key={`p-${ptag.tagNo}`}>{ptag.tagName}</span>
                 ))}
-                {consTags && consTags.map((ntag, i) => (
-                    <span key={`n-${i}`}>{ntag.tagName}</span>
+                {consTags?.map((ntag) => (
+                    <span key={`n-${ntag.tagNo}`}>{ntag.tagName}</span>
                 ))}
             </div>
             <div className="textBox">

@@ -37,8 +37,12 @@ public class LocalFileUploadService implements FileUploadService {
     }
 
     @Override
-    public void delete(String fileName) {
+    public void delete(String fileNameOrUrl) {
         try {
+            String fileName = fileNameOrUrl.startsWith("/images/")
+                ? fileNameOrUrl.substring("/images/".length())
+                : fileNameOrUrl;
+
             Path imagePath = Paths.get(uploadDir + fileName);
             Files.deleteIfExists(imagePath);
         }catch (IOException e) {

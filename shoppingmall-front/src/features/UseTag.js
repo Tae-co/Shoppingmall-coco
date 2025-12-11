@@ -9,17 +9,14 @@ function useTag(tags) {
         () => (tags ? tags.filter(tag => tag.tagStatus == "단점") : []), [tags]
     )
 
-    const [ptagsClicked, setPtagsClicked] = useState(Array(ptagsList.length).fill(false));
-    const [ntagsClicked, setNtagsClicked] = useState(Array(ntagsList.length).fill(false));
+    const [ptagsClicked, setPtagsClicked] = useState(new Array(ptagsList.length).fill(false));
+    const [ntagsClicked, setNtagsClicked] = useState(new Array(ntagsList.length).fill(false));
     const [pWarnMsg, pSetWarnMsg] = useState("");
     const [nWarnMsg, nSetWarnMsg] = useState("");
 
-    // const [ptagArr, setPtagArr] = useState([]);
-    // const [ntagArr, setNtagArr] = useState([]);
-
     useEffect(() => {
-        setPtagsClicked(Array(ptagsList.length).fill(false));
-        setNtagsClicked(Array(ntagsList.length).fill(false));
+        setPtagsClicked(new Array(ptagsList.length).fill(false));
+        setNtagsClicked(new Array(ntagsList.length).fill(false));
     }, [ptagsList, ntagsList])
 
     const ptoggleActive = (indexTogle) => {

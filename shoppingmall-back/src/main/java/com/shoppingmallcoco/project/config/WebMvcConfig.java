@@ -16,13 +16,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // 업로드된 이미지 파일 서빙
         registry.addResourceHandler("/images/**")
             .addResourceLocations("file:///" + uploadDir);
-        
-        // React 정적 리소스 서빙 (CSS, JS, 이미지 등)
-        registry.addResourceHandler("/static/**")
-            .addResourceLocations("classpath:/static/static/");
-        
-        // index.js 및 기타 정적 파일들 서빙 (WAR 파일 내부에서도 작동하도록)
-        registry.addResourceHandler("/index.js", "/favicon.ico", "/manifest.json", "/logo*.png", "/robots.txt", "/asset-manifest.json", "/prd_placeholder.png")
-            .addResourceLocations("classpath:/static/", "classpath:/META-INF/resources/");
+
     }
 }

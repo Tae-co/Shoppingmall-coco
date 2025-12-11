@@ -1,4 +1,4 @@
-import react, { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import greyStar from '../images/greyStar.svg'
 import yellowStar from '../images/yellowStar.svg'
@@ -12,7 +12,7 @@ import UseData from '../features/UseData.js'
 import '../css/review.css'
 function UpdateReview() {
 
-    const { reviewNo, orderItemNo } = useParams();
+    const { reviewNo } = useParams();
     const navigate = useNavigate();
 
     const reviewGuide = `1. 제품의 '첫인상'과 '사용감'을 자세히 알려주세요
@@ -48,7 +48,6 @@ function UpdateReview() {
     `;
 
     const [tags, setTags] = useState([]);
-    const [loadingTags, setLoadingTags] = useState(true);
 
     const [content, setContent] = useState(""); // 리뷰 텍스트를 위한 state
 
@@ -64,7 +63,7 @@ function UpdateReview() {
         null,
         reviewNo
     )
-    const { loadData, loading } = UseData(
+    const { loadData } = UseData(
         setContent, setRating,
         ptagsList, setPtagsClicked,
         ntagsList, setNtagsClicked,
@@ -73,14 +72,12 @@ function UpdateReview() {
 
     useEffect(() => {
         const loadAllTags = async () => {
-            setLoadingTags(true);
             try {
                 const response = await axios.get(`http://13.231.28.89:18080/api/tags`);
                 setTags(response.data);
             } catch (error) {
                 console.error("태그 목록 로딩 실패:", error);
             }
-            setLoadingTags(false);
         }
         loadAllTags();
     }, [])
