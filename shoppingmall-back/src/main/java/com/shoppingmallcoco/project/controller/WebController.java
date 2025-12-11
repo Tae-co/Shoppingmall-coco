@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class WebController implements ErrorController {
 
-    @GetMapping({"/{path:[^\\.]*}", "/**/{path:[^\\.]*}"})
+    @GetMapping("/{path:[^\\.]*}")
     public String redirect() {
         return "index.html";
     }
