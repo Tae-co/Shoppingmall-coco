@@ -3,6 +3,7 @@ package com.shoppingmallcoco.project.controller;
 import com.shoppingmallcoco.project.dto.review.SimilarSkinStatsDTO;
 import com.shoppingmallcoco.project.service.review.ReviewService;
 import java.util.List;
+import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -133,6 +134,16 @@ public class ProductApiController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+    
+    /**
+     * 검색어 매핑 정보 조회 API
+     * 프론트엔드에서 한글 필터(예: 건성)를 영문 태그(예: dry)로 변환할 때 사용할 매핑 테이블을 반환
+     * 이 API를 통해 프론트엔드에 하드코딩된 매핑 정보를 제거하고, 백엔드와 동기화
+     */
+    @GetMapping("/codes/search-keywords")
+    public ResponseEntity<Map<String, String>> getSearchKeywords() {
+        return ResponseEntity.ok(prdService.getSearchKeywordMap());
     }
 
 

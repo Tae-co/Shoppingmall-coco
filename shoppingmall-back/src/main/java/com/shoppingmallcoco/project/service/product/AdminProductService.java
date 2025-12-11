@@ -25,8 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * 관리자 전용 상품 관리 비즈니스 로직을 담당하는 서비스 클래스
- * 상품 등록, 수정(이미지/옵션 포함), 삭제 및 대시보드 통계 기능을 제공함
+ * 관리자 전용 상품 관리 비즈니스 로직을 담당하는 서비스 클래스 상품 등록, 수정(이미지/옵션 포함), 삭제 및 대시보드 통계 기능을 제공함
  */
 @Service
 @RequiredArgsConstructor
@@ -38,16 +37,16 @@ public class AdminProductService {
 	private final CategoryRepository catRepo;
 	private final ProductImageRepository prdImgRepo;
 	private final IReviewService reviewService;
-	
+
 	@Value("${file.upload-dir}") // application.properties의 값 주입
 	private String rootDir;
-	
+
 	// 도메인 상수 정의
 	private final String DOMAIN = "http://13.231.28.89:18080";
 
 	// 상품 전용 업로드 폴더 경로
 	private String getProductUploadPath() {
-	    return rootDir + "products/";
+		return Paths.get(rootDir, "products").toString() + File.separator;
 	}
 
 	/**
@@ -124,10 +123,9 @@ public class AdminProductService {
 	}
 
 	/**
-	 * 상품 이미지 목록을 동기화하고 순서를 재정렬하는 내부 헬퍼 메소드
-	 * - 프론트엔드에서 전달받은 이미지 순서(imageOrderList)에 따라 정렬 순서(sortOrder)를 업데이트함
-	 * - 목록에 없는 기존 이미지는 DB와 로컬 디스크에서 삭제함
-	 * - "NEW_FILE" 마커가 있는 위치에 새 파일을 저장함
+	 * 상품 이미지 목록을 동기화하고 순서를 재정렬하는 내부 헬퍼 메소드 - 프론트엔드에서 전달받은 이미지 순서(imageOrderList)에
+	 * 따라 정렬 순서(sortOrder)를 업데이트함 - 목록에 없는 기존 이미지는 DB와 로컬 디스크에서 삭제함 - "NEW_FILE" 마커가
+	 * 있는 위치에 새 파일을 저장함
 	 */
 	private void processImages(ProductEntity product, List<String> imageOrderList, List<MultipartFile> newFiles)
 			throws IOException {
@@ -140,7 +138,11 @@ public class AdminProductService {
 				boolean isKept = false;
 				if (imageOrderList != null) {
 					for (String item : imageOrderList) {
-						if (img.getImageUrl().equals(item)) {
+						// 전체 URL 비교 대신 파일명만 비교
+						String dbFileName = img.getImageUrl().substring(img.getImageUrl().lastIndexOf("/") + 1);
+						String itemFileName = item.contains("/") ? item.substring(item.lastIndexOf("/") + 1) : item;
+
+						if (dbFileName.equals(itemFileName)) {
 							isKept = true;
 							break;
 						}
@@ -158,10 +160,10 @@ public class AdminProductService {
 			for (ProductImageEntity img : toDelete) {
 				// 파일명만 추출
 				String fileName = img.getImageUrl().substring(img.getImageUrl().lastIndexOf("/") + 1);
-				
+
 				// 실제 삭제 경로
 				Path filePath = Paths.get(getProductUploadPath() + fileName);
-			    Files.deleteIfExists(filePath);
+				Files.deleteIfExists(filePath);
 			}
 		}
 
@@ -194,7 +196,8 @@ public class AdminProductService {
 
 	// 단일 파일 저장 로직 (UUID 파일명 생성)
 	private void saveSingleImage(ProductEntity product, MultipartFile file, int sortOrder) throws IOException {
-		if (file.isEmpty())	return;
+		if (file.isEmpty())
+			return;
 
 		// 파일 타입 검증 (이미지 파일만 허용)
 		String contentType = file.getContentType();
@@ -202,9 +205,7 @@ public class AdminProductService {
 			throw new IllegalArgumentException("이미지 파일만 업로드 가능합니다.");
 		}
 		// 허용된 이미지 타입만 허용
-		List<String> allowedTypes = List.of(
-			"image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"
-		);
+		List<String> allowedTypes = List.of("image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp");
 		if (!allowedTypes.contains(contentType.toLowerCase())) {
 			throw new IllegalArgumentException("지원하지 않는 이미지 형식입니다. (JPEG, PNG, GIF, WEBP만 허용)");
 		}
@@ -215,7 +216,8 @@ public class AdminProductService {
 
 		// 폴더 생성 (products 폴더가 없으면 자동 생성)
 		File dir = new File(getProductUploadPath());
-		if (!dir.exists())	dir.mkdirs(); // mkdirs는 상위 폴더까지 생성함
+		if (!dir.exists())
+			dir.mkdirs(); // mkdirs는 상위 폴더까지 생성함
 
 		// 파일명 생성 및 저장
 		String originalFilename = file.getOriginalFilename();
@@ -235,21 +237,21 @@ public class AdminProductService {
 
 	// (신규 등록용) 단순 이미지 리스트 저장
 	private void saveImages(ProductEntity product, List<MultipartFile> files) throws IOException {
-		if (files == null || files.isEmpty())	return;
-		
+		if (files == null || files.isEmpty())
+			return;
+
 		int sortOrder = 1;
 		if (product.getImages() != null) {
-            sortOrder = product.getImages().size() + 1;
-        }
+			sortOrder = product.getImages().size() + 1;
+		}
 
-        for (MultipartFile file : files) {
-            saveSingleImage(product, file, sortOrder++);
-        }
+		for (MultipartFile file : files) {
+			saveSingleImage(product, file, sortOrder++);
+		}
 	}
 
 	/**
-	 * API: 관리자 상품 삭제 (논리적 삭제로 변경)
-	 * 실제 DB에서 삭제하지 않고, '삭제됨(isDeleted=Y)' 상태로 변경함.
+	 * API: 관리자 상품 삭제 (논리적 삭제로 변경) 실제 DB에서 삭제하지 않고, '삭제됨(isDeleted=Y)' 상태로 변경함.
 	 */
 	public void deleteProduct(Long prdNo) {
 		ProductEntity product = prdRepo.findById(prdNo).orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
