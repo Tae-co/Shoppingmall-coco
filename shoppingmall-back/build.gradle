@@ -58,6 +58,9 @@ dependencies {
     
     // 이미지 썸네일 및 리사이징 라이브러리 (Thumbnailator)
     implementation 'net.coobird:thumbnailator:0.4.20'
+    
+    // WebP 이미지 입출력 지원 라이브러리 (ImageIO Plugin)
+    implementation 'org.sejda.imageio:webp-imageio:0.1.6'
 }
 
 tasks.named('test') {
