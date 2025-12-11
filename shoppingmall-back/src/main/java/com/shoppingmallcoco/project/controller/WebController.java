@@ -5,17 +5,37 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class WebController implements ErrorController {
+public class WebController {
 
     @GetMapping({
-        "/",            // 메인
-        "/product",     // /product
-        "/product/{id}",// /product/1 같은 상세
-        "/reviews",
-        "/reviews/**",  // 필요에 따라 추가
-        "/mypage/**"
+        "/",                 // Home
+        "/login",
+        "/signup/terms",
+        "/signup/info",
+        "/find-account",
+        "/kakao/additional-info",
+        "/product",          // 상품 리스트
+        "/products/{id}",    // 상품 상세
+        "/cart",
+        "/order",
+        "/payment",
+        "/order-success",
+        "/order-fail",
+        "/mypage",
+        "/profile-edit",
+        "/order-history",
+        "/account-settings",
+        "/my-comate",
+        "/order-detail/{orderNo}",
+        "/write-review/{orderItemNo}",
+        "/update-reviews/{reviewNo}",
+        "/comate/me/{tab}",
+        "/comate/user/{memNo}/{tab}",
+        "/terms/{type}",
+        "/notices",
+        "/event"
     })
-    public String redirect() {
-        return "index.html"; // static/index.html
+    public String forwardSPA() {
+        return "index.html";
     }
 }
