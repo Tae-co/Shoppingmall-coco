@@ -36,7 +36,7 @@ export function OrderProvider({ children }) {
       
       // 토큰이 없으면(비로그인) 포인트 조회 안 함
       if (!token) {
-        console.log("비로그인 상태: 포인트를 조회하지 않습니다.");
+        
         return;
       }
 
@@ -50,12 +50,12 @@ export function OrderProvider({ children }) {
 
         // 성공 시 포인트 업데이트
         if (response.data && response.data.point !== undefined) {
-          console.log("포인트 조회 성공:", response.data.point);
+          
           setUserPoints(response.data.point);
         }
 
       } catch (error) {
-        console.error("포인트 조회 실패:", error);
+        
         // (선택) 에러 시 처리 로직 (예: 토큰 만료 시 로그아웃 등)
       }
     };

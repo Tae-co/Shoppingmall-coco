@@ -119,7 +119,6 @@ function PaymentPage() {
       IMP.request_pay(data, (rsp) => {
         if (rsp.success) {
           // --- 결제 성공 ---
-          console.log("결제 성공:", rsp);
 
          
           const orderData = {
@@ -157,7 +156,7 @@ function PaymentPage() {
             .then((response) => {
               // 백엔드가 보내준 진짜 주문 번호 받기
               const realOrderNo = response.data; 
-              console.log("백엔드 저장 성공. 주문번호:", realOrderNo);
+              
 
               // 장바구니 비우기 로직 
               return axios.delete('http://13.231.28.89:18080/api/coco/members/cart/items', {
@@ -168,7 +167,7 @@ function PaymentPage() {
               
               // 성공-장바구니 비우기 성공 및 최종 이동
               .then(() => {
-                  console.log("장바구니 비우기 성공. FE 상태 초기화.");
+                  
                   
                   // Context 상태 초기화
                   if (setCartItems) { 
@@ -184,13 +183,13 @@ function PaymentPage() {
               // 실패-장바구니 비우기 실패 (주문은 성공했으므로 이동)
               .catch((cartError) => {
                   // 실패 시 알림 없이 콘솔에만 로그를 남기고 성공 처리
-                  console.error("장바구니 비우기 실패 (하지만 주문은 성공됨):", cartError);
+
                   navigate('/order-success', { state: { orderNo: realOrderNo } });
               });
             })
 
             .catch((error) => {
-              console.error("백엔드 저장 실패:", error);
+              
               
               // (403 에러 처리: 토큰 만료 등)
               if (error.response && error.response.status === 403) {
@@ -203,7 +202,7 @@ function PaymentPage() {
 
         } else {
           // --- 결제 실패 ---
-          console.log("결제 실패:", rsp.error_msg);
+          
           let message = "결제 승인 과정에서 오류가 발생했습니다.";
           if (rsp.error_msg.includes("취소") || rsp.error_msg.includes("포기")) {
              message = "사용자가 결제를 취소했습니다.";
@@ -223,7 +222,7 @@ function PaymentPage() {
         return;
       }
 
-      console.log("현재 '신용/체크카드 직접 입력'은 지원하지 않습니다. 실패 처리합니다.");
+      
       navigate('/order-fail', { state: { failMessage: "지원하지 않는 결제 방식이거나 카드 정보가 올바르지 않습니다." } });
     }
   };

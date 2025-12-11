@@ -71,7 +71,7 @@ function OrderPage() {
   useEffect(() => {
     // window.daum 객체와 Postcode 함수가 있는지 확인하여 스크립트 오류를 방지합니다.
     if (!window.daum || !window.daum.Postcode) {
-      console.error("Daum Postcode API 스크립트가 로드되지 않았습니다.");
+      
     }
   }, []); // 컴포넌트 마운트 시 한 번만 실행
 
@@ -116,7 +116,7 @@ function OrderPage() {
       });
 
       const member = response.data; // 백엔드에서 받은 회원 정보 (Entity)
-      console.log("불러온 회원 정보:", member);
+      
 
       // 3. 받아온 정보로 입력창 채우기 (Context 상태 업데이트)
 
@@ -138,7 +138,7 @@ function OrderPage() {
 
 
     } catch (error) {
-      console.error("내 정보 불러오기 실패:", error);
+      
       alert("정보를 불러오는데 실패했습니다. (로그인 상태를 확인해주세요)");
     }
   };
