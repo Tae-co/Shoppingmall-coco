@@ -104,7 +104,7 @@ function PaymentPage() {
 
       // 결제 요청 데이터 정의
       const data = {
-        pg: "kakaopay", // PG사 (예: 카카오페이)
+        pg: "html5_inicis", // PG사 
         pay_method: "card", // 결제 방식
         merchant_uid: `coco_order_${new Date().getTime()}`, // 고유한 주문번호
         name: generateOrderName(orderItems), // 주문명

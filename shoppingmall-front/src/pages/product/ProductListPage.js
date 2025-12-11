@@ -18,19 +18,6 @@ import '../../css/product/ProductListPage.css';
  * 4. 페이지네이션 및 정렬 기능 처리
  */
 
-// --- DB/마이페이지 데이터(한글) -> Shop 필터 ID 변환 맵 ---
-const reverseSkinMap = {
-  '건성': 'dry', '지성': 'oily', '복합성': 'combination', '민감성': 'sensitive'
-};
-const reverseConcernMap = {
-  '수분': 'hydration', '보습': 'moisture', '미백': 'brightening', '피부톤': 'tone',
-  '진정': 'soothing', '민감': 'sensitive', '자외선차단': 'uv', '주름': 'wrinkle',
-  '탄력': 'elasticity', '모공': 'pores'
-};
-const reverseColorMap = {
-  '봄 웜톤': 'spring', '여름 쿨톤': 'summer', '가을 웜톤': 'autumn', '겨울 쿨톤': 'winter'
-};
-
 function ProductListPage() {
   const [products, setProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -45,6 +32,8 @@ function ProductListPage() {
   const closeButtonRef = useRef(null);
   const navigate = useNavigate();
 
+  const [keywordMap, setKeywordMap] = useState({});
+
   const searchTerm = searchParams.get('q') || '';
   const sortOrder = searchParams.get('sort') || 'popularity';
   const currentPage = Number(searchParams.get('page')) || 1;
@@ -53,6 +42,20 @@ function ProductListPage() {
     skinConcerns: searchParams.getAll('skinConcern'),
     personalColors: searchParams.getAll('personalColor')
   };
+
+  // 페이지 로드 시 매핑 정보 가져오기
+  useEffect(() => {
+    const fetchKeywordMap = async () => {
+      try {
+        // 백엔드 API 호출
+        const response = await axios.get('http://13.231.28.89:18080/api/codes/search-keywords');
+        setKeywordMap(response.data); // 받아온 맵(Map<String, String>) 저장
+      } catch (error) {
+        console.error("검색어 매핑 정보 로드 실패:", error);
+      }
+    };
+    fetchKeywordMap();
+  }, []);
 
   // --- 프로필 정보 로드 ---
   useEffect(() => {
@@ -88,26 +91,49 @@ function ProductListPage() {
    */
   const applyProfileFilters = (profileData) => {
     if (!profileData) return;
+
+    // 매핑 정보가 아직 로드되지 않았으면 실행하지 않음 (비동기 처리 안전장치)
+    if (Object.keys(keywordMap).length === 0) {
+      console.warn("매핑 정보가 아직 로드되지 않아 필터를 적용할 수 없습니다.");
+      return;
+    }
+
     const newParams = new URLSearchParams(searchParams);
     let updated = false;
 
+    // 기존 필터 초기화
     newParams.delete('skinType');
     newParams.delete('skinConcern');
     newParams.delete('personalColor');
 
+   // 피부 타입 변환 (예: "건성" -> keywordMap["건성"] -> "dry")
     if (profileData.skinType) {
-      const code = reverseSkinMap[profileData.skinType];
-      if (code) { newParams.append('skinType', code); updated = true; }
+      const code = keywordMap[profileData.skinType];
+      if (code) { 
+        newParams.append('skinType', code); 
+        updated = true; 
+      }
     }
+
+    // 피부 고민 변환 (리스트)
     if (profileData.concerns && profileData.concerns.length > 0) {
       profileData.concerns.forEach(c => {
-        const code = reverseConcernMap[c.trim()];
-        if (code) { newParams.append('skinConcern', code); updated = true; }
+        // 공백 제거 후 맵핑 확인 (예: "수분" -> "hydration")
+        const code = keywordMap[c.trim()];
+        if (code) { 
+          newParams.append('skinConcern', code); 
+          updated = true; 
+        }
       });
     }
+
+    // 퍼스널 컬러 변환
     if (profileData.personalColor) {
-      const code = reverseColorMap[profileData.personalColor.trim()];
-      if (code) { newParams.append('personalColor', code); updated = true; }
+      const code = keywordMap[profileData.personalColor.trim()];
+      if (code) { 
+        newParams.append('personalColor', code); 
+        updated = true; 
+      }
     }
 
     if (updated) {

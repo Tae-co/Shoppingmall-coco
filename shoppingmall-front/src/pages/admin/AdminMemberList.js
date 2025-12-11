@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import Pagination from '../../components/admin/Pagination';
 import Spinner from '../../components/admin/Spinner';

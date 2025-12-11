@@ -55,6 +55,9 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    
+    // 이미지 썸네일 및 리사이징 라이브러리 (Thumbnailator)
+    implementation 'net.coobird:thumbnailator:0.4.20'
 }
 
 tasks.named('test') {
