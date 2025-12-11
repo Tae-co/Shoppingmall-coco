@@ -224,7 +224,13 @@ public class AdminProductService {
 		// 파일명 생성 및 저장
 		String originalFilename = file.getOriginalFilename();
 		String uuid = UUID.randomUUID().toString();
-		String savedFileName = uuid + "_" + originalFilename;
+		
+		// 원본 파일명에서 확장자 제거 후 .webp 붙이기
+		String baseName = originalFilename;
+		if (originalFilename.contains(".")) {
+		    baseName = originalFilename.substring(0, originalFilename.lastIndexOf("."));
+		}
+		String savedFileName = uuid + "_" + baseName + ".webp"; // 확장자를 webp로 고정
 
 		File dest = new File(getProductUploadPath() + savedFileName);
 		
@@ -232,6 +238,7 @@ public class AdminProductService {
 		try {
 			Thumbnails.of(file.getInputStream())
 				.size(1000, 1000)   // 최대 너비/높이를 1000px로 제한 (비율 유지)
+				.outputFormat("webp") // 강제로 WebP 포맷 사용
 				.outputQuality(0.8) // 이미지 품질을 80%로 설정 (용량 대폭 감소, 화질은 유지)
 				.toFile(dest);
 		} catch (IOException e) {
