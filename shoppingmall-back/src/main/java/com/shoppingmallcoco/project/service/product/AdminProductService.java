@@ -241,9 +241,28 @@ public class AdminProductService {
 				.outputFormat("webp") // 강제로 WebP 포맷 사용
 				.outputQuality(0.8) // 이미지 품질을 80%로 설정 (용량 대폭 감소, 화질은 유지)
 				.toFile(dest);
-		} catch (IOException e) {
-			// 만약 변환 중 에러가 나면 원본이라도 저장하도록 처리
-			file.transferTo(dest);
+		} catch (IllegalArgumentException | IOException e) {
+			// 실패 시 WebP 라이브러리가 없거나 오류 발생 시 JPG로 대체 저장
+		    System.out.println("⚠️ WebP 변환 실패(지원되지 않음). JPG로 저장합니다. 원인: " + e.getMessage());
+
+		    // 파일명 확장자를 .jpg로 변경
+		    String jpgFileName = savedFileName.replace(".webp", ".jpg");
+		    File jpgDest = new File(getProductUploadPath() + jpgFileName);
+
+		    try {
+		        // JPG로 다시 저장 시도
+		        Thumbnails.of(file.getInputStream())
+		            .size(1000, 1000)
+		            .outputFormat("jpg")
+		            .outputQuality(0.8)
+		            .toFile(jpgDest);
+		        
+		        // DB에 저장될 파일명 변수도 jpg로 교체
+		        savedFileName = jpgFileName;
+		        
+		    } catch (IOException ex) {
+		        throw new RuntimeException("이미지 저장 중 오류 발생", ex);
+		    }
 		}
 
 		// DB에 경로로 저장
