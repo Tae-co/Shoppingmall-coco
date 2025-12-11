@@ -58,6 +58,11 @@ public class ProductService {
         SEARCH_KEYWORD_MAP.put("가을 웜톤", "autumn");
         SEARCH_KEYWORD_MAP.put("겨울 쿨톤", "winter");
     }
+    
+    // 외부에서 매핑 테이블을 조회할 수 있도록 Getter 메서드 추가
+    public Map<String, String> getSearchKeywordMap() {
+        return SEARCH_KEYWORD_MAP;
+    }
 
     /**
 	 * 상품 상세 정보를 조회
@@ -91,14 +96,17 @@ public class ProductService {
 		case "newest": // 최신순 (ID 내림차순)
 			sortObj = Sort.by("prdNo").descending();
 			break;
-		case "priceAsc": // 낮은 가격순
-			sortObj = Sort.by("prdPrice").ascending();
+		case "priceAsc": // 낮은 가격순(가격이 같으면 최신순 정렬)
+			sortObj = Sort.by("prdPrice").ascending()
+					  .and(Sort.by("prdNo").descending());
 			break;
-		case "priceDesc": // 높은 가격순
-			sortObj = Sort.by("prdPrice").descending();
+		case "priceDesc": // 높은 가격순(가격이 같으면 최신순 정렬)
+			sortObj = Sort.by("prdPrice").descending()
+					  .and(Sort.by("prdNo").descending());
 			break;
-		case "popularity": // 인기순
-			sortObj = Sort.by("salesCount").descending();
+		case "popularity": // 인기순 (판매량이 같으면 최신순 정렬)
+			sortObj = Sort.by("salesCount")
+					  .descending().and(Sort.by("prdNo").descending());
 			break;
 		default: // 기본값
 			sortObj = Sort.by("prdNo").ascending();
@@ -155,6 +163,8 @@ public class ProductService {
 						// SKINTYPE 컬럼의 OR 조건
 						skinTypePredicates.add(cb.like(root.get("skinType"), "%" + type + "%"));
 					}
+					skinTypePredicates.add(cb.like(root.get("skinType"), "%all%"));
+					
 					predicates.add(cb.or(skinTypePredicates.toArray(new Predicate[0])));
 				}
 			}
