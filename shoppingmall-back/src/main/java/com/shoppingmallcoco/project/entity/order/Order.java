@@ -1,7 +1,6 @@
 package com.shoppingmallcoco.project.entity.order;
 
 import com.shoppingmallcoco.project.entity.auth.Member;
-import com.shoppingmallcoco.project.entity.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

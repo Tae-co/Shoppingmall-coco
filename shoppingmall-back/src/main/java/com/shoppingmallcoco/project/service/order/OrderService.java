@@ -36,7 +36,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
     private final ProductOptionRepository productOptionRepository;
-    private final IamportClient iamportClient; 
+    private final IamportClient iamportClient;
 
     private static final long SHIPPING_FEE = 3000L;
     private static final long FREE_SHIPPING_THRESHOLD = 30000L;
@@ -64,45 +64,45 @@ public class OrderService {
         Member member = memberRepository.findByMemId(memId)
                 .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
 
-        List<OrderItem> orderItems = new ArrayList<>();
-        long totalOrderPrice = 0;
-
-        for (OrderRequestDto.OrderItemDto itemDto : requestDto.getOrderItems()) {
-            ProductOptionEntity option = productOptionRepository.findById(itemDto.getOptionNo())
-                    .orElseThrow(() -> new RuntimeException("상품 옵션을 찾을 수 없습니다."));
-
-            option.removeStock(itemDto.getOrderQty().intValue());
-
-            // 상품 판매량(salesCount) 증가
-            option.getProduct().addSalesCount(itemDto.getOrderQty().intValue());
-
-            long realPrice = option.getProduct().getPrdPrice() + option.getAddPrice();
-
-            OrderItem orderItem = new OrderItem();
-            orderItem.setProduct(option.getProduct());
-            orderItem.setProductOption(option);
-            orderItem.setOrderQty(itemDto.getOrderQty());
-            orderItem.setOrderPrice(realPrice);
-
-            orderItems.add(orderItem);
-            totalOrderPrice += realPrice * itemDto.getOrderQty();
-        }
-
-        long shippingFee = (totalOrderPrice >= FREE_SHIPPING_THRESHOLD) ? 0 : SHIPPING_FEE;
-
-        long pointsToUse = requestDto.getPointsUsed();
-        if (pointsToUse > 0) {
-            if (member.getPoint() < pointsToUse)
-                throw new RuntimeException("포인트 부족");
-            if (pointsToUse > (totalOrderPrice + shippingFee))
-                throw new RuntimeException("결제 금액 초과 사용 불가");
-            member.usePoints(pointsToUse);
-        }
-
-        long finalTotalPrice = totalOrderPrice + shippingFee - pointsToUse;
-
-        //  [트랜잭션 시작] 결제 검증 및 주문 저장
+        // [트랜잭션 시작] 결제 검증 및 주문 저장
         try {
+            List<OrderItem> orderItems = new ArrayList<>();
+            long totalOrderPrice = 0;
+
+            for (OrderRequestDto.OrderItemDto itemDto : requestDto.getOrderItems()) {
+                ProductOptionEntity option = productOptionRepository.findById(itemDto.getOptionNo())
+                        .orElseThrow(() -> new RuntimeException("상품 옵션을 찾을 수 없습니다."));
+
+                option.removeStock(itemDto.getOrderQty().intValue());
+
+                // 상품 판매량(salesCount) 증가
+                option.getProduct().addSalesCount(itemDto.getOrderQty().intValue());
+
+                long realPrice = option.getProduct().getPrdPrice() + option.getAddPrice();
+
+                OrderItem orderItem = new OrderItem();
+                orderItem.setProduct(option.getProduct());
+                orderItem.setProductOption(option);
+                orderItem.setOrderQty(itemDto.getOrderQty());
+                orderItem.setOrderPrice(realPrice);
+
+                orderItems.add(orderItem);
+                totalOrderPrice += realPrice * itemDto.getOrderQty();
+            }
+
+            long shippingFee = (totalOrderPrice >= FREE_SHIPPING_THRESHOLD) ? 0 : SHIPPING_FEE;
+
+            long pointsToUse = requestDto.getPointsUsed();
+            if (pointsToUse > 0) {
+                if (member.getPoint() < pointsToUse)
+                    throw new RuntimeException("포인트 부족");
+                if (pointsToUse > (totalOrderPrice + shippingFee))
+                    throw new RuntimeException("결제 금액 초과 사용 불가");
+                member.usePoints(pointsToUse);
+            }
+
+            long finalTotalPrice = totalOrderPrice + shippingFee - pointsToUse;
+
             // 1. PG사에 결제된 금액과 서버에서 계산한 금액이 일치하는지 검증
             // impUid가 null이 아닐 때만 검증 (PG 결제일 경우)
             if (requestDto.getImpUid() == null || requestDto.getImpUid().isEmpty()) {
@@ -115,9 +115,8 @@ public class OrderService {
             Order order = new Order();
             order.setMember(member);
             order.setOrderDate(LocalDate.now());
-            order.setStatus("PAID"); 
+            order.setStatus("PAID");
             order.setTotalPrice(finalTotalPrice);
- 
 
             order.setRecipientName(requestDto.getRecipientName());
             order.setRecipientPhone(requestDto.getRecipientPhone());
@@ -126,7 +125,6 @@ public class OrderService {
             order.setOrderAddress2(requestDto.getOrderAddress2());
             order.setDeliveryMessage(requestDto.getDeliveryMessage());
             order.setPointsUsed(pointsToUse);
-           
 
             for (OrderItem orderItem : orderItems) {
                 order.addOrderItem(orderItem);
@@ -246,15 +244,16 @@ public class OrderService {
                 .items(items)
                 .build();
     }
+
     /**
      * 포트원 결제 금액 검증 로직
      * 서버에서 계산한 최종 금액과 PG사에 실제로 결제된 금액이 일치하는지 확인
      */
-    private void validatePayment(String impUid, long serverCalculatedPrice) 
-        throws IamportResponseException, IOException {
-        
+    private void validatePayment(String impUid, long serverCalculatedPrice)
+            throws IamportResponseException, IOException {
+
         IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(impUid);
-        
+
         // 1. 결제 상태 확인: 'paid'인지 확인
         if (!"paid".equals(iamportResponse.getResponse().getStatus())) {
             throw new RuntimeException("결제가 완료되지 않았습니다. (Status: " + iamportResponse.getResponse().getStatus() + ")");
