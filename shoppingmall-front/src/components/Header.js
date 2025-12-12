@@ -80,6 +80,7 @@ const Header = () => {
                 setCartCount(res.data.length);  // 장바구니 아이템 개수
             } catch (err) {
                 console.error("장바구니 개수 조회 실패:", err);
+                setCartCount(0);
             }
         };
 
@@ -116,6 +117,10 @@ const Header = () => {
 
     const handleLogout = () => {
         logout();
+
+        setCartCount(0); // 로그아웃 즉시 장바구니 숫자 초기화
+        window.dispatchEvent(new Event('loginStatusChanged'));
+        window.dispatchEvent(new Event('cartUpdated'));
         navigate('/');
     };
 
@@ -256,7 +261,7 @@ const Header = () => {
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="24" height="24">
                                     <path fill="#222" fillRule="evenodd" d="M16.192 5.2h3.267a1 1 0 0 1 .998.938l.916 14.837a.4.4 0 0 1-.399.425H3.025a.4.4 0 0 1-.4-.425l.917-14.837A1 1 0 0 1 4.54 5.2h3.267a4.251 4.251 0 0 1 8.385 0ZM7.75 6.7H5.01l-.815 13.2h15.61l-.816-13.2h-2.74v2.7h-1.5V6.7h-5.5v2.7h-1.5V6.7Zm1.59-1.5h5.32a2.751 2.751 0 0 0-5.32 0Z" clipRule="evenodd"></path>
                                 </svg>
-                                {cartCount > 0 && (<span className="cart-badge">{cartCount}</span>)}
+                                {loggedIn && cartCount > 0 && (<span className="cart-badge">{cartCount}</span>)}
                             </Link>
                             {/* 카테고리 버튼 */}
                             <button type="button" className="btn_category" onClick={toggleMenu}>
