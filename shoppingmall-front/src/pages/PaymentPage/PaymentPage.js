@@ -53,7 +53,13 @@ function PaymentPage() {
 
   // 포인트 입력 필드 변경 핸들러
   const handlePointsChange = (e) => {
-    let value = Number(e.target.value);
+    //  입력된 값에서 콤마(,)를 제거하고 숫자로 변환
+    const rawValue = e.target.value.replace(/,/g, '');
+    
+    // 숫자가 아닌 값이 입력되면 무시 (혹은 0 처리)
+    let value = Number(rawValue);
+    if (isNaN(value)) value = 0;
+
     if (value < 0) value = 0;
     if (value > userPoints) value = userPoints;       // 보유 포인트 초과 방지
     if (value > totalAmount) value = totalAmount;     // 결제 금액 초과 방지
@@ -312,9 +318,9 @@ function PaymentPage() {
             <div className="points-form form-group-with-button">
               {/* 사용할 포인트 입력 필드 */}
               <input 
-                type="number" 
+                type="text" 
                 placeholder="0"
-                value={pointsToUse || ''} 
+                value={pointsToUse.toLocaleString()} 
                 onChange={handlePointsChange}
               />
               {/* 포인트 모두 사용 버튼 */}
