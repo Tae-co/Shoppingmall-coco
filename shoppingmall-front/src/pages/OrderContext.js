@@ -29,37 +29,35 @@ export function OrderProvider({ children }) {
   const freeShippingThreshold = 30000;
   // 상품 금액(orderSubtotal)이 3만원 이상이면 0원, 아니면 3000원으로 계산
   const calculatedShippingFee = orderSubtotal >= freeShippingThreshold ? 0 : 3000;
+// 포인트 조회 로직을 별도 함수로 분리 
+  const fetchMyPoint = async () => {
+    const token = localStorage.getItem('token'); // 로그인 토큰 가져오기
 
-  useEffect(() => {
-    const fetchMyPoint = async () => {
-      const token = localStorage.getItem('token'); // 로그인 토큰 가져오기
-      
-      // 토큰이 없으면(비로그인) 포인트 조회 안 함
-      if (!token) {
-        
-        return;
-      }
+    // 토큰이 없으면(비로그인) 포인트 조회 안 함
+    if (!token) return;
 
-      try {
-        // 백엔드 API 호출 (GET /api/members/me)
-        const response = await axios.get('http://13.231.28.89:18080/api/member/me', {
-          headers: {
-            'Authorization': `Bearer ${token}` // 헤더에 토큰 실어 보내기
-          }
-        });
-
-        // 성공 시 포인트 업데이트
-        if (response.data && response.data.point !== undefined) {
-          
-          setUserPoints(response.data.point);
+    try {
+      // 백엔드 API 호출 (GET /api/members/me)
+      const response = await axios.get('http://13.231.28.89:18080/api/member/me', {
+        headers: {
+          'Authorization': `Bearer ${token}` // 헤더에 토큰 실어 보내기
         }
+      });
 
-      } catch (error) {
+      // 성공 시 포인트 업데이트
+      if (response.data && response.data.point !== undefined) {
         
-        // (선택) 에러 시 처리 로직 (예: 토큰 만료 시 로그아웃 등)
+        setUserPoints(response.data.point);
       }
-    };
 
+    } catch (error) {
+      
+      // (선택) 에러 시 처리 로직 (예: 토큰 만료 시 로그아웃 등)
+    }
+  };
+
+  // 기존 로직 유지: 앱 처음 켜질 때도 한 번 실행
+  useEffect(() => {
     fetchMyPoint();
   }, []);
 
@@ -82,6 +80,7 @@ export function OrderProvider({ children }) {
     pointsToUse, setPointsToUse,
     orderItems, setOrderItems,
     cartItems, setCartItems,
+    fetchMyPoint 
   };
 
   return (

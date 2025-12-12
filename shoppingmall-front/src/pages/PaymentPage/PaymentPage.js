@@ -17,17 +17,23 @@ function PaymentPage() {
     pointsToUse, setPointsToUse, // 사용할 포인트 상태
     lastName, firstName, phone, postcode, address, addressDetail, deliveryMessage, // 배송지 정보
     orderItems,
-    setCartItems
+    setCartItems,
+    fetchMyPoint
   } = useOrder();
 
   useEffect(() => {
     // 상품 금액이 0이거나 유효하지 않으면 (새로고침으로 Context가 초기화된 경우)
     if (orderSubtotal <= 0) {
-        
-        alert("유효하지 않은 주문 정보입니다. 장바구니로 돌아갑니다.");
-        navigate('/cart'); //  장바구니 페이지로 강제 이동
+
+      alert("유효하지 않은 주문 정보입니다. 장바구니로 돌아갑니다.");
+      navigate('/cart'); //  장바구니 페이지로 강제 이동
     }
-}, [orderSubtotal, navigate]); // orderSubtotal이 0일 때 실행되도록 설정
+  }, [orderSubtotal, navigate]); // orderSubtotal이 0일 때 실행되도록 설정
+
+  // 페이지 진입 시 최신 포인트 새로고침
+  useEffect(() => {
+    fetchMyPoint();
+  }, []);
 
   // 로컬 상태 관리: 결제 수단, 약관 동의, 약관 팝업 표시 여부
   const [paymentMethod, setPaymentMethod] = useState('api'); // 'api' 또는 'card'
@@ -55,7 +61,7 @@ function PaymentPage() {
   const handlePointsChange = (e) => {
     //  입력된 값에서 콤마(,)를 제거하고 숫자로 변환
     const rawValue = e.target.value.replace(/,/g, '');
-    
+
     // 숫자가 아닌 값이 입력되면 무시 (혹은 0 처리)
     let value = Number(rawValue);
     if (isNaN(value)) value = 0;
@@ -80,18 +86,18 @@ function PaymentPage() {
   };
   const generateOrderName = (items) => {
     if (!items || items.length === 0) {
-        return "Coco 뷰티 상품";
+      return "Coco 뷰티 상품";
     }
-    
+
     const firstItemName = items[0].productName; // 첫 번째 상품의 이름
-    
+
     if (items.length === 1) {
-        return firstItemName; // 상품이 1개일 경우 이름만 표시
+      return firstItemName; // 상품이 1개일 경우 이름만 표시
     }
-    
+
     const remainingCount = items.length - 1; // 나머지 상품 개수
-    return `${firstItemName} 외 ${remainingCount}건`; 
-};
+    return `${firstItemName} 외 ${remainingCount}건`;
+  };
 
 
   // '결제하기' 버튼 클릭 시 최종 유효성 검사 및 '진짜' 결제 처리
@@ -104,7 +110,7 @@ function PaymentPage() {
 
     if (paymentMethod === 'api') {
       // 2-1. 'API 간편결제'일 경우: '포트원' 실제 결제 로직
-      
+
       const { IMP } = window; // index.html에서 로드한 IMP 객체
       IMP.init("imp23266132"); // 테스트용 가맹점 식별코드
 
@@ -126,17 +132,17 @@ function PaymentPage() {
         if (rsp.success) {
           // --- 결제 성공 ---
 
-         
+
           const orderData = {
             // 1. 주문 상품 목록 (가장 중요)
-              orderItems: orderItems?.map(item => ({ 
-                  prdNo: Number(item.prdNo),       
-                  optionNo: Number(item.optionNo),    
-                  orderQty: Number(item.cartQty), 
-                  
-              })),
+            orderItems: orderItems?.map(item => ({
+              prdNo: Number(item.prdNo),
+              optionNo: Number(item.optionNo),
+              orderQty: Number(item.cartQty),
+
+            })),
             // 배송지 정보
-            recipientName: lastName + firstName, 
+            recipientName: lastName + firstName,
             recipientPhone: phone,
             orderZipcode: postcode,
             orderAddress1: address,
@@ -146,7 +152,7 @@ function PaymentPage() {
             pointsUsed: pointsToUse,
             // 백엔드 검증/취소용 결제 고유 ID 전송
             impUid: rsp.imp_uid
-            
+
           };
 
           // 토큰 가져오기
@@ -155,48 +161,48 @@ function PaymentPage() {
           //  Axios로 백엔드 API 호출 (헤더에 토큰 포함)
           axios.post('http://13.231.28.89:18080/api/orders', orderData, {
             headers: {
-              'Authorization': `Bearer ${token}`, 
+              'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
           })
             .then((response) => {
               // 백엔드가 보내준 진짜 주문 번호 받기
-              const realOrderNo = response.data; 
-              
+              const realOrderNo = response.data;
+
 
               // 장바구니 비우기 로직 
               return axios.delete('http://13.231.28.89:18080/api/coco/members/cart/items', {
-                  headers: {
-                      'Authorization': `Bearer ${token}`,
-                  }
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                }
               })
-              
-              // 성공-장바구니 비우기 성공 및 최종 이동
-              .then(() => {
-                  
-                  
+
+                // 성공-장바구니 비우기 성공 및 최종 이동
+                .then(() => {
+
+
                   // Context 상태 초기화
-                  if (setCartItems) { 
-                      setCartItems([]); 
+                  if (setCartItems) {
+                    setCartItems([]);
                   }
                   window.dispatchEvent(new Event("cartUpdated"));
-                  
+
                   alert("주문이 성공적으로 완료되었습니다!");
                   // 최종 성공 페이지로 이동하며 주문 번호 전달
                   navigate('/order-success', { state: { orderNo: realOrderNo } });
-              })
-              
-              // 실패-장바구니 비우기 실패 (주문은 성공했으므로 이동)
-              .catch((cartError) => {
+                })
+
+                // 실패-장바구니 비우기 실패 (주문은 성공했으므로 이동)
+                .catch((cartError) => {
                   // 실패 시 알림 없이 콘솔에만 로그를 남기고 성공 처리
 
                   navigate('/order-success', { state: { orderNo: realOrderNo } });
-              });
+                });
             })
 
             .catch((error) => {
-              
-              
+
+
               // (403 에러 처리: 토큰 만료 등)
               if (error.response && error.response.status === 403) {
                 alert("로그인 정보가 만료되었습니다. 다시 로그인해주세요.");
@@ -208,13 +214,13 @@ function PaymentPage() {
 
         } else {
           // --- 결제 실패 ---
-          
+
           let message = "결제 승인 과정에서 오류가 발생했습니다.";
           if (rsp.error_msg.includes("취소") || rsp.error_msg.includes("포기")) {
-             message = "사용자가 결제를 취소했습니다.";
+            message = "사용자가 결제를 취소했습니다.";
           }
 
-          alert(message); 
+          alert(message);
           //  실패 메시지를 state에 담아 전달
           navigate('/order-fail', { state: { failMessage: message } });
         }
@@ -222,21 +228,21 @@ function PaymentPage() {
 
     } else if (paymentMethod === 'card') {
       // 2-2. '신용/체크카드' 직접 입력일 경우
-      
+
       if (!cardNumber || !cardName || !cardExpiry || !cardCvc) {
         alert("카드 정보를 모두 입력해주세요.");
         return;
       }
 
-      
+
       navigate('/order-fail', { state: { failMessage: "지원하지 않는 결제 방식이거나 카드 정보가 올바르지 않습니다." } });
     }
   };
 
   return (
     <div className="payment-page">
-      
-      
+
+
       <h1>주문하기</h1>
 
       <div className="payment-content-wrapper">
@@ -245,14 +251,14 @@ function PaymentPage() {
           <h2>결제 수단 선택</h2>
           <div className="payment-method-options">
             {/* API 간편결제 선택 옵션 */}
-            <div 
+            <div
               className={`method-option ${paymentMethod === 'api' ? 'selected' : ''}`}
               onClick={() => setPaymentMethod('api')}
             >
               <span className="radio-icon"></span> API 간편결제 (포트원)
             </div>
             {/* 신용/체크카드 직접 입력 선택 옵션 */}
-            <div 
+            <div
               className={`method-option ${paymentMethod === 'card' ? 'selected' : ''}`}
               onClick={() => setPaymentMethod('card')}
             >
@@ -267,20 +273,20 @@ function PaymentPage() {
               <form className="card-form">
                 <div className="form-group">
                   <label htmlFor="card-number">카드 번호</label>
-                  <input 
-                    type="text" 
-                    id="card-number" 
-                    placeholder="1234 5678 9012 3456" 
+                  <input
+                    type="text"
+                    id="card-number"
+                    placeholder="1234 5678 9012 3456"
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
                   />
                 </div>
                 <div className="form-group">
                   <label htmlFor="card-name">카드 소유자명</label>
-                  <input 
-                    type="text" 
-                    id="card-name" 
-                    placeholder="HONG GIL DONG" 
+                  <input
+                    type="text"
+                    id="card-name"
+                    placeholder="HONG GIL DONG"
                     value={cardName}
                     onChange={(e) => setCardName(e.target.value)}
                   />
@@ -289,20 +295,20 @@ function PaymentPage() {
                 <div className="form-group-half">
                   <div className="form-group">
                     <label htmlFor="card-expiry">만료일</label>
-                    <input 
-                      type="text" 
-                      id="card-expiry" 
-                      placeholder="MM/YY" 
+                    <input
+                      type="text"
+                      id="card-expiry"
+                      placeholder="MM/YY"
                       value={cardExpiry}
                       onChange={(e) => setCardExpiry(e.target.value)}
                     />
                   </div>
                   <div className="form-group">
                     <label htmlFor="card-cvc">CVC</label>
-                    <input 
-                      type="text" 
-                      id="card-cvc" 
-                      placeholder="123" 
+                    <input
+                      type="text"
+                      id="card-cvc"
+                      placeholder="123"
                       value={cardCvc}
                       onChange={(e) => setCardCvc(e.target.value)}
                     />
@@ -317,10 +323,10 @@ function PaymentPage() {
             <h2>포인트 사용</h2>
             <div className="points-form form-group-with-button">
               {/* 사용할 포인트 입력 필드 */}
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="0"
-                value={pointsToUse.toLocaleString()} 
+                value={pointsToUse.toLocaleString()}
                 onChange={handlePointsChange}
               />
               {/* 포인트 모두 사용 버튼 */}
@@ -330,13 +336,13 @@ function PaymentPage() {
             </div>
             <p className="points-info">보유 포인트: {userPoints.toLocaleString()} P</p>
           </div>
-          
+
           {/* --- 약관 동의 섹션 --- */}
           <div className="agreement-section">
             <div className="agreement-item">
-              <input 
-                type="checkbox" 
-                id="agree-purchase" 
+              <input
+                type="checkbox"
+                id="agree-purchase"
                 name="purchase"
                 checked={agreements.purchase}
                 onChange={handleAgreementChange}
@@ -344,9 +350,9 @@ function PaymentPage() {
               <label htmlFor="agree-purchase">구매조건 및 결제대행 서비스 약관 동의 (필수)</label>
             </div>
             <div className="agreement-item">
-              <input 
-                type="checkbox" 
-                id="agree-info" 
+              <input
+                type="checkbox"
+                id="agree-info"
                 name="info"
                 checked={agreements.info}
                 onChange={handleAgreementChange}
@@ -373,7 +379,7 @@ function PaymentPage() {
               <span>배송비</span>
               <span>₩{shippingFee.toLocaleString()}</span>
             </div>
-            
+
             {/* 포인트 사용 시에만 표시 */}
             {pointsToUse > 0 && (
               <div className="summary-row discount">
@@ -381,24 +387,24 @@ function PaymentPage() {
                 <span>- ₩{pointsToUse.toLocaleString()}</span>
               </div>
             )}
-            
+
             {/* 총 결제 금액 */}
             <div className="summary-total">
               <span>총 결제 금액</span>
               <span>₩{finalAmount.toLocaleString()}</span>
             </div>
-            
+
             {/* 최종 결제 버튼 (결제 유효성 검사 실행) */}
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="btn-primary"
               onClick={handlePaymentSubmit}
             >
               ₩{finalAmount.toLocaleString()} 결제하기
             </button>
             {/* 이전 단계 버튼 (배송 정보 페이지로 이동) */}
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="btn-secondary"
               onClick={() => navigate('/order')}
             >
