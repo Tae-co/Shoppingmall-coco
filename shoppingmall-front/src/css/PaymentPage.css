@@ -154,7 +154,7 @@
   text-align: left;
 }
 /* 텍스트/숫자 입력 필드 기본 스타일 */
-.card-form input[type="text"], .points-form input[type="number"] {
+.card-form input[type="text"], .points-form input[type="text"] {
   width: 100%;
   padding: 12px;
   font-size: 1rem;
