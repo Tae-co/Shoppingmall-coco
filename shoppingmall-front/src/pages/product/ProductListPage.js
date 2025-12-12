@@ -296,6 +296,8 @@ function ProductListPage() {
         }
       );
 
+       window.dispatchEvent(new Event("cartUpdated"));
+
       if (window.confirm(`${product.prdName}을(를) 장바구니에 담았습니다.\n장바구니로 이동하시겠습니까?`)) {
         navigate('/cart');
       }

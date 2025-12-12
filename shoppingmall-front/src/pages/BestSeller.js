@@ -7,6 +7,7 @@ import "slick-carousel/slick/slick-theme.css";
 import '../css/BestSeller.css';
 
 import ProductCard from '../components/ProductCard';
+import { BestSellerSkeleton } from '../components/MainSkeletons';
 import { fetchWithAuth, isLoggedIn, getStoredMember } from '../utils/api'; // 장바구니 기능용
 
 // 영어 -> 한글 변환 맵
@@ -18,9 +19,10 @@ const skinTypeMap = {
     all: '모든 피부'
 };
 
-function MultipleItems() {
+function BestSeller() {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const settings = {
         infinite: true,
@@ -47,9 +49,10 @@ function MultipleItems() {
         ]
     };
 
-    // 컴포넌트 로드 시 '인기 상품' 10개 가져오기
+    // 컴포넌트 로드 시 인기 상품 10개 가져오기
     useEffect(() => {
         const fetchBestSellers = async () => {
+            setLoading(true);
             try {
                 // sort=popularity, size=10으로 요청
                 const response = await fetch('http://13.231.28.89:18080/api/products?page=1&size=10&sort=popularity');
@@ -63,6 +66,8 @@ function MultipleItems() {
 
             } catch (error) {
                 console.error("베스트 상품 로드 중 오류:", error);
+            } finally {
+                setLoading(false); // 로딩 종료
             }
         };
 
@@ -120,6 +125,15 @@ function MultipleItems() {
         }
     };
 
+    // 로딩 중이면 스켈레톤 표시
+    if (loading) {
+        return (
+            <div className="slider-container">
+                <BestSellerSkeleton />
+            </div>
+        );
+    }
+
     // 데이터가 없을 경우 처리
     if (products.length === 0) {
         return <div style={{ textAlign: 'center', padding: '50px', color: '#888' }}>등록된 베스트 상품이 없습니다.</div>;
@@ -166,4 +180,4 @@ function MultipleItems() {
     );
 }
 
-export default MultipleItems;
+export default BestSeller;

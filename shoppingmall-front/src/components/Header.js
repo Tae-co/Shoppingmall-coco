@@ -189,7 +189,9 @@ const Header = () => {
                                     <b>{userName}</b>님 환영합니다!
                                 </li>
                             )}
-                            <li className="top_item">고객센터</li>
+                            <li className="top_item">
+                                <Link to="/notices" className="top_item">공지사항</Link>
+                            </li>
                             <li className="top_item">
                                 <Link
                                     to={(userRole === 'ADMIN' || userRole === 'admin') ? '/admin' : '/mypage'}

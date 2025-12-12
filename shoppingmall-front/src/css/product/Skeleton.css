@@ -81,3 +81,43 @@
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 25px;
 }
+
+/* Home Slider Skeleton (가로 배치) */
+.skeleton-slider-wrapper {
+  display: flex;
+  gap: 20px;
+  overflow: hidden; /* 슬라이더처럼 보이게 넘치는 부분 숨김 */
+  padding: 10px 5px;
+  justify-content: center; /* 중앙 정렬 */
+}
+
+/* BestSeller용 카드 (기존 skeleton-card 활용하되 크기 지정) */
+.skeleton-slide-card {
+  flex: 0 0 auto; /* 줄어들지 않게 */
+  width: 250px;   /* 실제 ProductCard 너비와 맞춤 */
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+/* Home_Comate용 미니 프로필 */
+.skeleton-comate-card {
+  flex: 0 0 auto;
+  width: 180px;   /* 실제 MiniProfile 너비 */
+  padding: 25px 15px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.skeleton-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}

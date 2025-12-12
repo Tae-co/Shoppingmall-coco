@@ -9,6 +9,7 @@ import '../css/Home_Comate.css';
 import ComateMiniProfile from "../components/ComateMiniProfile";
 import { getCurrentMember } from '../utils/api'; 
 import { getRandomComates, follow, unfollow } from "../utils/comate_api"; 
+import { ComateSkeleton } from '../components/MainSkeletons';
 
 function Home_Comate() {
     const navigate = useNavigate();
@@ -153,7 +154,14 @@ function Home_Comate() {
         }
     };
 
-    if (loading) return <div>로딩중...</div>;
+    // 로딩 중일 때 스켈레톤 표시
+    if (loading) {
+        return (
+            <div className="comate-slider-container">
+                <ComateSkeleton />
+            </div>
+        );
+    }
 
     return (
         <div className="comate-slider-container">

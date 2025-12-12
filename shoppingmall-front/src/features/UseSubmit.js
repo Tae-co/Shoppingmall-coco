@@ -26,8 +26,8 @@ function useSubmit(
         const positiveTags = ptagsList.filter((tag, index) => ptagsClicked[index]);
         const negativeTags = ntagsList.filter((tag, index) => ntagsClicked[index]);
 
-        if (content.length < 10) {
-            window.alert("1000자 이상 작성해주세요!");
+        if (content.length < 500) {
+            window.alert("500자 이상 작성해주세요!");
             return;
         } else if (starTotal < 1) {
             window.alert("별점을 눌러주세요!");

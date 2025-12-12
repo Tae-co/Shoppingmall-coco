@@ -53,8 +53,8 @@ function SimpleSlider() {
             link: '/product?categoryNo=3',
             btnText: '바디/헤어 라인 보기 >',
             contentClass: 'align-right theme-body',
-            boxClass: 'glass-box text-left', // 박스는 오른쪽이지만 텍스트는 왼쪽 정렬
-            btnClass: 'btn-square btn-body'
+            boxClass: 'glass-box',
+            btnClass: 'btn-round btn-body'
         },
         {
             id: 'homme',
@@ -64,7 +64,7 @@ function SimpleSlider() {
             link: '/product?categoryNo=4',
             btnText: '옴므 라인 보기 >',
             contentClass: 'align-right theme-homme',
-            btnClass: 'btn-square btn-homme'
+            btnClass: 'btn-round btn-homme'
         }
     ];
 
