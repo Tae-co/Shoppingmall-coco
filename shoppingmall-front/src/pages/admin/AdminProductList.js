@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom'; // useSearchParams 추가
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Pagination from '../../components/admin/Pagination';
@@ -14,25 +14,30 @@ import deleteIcon from '../../images/delete.svg';
  * 1. 전체 상품 목록 조회 (페이징, 검색, 카테고리/상태 필터)
  * 2. 상품 대시보드 통계 표시 (전체, 판매중, 품절, 재고 현황)
  * 3. 상품 삭제(논리적 삭제) 및 수정 페이지 이동 기능 제공
+ * 4. 페이지 상태 유지를 위해 URL SearchParams 사용 / 변경사항
  */
 
 const LIMIT = 6;
 
 function AdminProductList() {
+  // URL 파라미터 훅 사용
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // URL에서 상태값 추출 (없으면 기본값 사용)
+  const currentPage = parseInt(searchParams.get('page')) || 1;
+  const selectedCategory = searchParams.get('category') || '';
+  const selectedStatus = searchParams.get('status') || 'ALL';
+  const sortOrder = searchParams.get('sort') || 'idAsc';
+  const currentQuery = searchParams.get('q') || '';
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  // 검색 필터 상태
-  const [searchTerm, setSearchTerm] = useState(''); // 입력창 표시용
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(''); // 실제 검색 요청용 (API)
-  const [debounceTimer, setDebounceTimer] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('ALL');
-  const [sortOrder, setSortOrder] = useState('idAsc'); // 기본 정렬: ID 오름차순
-
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+
+  // 검색 입력창용 로컬 상태 (URL과 별개로 입력 반응성 위해 필요)
+  const [searchTerm, setSearchTerm] = useState(currentQuery);
+  const [debounceTimer, setDebounceTimer] = useState(null);
 
   // 대시보드 상태
   const [dashboardCounts, setDashboardCounts] = useState({
@@ -49,22 +54,21 @@ function AdminProductList() {
       .catch(err => console.error("카테고리 로드 실패:", err));
   }, []);
 
-  // 대시보드 통계 및 상품 목록 로드
+  // URL 파라미터가 변경될 때마다 데이터 다시 로드
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        // 쿼리 파라미터 생성
+        // 쿼리 파라미터 생성 (URL 값 사용)
         const params = {
           page: currentPage,
           size: LIMIT,
           sort: sortOrder,
-          q: debouncedSearchTerm || undefined, // 디바운스된 값 사용
+          q: currentQuery || undefined,
           categoryNo: selectedCategory || undefined,
           status: selectedStatus || undefined
         };
 
-        // 토큰 가져오기
         const token = localStorage.getItem('token');
 
         // 상품 목록 요청
@@ -93,30 +97,41 @@ function AdminProductList() {
     };
 
     loadData();
-  }, [currentPage, debouncedSearchTerm, selectedCategory, selectedStatus, sortOrder]);
+  }, [currentPage, currentQuery, selectedCategory, selectedStatus, sortOrder]);
+
+  // 검색어 입력 시 URL이 아닌 로컬 상태만 업데이트하고 디바운싱 처리
+  useEffect(() => {
+    setSearchTerm(currentQuery);
+  }, [currentQuery]);
+
+  /**
+   * 공통 URL 업데이트 함수
+   * 기존 파라미터를 유지하면서 변경된 값만 덮어씌움
+   */
+  const updateParams = (newParams) => {
+    const currentParams = Object.fromEntries(searchParams);
+    setSearchParams({ ...currentParams, ...newParams });
+  };
 
   /**
    * 상품 삭제 핸들러
-   * - 관리자가 삭제 확인 시 서버에 삭제 요청(Soft Delete)을 보냄
-   * - 성공 시 UI 목록에서 즉시 제거하여 빠른 반응성 제공
    */
   const handleDelete = async (product) => {
     if (window.confirm(`정말 삭제하시겠습니까?\n상품명: ${product.prdName}`)) {
       try {
-        // 토큰 가져오기
         const token = localStorage.getItem('token');
-
         await axios.delete(`http://13.231.28.89:18080/api/admin/products/${product.prdNo}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
         toast.success('삭제되었습니다.');
 
-        // 새로고침 로직
+        // 삭제 후 페이지 처리
         if (products.length === 1 && currentPage > 1) {
-          setCurrentPage(prev => prev - 1);
+          // 마지막 아이템 삭제 시 이전 페이지로 이동
+          updateParams({ page: currentPage - 1 });
         } else {
-          // 빠른 UI 반영을 위해 클라이언트 상태 업데이트
+          // 현재 페이지 새로고침 효과 (데이터만 다시 로드하거나 상태 필터링)
           setProducts(prev => prev.filter(p => p.prdNo !== product.prdNo));
           setDashboardCounts(prev => ({ ...prev, totalProducts: prev.totalProducts - 1 }));
         }
@@ -126,31 +141,37 @@ function AdminProductList() {
     }
   };
 
-  const handleFilterChange = (setter) => (e) => {
+  const handleSearchChange = (e) => {
     const value = e.target.value;
+    setSearchTerm(value);
 
-    if (setter === setSearchTerm) {
-      // 입력값은 즉시 UI 반영
-      setSearchTerm(value);
+    if (debounceTimer) clearTimeout(debounceTimer);
 
-      // 기존 타이머 취소
-      if (debounceTimer) clearTimeout(debounceTimer);
+    const newTimer = setTimeout(() => {
+      // 검색 시 1페이지로 초기화하며 URL 업데이트
+      updateParams({ q: value, page: 1 });
+    }, 500);
+    setDebounceTimer(newTimer);
+  };
 
-      const newTimer = setTimeout(() => {
-        setDebouncedSearchTerm(value);
-        setCurrentPage(1); // 검색 시 1페이지로 이동
-      }, 500);
-      setDebounceTimer(newTimer);
-    } else {
-      // 카테고리나 상태 변경은 즉시 적용
-      setter(value);
-      setCurrentPage(1);
-    }
+  const handleCategoryChange = (e) => {
+    updateParams({ category: e.target.value, page: 1 });
+  };
+
+  const handleStatusChange = (e) => {
+    updateParams({ status: e.target.value, page: 1 });
+  };
+
+  const handleSortChange = (e) => {
+    updateParams({ sort: e.target.value, page: 1 });
+  };
+
+  const handlePageChange = (page) => {
+    updateParams({ page: page });
   };
 
   return (
     <div className="admin-page-container">
-      {/* 페이지 타이틀과 밑줄 */}
       <h2 className="page-title">상품 관리</h2>
 
       {/* 대시보드 영역 */}
@@ -189,10 +210,10 @@ function AdminProductList() {
             className="search-input"
             placeholder="상품명 검색..."
             value={searchTerm}
-            onChange={handleFilterChange(setSearchTerm)}
+            onChange={handleSearchChange}
           />
 
-          <select className="filter-select" value={selectedCategory} onChange={handleFilterChange(setSelectedCategory)}>
+          <select className="filter-select" value={selectedCategory} onChange={handleCategoryChange}>
             <option value="">전체 카테고리</option>
             {categories.filter(c => !c.parentCategoryNo).map(cat => (
               <React.Fragment key={cat.categoryNo}>
@@ -204,14 +225,14 @@ function AdminProductList() {
             ))}
           </select>
 
-          <select className="filter-select" value={selectedStatus} onChange={handleFilterChange(setSelectedStatus)}>
+          <select className="filter-select" value={selectedStatus} onChange={handleStatusChange}>
             <option value="ALL">전체 상태</option>
             <option value="SALE">판매중</option>
             <option value="SOLD_OUT">품절</option>
             <option value="STOP">판매중지</option>
           </select>
 
-          <select className="filter-select" value={sortOrder} onChange={(e) => { setSortOrder(e.target.value); setCurrentPage(1); }}>
+          <select className="filter-select" value={sortOrder} onChange={handleSortChange}>
             <option value="idAsc">등록순 (ID)</option>
             <option value="newest">최신순</option>
             <option value="popularity">인기순</option>
@@ -248,7 +269,7 @@ function AdminProductList() {
                         alt="상품"
                         className="product-thumb"
                         onError={(e) => {
-                          e.target.onerror = null; // 무한 반복 방지
+                          e.target.onerror = null;
                           e.target.src = '/prd_placeholder.png';
                         }}
                       />
@@ -258,15 +279,14 @@ function AdminProductList() {
                     <td>{product.prdPrice.toLocaleString()}원</td>
                     <td>{product.stock}개</td>
                     <td>
-                      {/* 상태값 CSS 클래스로 색상 처리 */}
                       <span className={`status-tag ${product.status === '판매중' ? 'status-sale' :
                         product.status === '품절' ? 'status-soldout' : 'status-stop'
                         }`}>
                         {product.status}
                       </span>
                     </td>
-                    {/* 수정, 삭제 버튼 영역 */}
                     <td>
+                      {/* 수정 버튼 링크는 페이지 이동을 하므로, 돌아올 때 URL 파라미터가 유지됨 */}
                       <Link to={`/admin/product/edit/${product.prdNo}`} className="icon-btn edit" title="수정">
                         <img src={editIcon} alt="수정" />
                       </Link>
@@ -286,7 +306,7 @@ function AdminProductList() {
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
+          onPageChange={handlePageChange}
         />
       </div>
     </div>
