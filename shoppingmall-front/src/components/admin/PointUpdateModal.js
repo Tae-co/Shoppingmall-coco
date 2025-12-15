@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { getAuthHeaders } from '../../utils/api'; // 경로는 프로젝트 구조에 맞게 조정하세요
+import { getAuthHeaders } from '../../utils/api'; 
 
 const PointUpdateModal = ({ isOpen, onClose, member, onSuccess }) => {
   const [newPointInput, setNewPointInput] = useState('');
@@ -16,7 +16,7 @@ const PointUpdateModal = ({ isOpen, onClose, member, onSuccess }) => {
   if (!isOpen || !member) return null;
 
   const savePoint = async () => {
-    const newPoint = Number(newPointInput);
+    const newPoint = Number(String(newPointInput).replace(/,/g, ''));
 
     if (isNaN(newPoint) || newPoint < 0) {
       alert("올바른 숫자(0 이상)를 입력해주세요.");
@@ -82,9 +82,12 @@ const PointUpdateModal = ({ isOpen, onClose, member, onSuccess }) => {
           {/* 입력창 영역 */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
             <input
-              type="number"
-              value={newPointInput}
-              onChange={(e) => setNewPointInput(e.target.value)}
+              type="text"
+              value={newPointInput ? Number(String(newPointInput).replace(/,/g, '')).toLocaleString() : ''}
+              onChange={(e) => {
+                const val = e.target.value.replace(/,/g, '');
+                if (!isNaN(val)) setNewPointInput(val);
+              }}
               placeholder="0"
               style={{
                 padding: '12px',
