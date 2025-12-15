@@ -58,7 +58,7 @@ const ProductCard = ({ product, onAddToCart }) => {
       <div className="product-card-content">
         <h3 className="product-card-name">{product.prdName}</h3>
         <p className="product-card-rating">
-          ⭐ {product.averageRating} ({product.reviewCount})
+          ⭐ {product.reviewCount >= 5 ? product.averageRating : "평가중"} ({product.reviewCount})
         </p>
 
         <div className="product-card-tags">

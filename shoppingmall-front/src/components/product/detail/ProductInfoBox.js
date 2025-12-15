@@ -42,29 +42,13 @@ const ProductInfoBox = ({
   const navigate = useNavigate();
   const handleTagClick = (keyword) => navigate(`/product?q=${encodeURIComponent(keyword)}`);
 
-  // 태그 렌더링 헬퍼 함수
-  const renderTag = (key, label) => (
-    <span 
-      key={key} 
-      className="tag-badge" 
-      onClick={() => handleTagClick(label)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          handleTagClick(label);
-        }
-      }}
-    >
-      # {label}
-    </span>
-  );
-
   return (
     <div className="info-box">
       <h2 className="product-name">{product.prdName}</h2>
-      {/* 별점 및 리뷰 수 */}
-      <p className="product-rating">⭐ {product.averageRating} ({product.reviewCount})</p>
+      {/* 별점 및 리뷰 수 (리뷰 5개 이상일 때만 평점 노출) */}
+      <p className="product-rating">
+        ⭐ {product.reviewCount >= 5 ? product.averageRating : "평가중"} ({product.reviewCount})
+      </p>
       
       {/* 태그 렌더링 영역 */}
       <div className="tag-container">
