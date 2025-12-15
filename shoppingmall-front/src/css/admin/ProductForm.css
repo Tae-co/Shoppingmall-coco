@@ -264,3 +264,27 @@
   margin-bottom: 10px;
   font-size: 13px;
 }
+
+/* 숫자 입력 + 단위 컨테이너 */
+.price-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* 콤마가 들어가는 숫자 입력창 스타일 */
+.price-input-container .form-input {
+  padding-right: 35px;
+  text-align: right;
+}
+
+/* 단위 텍스트 (원, 개 등) */
+.currency-unit {
+  position: absolute;
+  right: 12px;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+  pointer-events: none;
+}

@@ -226,18 +226,62 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
           <div className="form-section">
             <h3 className="section-title">옵션 및 재고 관리</h3>
             <div className="option-header">
-              <span style={{ width: '20%' }}>옵션명</span>
-              <span style={{ flex: 1 }}>옵션값</span>
-              <span style={{ width: '15%' }}>추가금</span>
+              <span style={{ width: '15%' }}>옵션명</span>
+              <span style={{ width: '40%' }}>옵션값</span>
+              <span style={{ width: '20%' }}>추가금</span>
               <span style={{ width: '15%' }}>재고</span>
               <span style={{ width: '50px' }}>삭제</span>
             </div>
             {options.map((opt, idx) => (
               <div className="option-row" key={idx}>
-                <input className="form-input" style={{ width: '20%' }} placeholder="예: 용량" value={opt.optionName} onChange={e => handleOptionChange(idx, 'optionName', e.target.value)} />
-                <input className="form-input" style={{ flex: 1 }} placeholder="예: 50ml" value={opt.optionValue} onChange={e => handleOptionChange(idx, 'optionValue', e.target.value)} />
-                <input className="form-input" type="number" style={{ width: '15%' }} placeholder="0" value={opt.addPrice} onChange={e => handleOptionChange(idx, 'addPrice', e.target.value)} />
-                <input className="form-input" type="number" style={{ width: '15%' }} placeholder="0" value={opt.stock} onChange={e => handleOptionChange(idx, 'stock', e.target.value)} />
+                {/* 옵션 입력 */}
+                <input
+                  className="form-input"
+                  style={{ width: '15%' }}
+                  placeholder="예: 용량"
+                  value={opt.optionName}
+                  onChange={e => handleOptionChange(idx, 'optionName', e.target.value)}
+                />
+                {/* 옵션 값 입력 */}
+                <input
+                  className="form-input"
+                  style={{ width: '40%' }}
+                  placeholder="예: 50ml"
+                  value={opt.optionValue}
+                  onChange={e => handleOptionChange(idx, 'optionValue', e.target.value)}
+                />
+
+                {/* 추가금 입력 (원 단위, 콤마 적용) */}
+                <div className="price-input-container" style={{ width: '20%' }}>
+                  <input
+                    type="text"
+                    className="form-input"
+                    style={{ width: '100%' }}
+                    placeholder="0"
+                    value={opt.addPrice ? Number(opt.addPrice).toLocaleString() : ''}
+                    onChange={e => {
+                      const val = e.target.value.replace(/,/g, '');
+                      if (!isNaN(val)) handleOptionChange(idx, 'addPrice', val);
+                    }}
+                  />
+                  <span className="currency-unit">원</span>
+                </div>
+
+                {/* 재고 입력 (개) */}
+                <div className="price-input-container" style={{ width: '15%' }}>
+                  <input
+                    type="number"
+                    className="form-input"
+                    style={{ width: '100%' }}
+                    placeholder="0"
+                    value={opt.stock}
+                    onChange={e => {
+                      const val = e.target.value.replace(/[^0-9]/g, '');
+                      handleOptionChange(idx, 'stock', val);
+                    }}
+                  />
+                  <span className="currency-unit">개</span>
+                </div>
                 <button type="button" className="btn-remove-option" onClick={() => removeOption(idx)}>X</button>
               </div>
             ))}
@@ -295,15 +339,24 @@ function ProductForm({ initialData, categories, onSubmit, isEdit }) {
             </div>
             <div className="form-group">
               <label className="form-label">기본 가격 *</label>
-              <input
-                id="prdPrice"
-                className="form-input"
-                type="number"
-                name="prdPrice"
-                value={formData.prdPrice}
-                onChange={handleChange}
-                required
-              />
+              <div className="price-input-container">
+                <input
+                  id="prdPrice"
+                  type="text"
+                  className="form-input"
+                  name="prdPrice"
+                  value={formData.prdPrice ? Number(formData.prdPrice).toLocaleString() : ''}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/,/g, '');
+                    if (!isNaN(value)) {
+                      setFormData({ ...formData, prdPrice: value });
+                    }
+                  }}
+                  required
+                  placeholder="0"
+                />
+                <span className="currency-unit">원</span>
+              </div>
             </div>
           </div>
 
