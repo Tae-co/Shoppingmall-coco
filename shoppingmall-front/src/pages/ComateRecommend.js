@@ -17,7 +17,9 @@ const ComateRecommend = ({ loginUserNo }) => {
     useEffect(() => {
         const loadRecommend = async () => {
             try {
-                setRecommendData(await getRecommendation());
+                const data = await getRecommendation();
+                setRecommendData(data);
+                console.log(data);
             } catch (err) {
                 // console.error("추천 불러오기 실패:", err);
                 alert("잠시 후 다시 접속해주세요.");
