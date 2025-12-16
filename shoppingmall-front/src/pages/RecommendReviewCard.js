@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import '../css/ComateReviewCard.css';
 
 import sampleImg_profile from '../images/sampleImg_profile.png'; // 임시 프로필 이미지
 import starIcon from '../images/review_rate_icon_star.png';
+import detailIcon from '../images/detailIcon.svg';
 
 const RecommendReviewCard = ({
     productNo, productName, productOption, createdAt, productImg,
@@ -15,6 +16,13 @@ const RecommendReviewCard = ({
     const totalStar = 5;
     const filledStar = rating;
     const emptyStar = totalStar - filledStar;
+
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const toggleExpand = (e) => {
+        e.stopPropagation();
+        setIsExpanded(prev => !prev);
+    };
 
     return (
         <div className="comate_review_wrapper">
@@ -53,15 +61,27 @@ const RecommendReviewCard = ({
                         {reviewImages.map((img) => (
                             <img
                                 key={img.reviewImageNo}
-                                src={img.imageUrl}
-                                alt="review"
+                                src={`http://13.231.28.89:18080${img.imageUrl}`}
+                                alt="리뷰 이미지"
                                 className="review_img"
                             />
                         ))}
                     </div>
                 )}
                 <div className="review_tags">{tags.map(tag => <span key={tag}>{tag}</span>)}</div>
-                <div className="review_content">{content}</div>
+                <div className="review_content_wrapper">
+                    <p className={`review_content ${isExpanded ? 'expanded' : 'clamped'}`}>
+                    {content}
+                    </p>
+
+                    {/* 내용이 길 때만 더보기 버튼 */}
+                    {content && content.length > 80 && (
+                        <div className="detail-box" onClick={toggleExpand}>
+                            <img src={detailIcon} alt="더보기" />
+                            <span>{isExpanded ? '간략히 보기' : '더보기'}</span>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );   

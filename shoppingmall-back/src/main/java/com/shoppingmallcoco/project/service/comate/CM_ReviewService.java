@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.shoppingmallcoco.project.dto.comate.LikedReviewDTO;
 import com.shoppingmallcoco.project.dto.comate.MyReviewDTO;
+import com.shoppingmallcoco.project.dto.review.ReviewImageDTO;
 import com.shoppingmallcoco.project.entity.review.Review;
 import com.shoppingmallcoco.project.entity.review.ReviewLike;
 import com.shoppingmallcoco.project.repository.product.ProductRepository;
@@ -58,6 +59,8 @@ public class CM_ReviewService {
             if (product.getImages() != null && !product.getImages().isEmpty()) {
                 productImg = product.getImages().get(0).getImageUrl();
             }
+            
+            List<ReviewImageDTO> reviewImages = mapReviewImages(review);
         	
         	return MyReviewDTO.builder()
         		.reviewNo(review.getReviewNo())
@@ -68,6 +71,7 @@ public class CM_ReviewService {
                 .rating(review.getRating())
                 .createdAt(review.getCreatedAt())
                 .tags(tags)
+                .reviewImages(reviewImages)
                 .content(review.getContent())
                 .likeCount(likeCount)
                 .likedByCurrentUser(likedByCurrentUser)
@@ -122,6 +126,8 @@ public class CM_ReviewService {
                     if (product.getImages() != null && !product.getImages().isEmpty()) {
                         productImg = product.getImages().get(0).getImageUrl();
                     }
+                    
+                    List<ReviewImageDTO> reviewImages = mapReviewImages(review);
         			
         			return LikedReviewDTO.builder()
         					.reviewNo(review.getReviewNo())
@@ -132,6 +138,7 @@ public class CM_ReviewService {
                             .rating(review.getRating())
                             .createdAt(review.getCreatedAt())
                             .tags(tags)
+                            .reviewImages(reviewImages)
                             .content(review.getContent())
                             .likeCount(likeCount)
                             .likedByCurrentUser(likedByCurrentUser)
@@ -140,5 +147,16 @@ public class CM_ReviewService {
                             .build();
         		})
         		.toList();
+    }
+    
+    /* 리뷰 이미지 불러오기 */
+    private List<ReviewImageDTO> mapReviewImages(Review review) {
+        if (review.getReviewImages() == null || review.getReviewImages().isEmpty()) {
+            return List.of();
+        }
+
+        return review.getReviewImages().stream()
+            .map(ReviewImageDTO::toDTO)
+            .toList();
     }
 }

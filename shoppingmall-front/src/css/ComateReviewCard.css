@@ -88,4 +88,27 @@ a {
 .review_images img {
     border-radius: 5px;
     width: 150px;
+    margin-bottom: 10px;
+}
+
+
+.review_content.clamped {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.review_content.expanded {
+    display: block;
+}
+.review_content_wrapper {
+    position: relative;
+}
+.more_btn {
+    background: none;
+    border: none;
+    padding: 0 10px;
+    font-size: 13px;
+    color: #999;
+    cursor: pointer;
 }
