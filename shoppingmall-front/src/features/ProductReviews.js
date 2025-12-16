@@ -76,7 +76,7 @@ function ProductReviews({ productNo }) {
         } catch (error) {
             console.log("orderItemNo를 불러오지 못 했습니다.", error);
             const msg = error.response?.data?.message
-                || "주문 이력이 없거나 오류가 발생했습니다.";
+                || "주문 이력이 없거나 이미 리뷰를 작성했습니다.";
             alert(msg);
         } finally {
             setLoading(false);
