@@ -88,4 +88,5 @@ a {
 .review_images img {
     border-radius: 5px;
     width: 150px;
+    margin-bottom: 10px;
 }
