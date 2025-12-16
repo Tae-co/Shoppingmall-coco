@@ -9,7 +9,8 @@ import starIcon from '../images/review_rate_icon_star.png';
 const RecommendReviewCard = ({
     productNo, productName, productOption, createdAt, productImg,
     rating, content, tags, 
-    authorNo, authorNickname
+    authorNo, authorNickname,
+    reviewImages
 }) => {
     const totalStar = 5;
     const filledStar = rating;
@@ -46,6 +47,19 @@ const RecommendReviewCard = ({
                     </div>
                     <div className="review_meta">작성일자 {createdAt}</div>
                 </div>
+                {/* 리뷰 이미지 */}
+                {reviewImages && reviewImages.length > 0 && (
+                    <div className="review_images">
+                        {reviewImages.map((img) => (
+                            <img
+                                key={img.reviewImageNo}
+                                src={img.imageUrl}
+                                alt="review"
+                                className="review_img"
+                            />
+                        ))}
+                    </div>
+                )}
                 <div className="review_tags">{tags.map(tag => <span key={tag}>{tag}</span>)}</div>
                 <div className="review_content">{content}</div>
             </div>

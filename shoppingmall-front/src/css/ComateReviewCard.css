@@ -59,6 +59,7 @@
 }
 .review_content {
     margin: 30px 10px;
+    white-space: pre-line;
 }
 .review_like_wrapper {
     display: flex;
@@ -83,4 +84,8 @@
 a {
     text-decoration: none;
     color: black;
+}
+.review_images img {
+    border-radius: 5px;
+    width: 150px;
 }
