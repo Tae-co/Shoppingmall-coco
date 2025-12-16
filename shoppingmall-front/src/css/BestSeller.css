@@ -1,0 +1,62 @@
+.slider-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px 0;
+    position: relative; /* 화살표 위치 기준점 */
+}
+.slick-slide > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+  
+/* --- 화살표 스타일 추가 --- */
+
+/* 화살표 아이콘 (폰트/색상/크기) */
+.slider-container .slick-prev:before,
+.slider-container .slick-next:before {
+    font-family: 'slick', sans-serif;
+    font-size: 40px;      /* CO-MATE 처럼 큼직하게 */
+    color: #d9d9d9;       /* 기본 연한 회색 */
+    opacity: 1;
+    transition: color 0.2s;
+}
+
+/* 마우스 올렸을 때 진하게 */
+.slider-container .slick-prev:hover:before,
+.slider-container .slick-next:hover:before {
+    color: #555;
+}
+
+/* 왼쪽 화살표 위치 */
+.slider-container .slick-prev {
+    left: -45px;          /* 콘텐츠 밖으로 배출 */
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+}
+
+/* 오른쪽 화살표 위치 */
+.slider-container .slick-next {
+    right: -45px;         /* 콘텐츠 밖으로 배출 */
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+}
+
+/* 화면이 좁아질 경우 화살표를 안쪽으로 들여오기 (반응형) */
+@media screen and (max-width: 1350px) {
+    .slider-container .slick-prev {
+        left: 10px;
+    }
+    .slider-container .slick-next {
+        right: 10px;
+    }
+    /* 안쪽으로 들어올 경우 잘 보이기 위해 그림자 추가 가능 */
+    .slider-container .slick-prev:before,
+    .slider-container .slick-next:before {
+        text-shadow: 0 0 5px rgba(255,255,255,0.8);
+        color: #999;
+    }
+}

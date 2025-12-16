@@ -1,0 +1,107 @@
+.footer_top {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1200px;
+    padding: 50px 40px;
+}
+.service_area {
+    display: flex;
+    justify-content: space-between;
+}
+.footer_menu {
+    display: flex;
+}
+.menu_box {
+    min-width: 120px;
+    margin-left: 80px;
+}
+.logo_box {
+    min-width: 250px;
+    padding-top: 20px;
+}
+.footer_logo {
+    width: 150px;
+}
+.footer_logo_content {
+    font-size: 14px;
+    padding-top: 15px;
+    color: #444444;
+}
+.menu_title {
+    font-size: 16px;
+    letter-spacing: -.16px;
+}
+.menu_list {
+    padding-top: 16px;
+}
+.menu_item+.menu_item {
+    margin-top: 12px;
+}
+.menu_item {
+    color: #777777;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.menu_item:hover {
+    color: #000;
+    font-weight: 500;
+}
+.customer_service {
+    display: flex;
+    flex-direction: column;
+}
+.service_title {
+    align-items: center;
+    display: inline-flex;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -.16px;
+}
+.service_tel {
+    letter-spacing: normal;
+    margin-left: 4px;
+}
+.service_time {
+    padding-top: 8px;
+    color: rgba(34, 34, 34, .5);
+    font-size: 13px;
+    letter-spacing: -.07px;
+    line-height: 20px;
+    margin-right: 4px;
+}
+.service_note {
+    font-size: 13px;
+    letter-spacing: -.07px;
+    padding-top: 8px;
+}
+.btn_service_box {
+    padding-top: 17px;
+}
+.btn_faq {
+    border-radius: 0;
+    color: #fafafa;
+    background-color: #222;
+    font-weight: 700;
+    font-size: 12px;
+    height: 34px;
+    letter-spacing: -.06px;
+    padding: 0 14px;
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+}
+.footer_bottom {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1200px;
+}
+.copyright {
+    text-align: center;
+    padding: 20px 0;
+    border-top: 1px solid #e2e2e2;
+    font-size: 12px;
+    color: #777777;
+}

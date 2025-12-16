@@ -1,0 +1,59 @@
+import { useState } from "react";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+
+function useData(setContent, setRating, ptagsList, setPtagsClicked, ntagsList, setNtagsClicked, setPreviewFiles) {
+    const [loading, setLoading] = useState(false);
+
+    const loadData = async (reviewNo) => {
+
+        if (!reviewNo) return;
+
+        setLoading(true);
+
+        try {
+            const response = await axios.get(`http://13.231.28.89:18080/api/reviews/${reviewNo}`);
+            const data = response.data;
+
+            setContent(data.content);
+            setRating(data.rating);
+
+            const goodTagNames = new Set((data.prosTags || []).map(tag => tag.tagName));
+            const badTagNames = new Set((data.consTags || []).map(tag => tag.tagName));
+
+            const newPtagClicked = ptagsList.map((tag) => {
+                return goodTagNames.has(tag.tagName);
+            });
+
+            setPtagsClicked(newPtagClicked);
+
+            const newNtagClicked = ntagsList.map((tag) => {
+                return badTagNames.has(tag.tagName);
+            })
+            setNtagsClicked(newNtagClicked);
+
+            if (data.reviewImages && data.reviewImages.length > 0) {
+                const loadedImages = data.reviewImages.map(imgObject => ({
+                    id: uuidv4(),
+                    url: imgObject.imageUrl,
+                    file: null
+                }));
+
+                setPreviewFiles(loadedImages);
+            }
+
+        } catch (error) {
+            console.error("리뷰 데이터를 불러오는데 실패했습니다:", error);
+        } finally {
+            setLoading(false);
+        }
+
+    }
+
+    return {
+        loadData,
+        loading
+    }
+}
+
+export default useData;

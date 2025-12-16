@@ -1,0 +1,121 @@
+.notice-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  min-height: 70vh;
+  font-family: "Pretendard", sans-serif;
+  box-sizing: border-box;
+}
+
+.notice-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.notice-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #222;
+}
+
+.notice-header p {
+  font-size: 16px;
+  color: #666;
+}
+
+.notice-list {
+  border-top: 2px solid #222;
+}
+
+/* 리스트 헤더 */
+.notice-list-header {
+  display: flex;
+  padding: 15px 0;
+  border-bottom: 1px solid #ddd;
+  background-color: #fafafa;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  font-size: 15px;
+}
+
+/* 리스트 아이템 */
+.notice-item {
+  border-bottom: 1px solid #eee;
+}
+
+/* 요약 줄 (클릭 가능 영역) */
+.notice-summary {
+  display: flex;
+  padding: 20px 0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  align-items: center;
+  text-align: center;
+}
+
+.notice-summary:hover {
+  background-color: #f9f9f9;
+}
+
+/* 컬럼 너비 설정 */
+.col-id { width: 80px; color: #666; }
+.col-title { 
+  flex: 1; 
+  text-align: left; 
+  padding: 0 20px; 
+  color: #222;
+  font-weight: 500;
+}
+.col-date { width: 120px; color: #888; font-size: 14px; }
+
+/* 화살표 아이콘 영역 */
+.arrow-icon {
+  width: 60px;
+  height: 100%;
+  min-height: 24px;
+  color: #bbb; /* 평소에는 연한 회색 */
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* 회전 애니메이션 */
+  transition: transform 0.3s ease, color 0.2s;
+  transform-origin: center center;
+}
+
+.arrow-icon svg {
+  display: block; /* 미세한 하단 여백 제거 */
+}
+
+/* 활성화 시 화살표 회전 */
+.notice-item.active .arrow-icon {
+  transform: rotate(180deg);
+  color: #222; /* 활성화되면 진하게 */
+}
+
+.notice-item.active .notice-summary {
+  font-weight: 600;
+  background-color: #fdfdfd;
+}
+
+/* 내용 영역 */
+.notice-content {
+  background-color: #f5f5f5;
+  padding: 30px 40px;
+  color: #444;
+  line-height: 1.6;
+  white-space: pre-wrap; /* 줄바꿈 적용 */
+  font-size: 15px;
+  border-top: 1px solid #f0f0f0;
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .col-id, .col-date { display: none; } /* 모바일에서 날짜/번호 숨김 */
+  .notice-summary { padding: 15px 10px; }
+  .col-title { padding: 0 10px; font-size: 14px; }
+}

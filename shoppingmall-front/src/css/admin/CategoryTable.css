@@ -1,0 +1,87 @@
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.category-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  font-size: 14px;
+  table-layout: auto !important;
+}
+
+.category-table th {
+  padding: 12px;
+  border-bottom: 2px solid #eee;
+  background: #f9f9f9;
+  font-weight: 600;
+  white-space: nowrap;
+  text-align: center; /* 헤더 중앙 정렬 */
+}
+
+.category-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+  text-align: center;
+}
+
+/* 관리 열 너비 최적화 */
+.category-table th:last-child,
+.category-table td:last-child {
+  width: 100px;
+  min-width: 100px;
+  white-space: nowrap;
+}
+
+/* 카테고리 이름 왼쪽 정렬 */
+.category-name-cell {
+  text-align: left !important;
+  padding-left: 30px;
+}
+
+.category-name-cell.child {
+  padding-left: 60px;
+  color: #555;
+}
+
+.id-cell-child {
+  color: #888;
+}
+
+/* 아이콘 버튼 스타일 */
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  margin: 0 4px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+/* 아이콘 크기 조정 */
+.icon-btn img {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+
+/* 호버 효과 */
+.icon-btn:hover {
+  background-color: #f0f0f0;
+}
+
+/* 수정 버튼 호버 시 */
+.icon-btn.edit:hover {
+  background-color: #e3f2fd;
+}
+
+/* 삭제 버튼 호버 시 */
+.icon-btn.delete:hover {
+  background-color: #ffebee;
+}

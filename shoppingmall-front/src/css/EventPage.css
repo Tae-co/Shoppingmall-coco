@@ -1,0 +1,153 @@
+.event-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  min-height: 80vh;
+  box-sizing: border-box;
+  font-family: "Pretendard", sans-serif;
+}
+
+.event-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.event-header h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #222;
+}
+
+.event-header p {
+  color: #666;
+  font-size: 16px;
+}
+
+/* 탭 스타일 */
+.event-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.event-tabs button {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.event-tabs button:hover {
+  background-color: #f5f5f5;
+}
+
+.event-tabs button.active {
+  background-color: #222;
+  color: #fff;
+  border-color: #222;
+  font-weight: 600;
+}
+
+/* 리스트 그리드 */
+.event-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 한 줄에 3개 */
+  gap: 30px;
+}
+
+/* 카드 아이템 */
+.event-card {
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s;
+  border: 1px solid #eee;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+/* 썸네일 영역 */
+.event-thumbnail {
+  height: 220px;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  justify-content: flex-start;
+  
+  /* 배경 이미지 설정 */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: transform 0.3s;
+}
+
+/* 호버 시 이미지 살짝 확대 효과 */
+.event-card:hover .event-thumbnail {
+  transform: scale(1.02);
+}
+
+/* 상태 뱃지 */
+.status-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  z-index: 2; /* 이미지 위에 뜨도록 */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* 가독성을 위한 그림자 */
+}
+
+.status-badge.ing {
+  background-color: #000;
+}
+
+.status-badge.end {
+  background-color: #aaa;
+}
+
+/* 텍스트 정보 */
+.event-info {
+  padding: 20px;
+  background-color: #fff;
+}
+
+.event-title {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+  line-height: 1.4;
+}
+
+.event-period {
+  margin: 0;
+  font-size: 13px;
+  color: #888;
+}
+
+/* 반응형 */
+@media (max-width: 900px) {
+  .event-list {
+    grid-template-columns: repeat(2, 1fr); /* 태블릿 2개 */
+  }
+}
+
+@media (max-width: 600px) {
+  .event-list {
+    grid-template-columns: 1fr; /* 모바일 1개 */
+  }
+}

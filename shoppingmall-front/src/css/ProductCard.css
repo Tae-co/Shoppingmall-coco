@@ -1,0 +1,160 @@
+.product_card {
+    width: 90%;
+    max-width: 250px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    padding: 10px;
+    margin: 0 auto;
+    cursor: pointer;
+    transition: transform 0.2s ease; /* 호버 효과 추가 */
+    position: relative; 
+    /* 높이 통일을 위한 Flex 설정 */
+    display: flex;           
+    flex-direction: column;  /* 세로 정렬 */
+    min-height: 430px;       /* 최소 높이 고정 */
+    justify-content: space-between; /* 내용을 위아래로 분배 */
+}
+.product_card:hover {
+    transform: translateY(-5px); /* 마우스 올리면 살짝 떠오름 */
+}
+/* 이미지 영역 래퍼 */
+.img_wrapper {
+    position: relative; /* 기준점 */
+    width: 100%;
+    height: 250px; /* 이미지 높이와 동일하게 */
+    border-radius: 8px; /* 이미지와 동일한 둥근 모서리 */
+    overflow: hidden;   /* 오버레이가 둥근 모서리 밖으로 나가는 것 방지 */
+    flex-shrink: 0; /* 이미지가 줄어들지 않도록 고정 */
+}
+/* 이미지 크기 고정 및 비율 유지 */
+.product_card img.product_image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지가 찌그러지지 않고 꽉 차게 자름 */
+    border-radius: 8px;
+    display: block;
+}
+.product_info {
+    padding: 12px 4px 0; /* 내부 여백 조정 */
+    margin-left: 10px;
+    /* 남은 빈 공간을 이 영역이 다 차지하도록 설정 */
+    flex: 1; 
+    display: flex;
+    flex-direction: column; /* 내부 요소 세로 정렬 */
+}
+/* 상품명: 더 진하고 잘 보이게 수정 */
+.product_name {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 700; /* 굵기 강조 */
+    color: #222; /* 진한 검정색 */
+    
+    /* 긴 제목 말줄임표 처리 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* 가격: 강조 */
+.product_price {
+    font-size: 18px;
+    font-weight: 800;
+    color: #000; /* 완전 검정 */
+    margin-top: auto;
+    padding-top: 10px; /* 가격 위쪽 여백 */
+}
+/* 리뷰 정보: 가독성 개선 */
+.product_reviewInfo {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: #666; /* 너무 연하지 않은 회색 */
+    margin-top: 8px;
+    gap: 4px;
+}
+.star_icon {
+    width: 14px;
+    height: 14px;
+}
+.btn_add_cart {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* 꽉 차게 */
+    border-radius: 8px;
+    background-color: #333; /* 진한 회색 */
+    color: white;
+    font-weight: 600;
+    padding: 10px 0;
+    margin-top: 15px;
+    transition: background-color 0.2s;
+}
+.btn_add_cart:hover {
+    background-color: #000;
+}
+/* --- 비활성화된 버튼 추가 --- */
+.btn_add_cart.disabled {
+    background-color: #ccc; /* 회색 배경 */
+    cursor: not-allowed;    /* 금지 커서 */
+    pointer-events: none;   /* 클릭 이벤트 원천 차단 */
+}
+/* 피부 타입 태그 */
+.product_skin_types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+.product_skin_types span {
+    background-color: #f2f2f2;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #444; /* 글자색 진하게 */
+}
+/* 랭킹 뱃지 */
+.ranking_badge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 35px;
+    height: 35px;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    z-index: 20; /* 제일 위에 표시 */
+    border-bottom-right-radius: 10px; /* 디자인 포인트 */
+}
+/* 품절 오버레이 */
+.soldout_overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7); /* 흰색 반투명 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff0000;
+    font-weight: 800;
+    font-size: 1.5rem;
+    z-index: 15; /* 뱃지보다는 아래, 내용보다는 위 */
+    pointer-events: none; /* 클릭은 통과되게 */
+}
+
+/* 품절 상품일 때 스타일 */
+.product_card.sold-out {
+    cursor: default;
+    opacity: 0.7;
+}
+
+/* 품절 상품은 마우스 올려도 떠오르지 않게 막기 */
+.product_card.sold-out:hover {
+    transform: none;      
+}

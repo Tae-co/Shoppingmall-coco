@@ -1,0 +1,328 @@
+body { overflow-x: hidden; }
+body, button, dd, div, dl, dt, fieldset, figcaption, figure, form, 
+h1, h2, h3, h4, h5, h6, input, legend, li, ol, p, select, table, td, textarea, th, ul {
+    margin: 0;
+    padding: 0;
+}
+button {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    outline: none;
+    padding: 0;
+}
+ul {
+    list-style: none;
+}
+
+.header_top, .header_tab {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1280px;
+}
+.header_top .top_inner {
+    display: flex;
+    height: 14px;
+    padding: 8px 40px;
+    box-sizing: border-box;
+}
+.header_top .top_list {
+    align-items: center;
+    color: #222c;
+    display: flex;
+    font-size: 12px;
+    height: 14px;
+    margin-left: auto;
+}
+.top_item+.top_item {
+    margin-left: 24px;
+}
+.top_item, .top_item:visited {
+    text-decoration: none;
+    color: #222c;
+}
+.logout_button {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+.logout_button:hover {
+    text-decoration: underline;
+}
+
+.header_main {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1280px;
+}
+.logo {
+    display: flex;
+    width: 170px;
+}
+.main_inner { 
+    display: flex;
+    align-items: center;
+    height: 24px;
+    padding: 25px 40px;
+    min-width: 320px; 
+}
+.header_center {
+    flex: 1;
+    display: flex;
+    margin: 0 50px;
+}
+.header_right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    min-width: 120px;
+}
+#gnb_area, .gnb_list {
+    display: flex;
+    align-items: center;
+}
+.gnb_item {
+    margin-right: 24px;
+}
+.gnb_item .gnb_link {
+    display: flex;
+    font-size: 20px;
+    letter-spacing: -.3px;
+    position: relative;
+}
+.gnb_link, .gnb_link:hover, .gnb_link:visited { 
+    text-decoration: none;
+    color: black;
+}
+.gnb_link.active {
+    font-weight: 700;
+}
+
+
+.search_container {
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+}
+.search_container form {
+    display: flex;
+    align-items: center;
+    border: 1px solid #bfbfbf;
+    border-radius: 25px;
+    overflow: hidden;
+}
+.search_container input[type="text"] {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    width: 300px;
+    font-size: 12px;
+    border-radius: 25px 0 0 25px;
+    outline: none;
+}
+.search_container input[type="text"]:focus {
+    background-color: #fdfdfd; 
+}
+
+.btn_search {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    flex-shrink: 0;
+    width: 40px;
+    justify-content: center;
+}
+.btn_cart {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    position: relative;
+    width: 40px;
+}
+.btn_category {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    position: relative;
+    width: 40px;
+}
+.ul_tab {
+    margin-left: 40px;
+    margin-right: 40px;
+    display: flex;
+    flex-wrap: nowrap;
+    height: 45px;
+}
+.li_tab {
+    display: inline-flex;
+}
+.tab {
+    display: inline-flex;
+    height: 100%;
+    padding-bottom: 6px;
+    padding-top: 15px;
+}
+.tab_name {
+    font-size: 16px;
+    line-height: 1.25;
+}
+.li_tab+.li_tab {
+        margin-left: 24px;
+    }
+.btn_cart {
+  position: relative; /* 뱃지 위치 기준 */
+}
+
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background-color: #ff4b4b;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header {
+    position: relative;  /* 자식인 메가 메뉴의 위치 기준점이 됨 */
+    z-index: 2000;      
+    background-color: #fff;
+}
+
+/* --- 메가 메뉴 스타일 --- */
+.mega-menu {
+    position: absolute;
+    top: 100%; /* 헤더 바로 아래 */
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    overflow: hidden;
+    z-index: 2001; /* 다른 요소보다 위에 */
+    
+    /* 애니메이션 초기 상태 */
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease-in-out;
+    border-top: 1px solid #eee;
+}
+
+.mega-menu.active {
+    max-height: 400px; /* 충분한 높이 */
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    padding-bottom: 20px; /* 하단 여백 */
+}
+
+.menu-inner {
+    display: flex;
+    justify-content: center;
+    gap: 100px; /* 카테고리 간 간격 */
+    padding: 50px 0;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.menu-column h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #222; /* 포인트 컬러 */
+    padding-bottom: 10px;
+    display: inline-block;
+    min-width: 140px;
+}
+
+.menu-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-column ul li {
+    margin-bottom: 16px;
+}
+
+.menu-column ul li a {
+    text-decoration: none;
+    color: #666;
+    font-size: 16px;
+    transition: color 0.2s;
+    display: block;
+}
+
+.menu-column ul li a:hover {
+    color: #000;
+    font-weight: 700;
+    transform: translateX(5px);
+}
+
+/* --- 오버레이 (배경 흐림) --- */
+.menu-overlay {
+    position: fixed;
+    top: 0; /* 헤더 높이만큼 띄우려면 top 조정 필요할 수 있음 */
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.3);
+    z-index: 1500;
+}
+
+/* btn_category 스타일 보정 (button 태그로 변경했으므로) */
+.btn_category {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+@media (max-width: 822px) {
+    .logo {
+        width: 110px;
+    }
+    .gnb_item {
+        margin-right: 15px;
+    }
+    .header_main .main_inner {
+        padding: 20px 12px;
+    }
+    .header_center {
+        margin: 0 20px;
+    }
+}
+@media (max-width: 600px) {
+    .logo {
+        width: 95px;
+    }
+    .gnb_list {
+        gap: 4px;
+    }
+    .gnb_list .gnb_link {
+        font-size: 16px;
+        padding: 0 6px;
+    }
+    .gnb_item {
+        margin-right: 5px;
+    }
+    .header_center {
+        margin: 0 10px;
+    }
+}

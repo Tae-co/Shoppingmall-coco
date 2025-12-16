@@ -1,0 +1,283 @@
+/* --- 1. 기본 레이아웃 (OrderPage.css와 유사) --- */
+/* 결제 페이지 컨테이너의 전체 너비, 중앙 정렬 및 기본 스타일 설정 */
+.payment-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #333;
+}
+.payment-page h1 {
+  font-size: 2rem;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+/* 섹션 제목 스타일 (아래쪽에 구분선 포함) */
+.payment-page h2 {
+  font-size: 1.5rem;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  text-align: left;
+}
+/* 섹션 내 소제목 스타일 */
+.payment-page h3 {
+  font-size: 1.25rem;
+  margin-bottom: 20px;
+  text-align: left;
+}
+/* 결제 상세 정보 영역과 요약 사이드바를 포함하는 Flex 컨테이너 */
+.payment-content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+/* 결제 상세 정보 영역 (결제 수단, 약관 등이 들어가는 주요 영역) */
+.payment-details {
+  flex-grow: 1; /* 남은 공간을 모두 차지하도록 확장 */
+}
+
+/* --- 2. 상단 진행 단계 (OrderPage.css와 동일) --- */
+/* 주문/결제 단계를 표시하는 진행 표시줄 컨테이너 */
+.checkout-progress {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 40px;
+}
+/* 개별 단계 아이템 스타일 */
+.step-item { display: flex; flex-direction: column; align-items: center; color: #ccc; font-weight: bold; }
+/* 단계 아이콘 (번호 또는 체크 표시) 스타일 */
+.step-item .step-icon { width: 30px; height: 30px; border-radius: 50%; background-color: #eee; 
+  color: #ccc; display: flex; justify-content: center; align-items: center; font-size: 1rem; 
+  margin-bottom: 8px; }
+/* 현재 활성화된 단계 스타일 */
+.step-item.active { color: #333; }
+.step-item.active .step-icon { background-color: #333; color: #fff; }
+/* 완료된 단계 스타일 */
+.step-item.complete { color: #00c73c; }
+.step-item.complete .step-icon { background-color: #00c73c; color: #fff; }
+/* 단계들을 연결하는 선 스타일 */
+.step-connector { flex-grow: 1; height: 2px; background-color: #eee; margin: 0 10px; 
+  position: relative; bottom: 15px; }
+
+/* --- 3. 결제 수단 선택 --- */
+/* 결제 수단 선택 목록 컨테이너 */
+.payment-method-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+/* 개별 결제 수단 옵션 박스 스타일 */
+.method-option {
+  display: flex;
+  align-items: center;
+  padding: 18px 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+}
+/* 커스텀 라디오 버튼 외곽 스타일 */
+.method-option .radio-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  margin-right: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+/* 커스텀 라디오 버튼 내부 채우는 점 스타일 */
+.method-option .radio-icon::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #333;
+  display: none; /* 평소엔 숨김 */
+  transition: all 0.2s ease;
+}
+/* 선택된 결제 수단 옵션의 테두리 강조 스타일 */
+.method-option.selected {
+  border-color: #333;
+  border-width: 2px;
+  padding: 17px 19px; /* 테두리 두께만큼 안쪽으로 여백 조정 */
+}
+.method-option.selected .radio-icon {
+  border-color: #333;
+}
+/* 선택되면 커스텀 라디오 버튼의 내부 점 표시 */
+.method-option.selected .radio-icon::after {
+  display: block; 
+}
+
+/* --- 4. 카드/포인트 폼 (OrderPage.css와 유사) --- */
+/* 카드 정보 입력 섹션 및 포인트 사용 섹션 */
+.card-info-section, .points-section {
+  margin-top: 20px;
+}
+/* 카드 정보나 포인트 사용 폼을 담는 박스 스타일 */
+.card-form, .points-form {
+  padding: 20px;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  background-color: #fafafa;
+}
+/* h2 바로 뒤에 오는 폼 섹션의 위쪽 여백 제거 */
+.payment-details h2 + .card-info-section,
+.payment-details h2 + .points-section {
+  margin-top: 0;
+}
+.card-form .form-group, .points-form.form-group-with-button {
+  margin-bottom: 20px;
+}
+/* 폼 내 마지막 폼 그룹은 아래쪽 여백 제거 */
+.card-form .form-group:last-child,
+.points-form.form-group-with-button:last-child {
+  margin-bottom: 0;
+}
+
+/* 폼 라벨 스타일 */
+.card-form label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  text-align: left;
+}
+/* 텍스트/숫자 입력 필드 기본 스타일 */
+.card-form input[type="text"], .points-form input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+/* 두 개의 폼 그룹을 한 줄에 배치할 때 사용 */
+.card-form .form-group-half { display: flex; gap: 20px; }
+.card-form .form-group-half .form-group { width: 50%; }
+
+/* 포인트 폼 */
+/* 입력 필드와 버튼을 한 줄에 정렬할 때 사용 (예: 전체 사용 버튼) */
+.form-group-with-button {
+  display: flex;
+  align-items: center; /* 폼과 버튼을 세로 중앙 정렬 */
+  gap: 10px;
+}
+.form-group-with-button input {
+  flex-grow: 1;
+}
+/* 아웃라인 스타일 버튼 (주로 보조적인 기능이나 전체 사용 버튼에 사용) */
+.btn-outline {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 1px solid #555;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap; /* 줄 바꿈 방지 */
+}
+/* 포인트 정보 안내 텍스트 스타일 */
+.points-info {
+  font-size: 0.9rem;
+  color: #666;
+  text-align: left;
+  margin-top: 10px;
+}
+
+/* --- 5. 약관 동의 --- */
+/* 약관 동의 섹션 (상단 구분선 포함) */
+.agreement-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  text-align: left; 
+}
+/* 개별 약관 동의 항목 */
+.agreement-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+/* 체크박스 스타일 */
+.agreement-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  flex-shrink: 0; 
+}
+.agreement-item label {
+  font-size: 0.95rem;
+  color: #333;
+}
+/* 약관 상세 보기 링크 스타일 */
+.agreement-link {
+  font-size: 0.9rem;
+  color: #555;
+  text-decoration: underline;
+  margin-left: 30px; /* 체크박스 너비만큼 들여쓰기 */
+}
+
+/* --- 6. 오른쪽 사이드바 (OrderPage.css와 동일) --- */
+/* 주문 요약 사이드바 영역 */
+.order-summary-sidebar {
+  width: 320px;
+  flex-shrink: 0;
+}
+/* 주문 요약 정보 박스 스타일 */
+.summary-box {
+  border: 1px solid #eee;
+  background-color: #fafafa;
+  padding: 24px;
+  border-radius: 4px;
+  text-align: left;
+}
+/* 요약 정보 개별 항목 (항목과 값을 Flex로 분리) */
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 15px;
+}
+/* 할인 또는 포인트 사용 금액 표시 (붉은색) */
+.summary-row.discount {
+  color: #d9534f; 
+}
+/* 최종 결제 금액 행 강조 (상단 구분선 포함) */
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+}
+/* 주 버튼 스타일 (검은색 배경) */
+.btn-primary { width: 100%; padding: 14px; font-size: 1rem; font-weight: 600; 
+  color: #fff; background-color: #333; border: none; border-radius: 4px; 
+  cursor: pointer; margin-bottom: 10px; }
+/* 보조 버튼 스타일 (흰색 배경) */
+.btn-secondary { width: 100%; padding: 14px; font-size: 1rem; font-weight: 600; 
+  color: #333; background-color: #fff; border: 1px solid #ddd; border-radius: 4px; 
+  cursor: pointer; }
+/* 결제 관련 유의 사항 안내 텍스트 */
+.summary-note {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 20px;
+  line-height: 1.5;
+  text-align: center;
+}

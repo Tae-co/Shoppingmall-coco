@@ -1,0 +1,136 @@
+.admin-wrapper {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f4f7f6;
+}
+
+/* 사이드바 */
+.admin-sidebar {
+  width: 240px;
+  min-width: 240px;
+  background: #2d3748;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.admin-logo {
+  font-size: 24px;
+  margin: 0 0 40px 0;
+  font-weight: bold;
+}
+
+.admin-logo a {
+  color: white;
+  text-decoration: none;
+}
+
+.admin-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+.admin-nav-item {
+  display: block;
+  padding: 12px 16px;
+  text-decoration: none;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  transition: all 0.2s;
+  color: #cbd5e0;
+  border-left: 4px solid transparent;
+}
+
+.admin-nav-item:hover {
+  background: #4a5568;
+  color: white;
+  transform: translateX(4px);
+}
+
+.admin-nav-item.active {
+  background: #4a5568;
+  color: white;
+  font-weight: 600;
+  border-left: 4px solid #63b3ed;
+}
+
+.admin-nav-item.disabled {
+  color: #718096;
+  cursor: not-allowed;
+}
+
+.admin-nav-item.disabled:hover {
+  transform: none;
+  background: transparent;
+  color: #718096;
+}
+
+/* 메인 컨텐츠 영역 */
+.admin-page-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* 상단 헤더 */
+.admin-top-header {
+  height: 64px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 30px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.header-link-btn {
+  margin-right: 10px;
+  font-size: 13px;
+  padding: 8px 16px;
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.header-link-btn:hover {
+  background-color: #f9f9f9;
+}
+
+.admin-welcome-msg {
+  margin-right: 15px;
+  font-weight: 500;
+  color: #333;
+}
+
+.header-logout-btn {
+  font-size: 13px;
+  padding: 8px 16px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.header-logout-btn:hover {
+  opacity: 0.9;
+}
+
+/* 실제 내용이 들어가는 부분 */
+.admin-content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}

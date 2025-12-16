@@ -1,0 +1,184 @@
+/* 팝업 배경 (전체 화면을 덮는 오버레이 및 팝업 중앙 정렬) */
+.signup-terms-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 팝업 내용 영역 (실제 내용이 표시되는 흰색 상자) */
+.signup-terms-popup-content {
+  background-color: #fff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 팝업 헤더 (제목과 닫기 버튼 포함) */
+.signup-terms-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding: 20px 24px;
+  flex-shrink: 0;
+}
+
+.signup-terms-popup-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 팝업 닫기 버튼 스타일 */
+.signup-terms-popup-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  font-weight: 300;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.signup-terms-popup-close:hover {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+/* 팝업 본문 영역 (텍스트 왼쪽 정렬) */
+.signup-terms-popup-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* 약관 내용이 들어갈 스크롤 박스 */
+.signup-terms-content {
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.8;
+}
+
+/* 약관 내용 내 소제목 스타일 */
+.signup-terms-content h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.signup-terms-content h4:first-child {
+  margin-top: 0;
+}
+
+.signup-terms-content p {
+  margin-bottom: 16px;
+  color: #555;
+}
+
+.signup-terms-content ul {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+.signup-terms-content li {
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.signup-terms-content strong {
+  color: #333;
+  font-weight: 600;
+}
+
+/* 스크롤바 스타일링 */
+.signup-terms-popup-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.signup-terms-popup-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.signup-terms-popup-body::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.signup-terms-popup-body::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .signup-terms-popup-content {
+    width: 95%;
+    max-height: 85vh;
+  }
+
+  .signup-terms-popup-header {
+    padding: 16px 20px;
+  }
+
+  .signup-terms-popup-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .signup-terms-popup-body {
+    padding: 20px;
+  }
+
+  .signup-terms-content {
+    font-size: 0.85rem;
+  }
+
+  .signup-terms-content h4 {
+    font-size: 1rem;
+  }
+}
+

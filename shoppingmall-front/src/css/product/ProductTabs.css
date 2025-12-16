@@ -1,0 +1,39 @@
+.product-tab-container {
+  margin-top: 60px;
+  border-top: 2px solid #333;
+}
+
+.product-tab-buttons {
+  display: flex;
+  border-bottom: 1px solid #eee;
+}
+
+.product-tab-btn {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+  color: #888;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.product-tab-btn:hover {
+  color: #333;
+}
+
+.product-tab-btn.active {
+  border-bottom: 3px solid #333;
+  color: #333;
+}
+
+.product-tab-content {
+  padding: 20px;
+  min-height: 200px;
+  line-height: 1.7;
+  font-size: 16px;
+  text-align: left; /* 텍스트 왼쪽 정렬 보장 */
+}

@@ -1,0 +1,111 @@
+import React from "react";
+import { useNavigate } from 'react-router-dom';
+
+import '../css/ComateProfile.css';
+import sampleImg_profile from '../images/sampleImg_profile.png'; // 임시 프로필 이미지
+
+const ComateFullProfile = ({ 
+    nickname, 
+    skinTags, 
+    reviews,
+    likes, 
+    followers, 
+    following, 
+    onFollowClick, 
+    isMine, 
+    isFollowing,
+    matchingRate,
+    onTabClick,
+    userType
+}) => {
+    const navigate = useNavigate();
+
+    const getMatchClass = (matchingRate) => {
+        if (70 <= matchingRate) return "high";
+        if (40 <= matchingRate) return "medium";
+        return "low";
+    };
+
+    return (
+        <div className="comate_card_wrapper">
+            {userType !== 'me' && (
+                <button 
+                    className="back_to_me_btn"
+                    onClick={() => navigate('/comate/me/recommend')}
+                >
+                    <svg class="arrow-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    <span>CO-MATE 메인으로</span>
+                </button>
+            )}
+            <div className="comate_card full">
+            <div className="profile_section full">
+                <img src={sampleImg_profile} alt="user_profile" className="profile_img full" />
+                <div className="nickname full">{nickname}</div>
+                <div className="skin_types full">
+                    {skinTags?.map((type, index) => (
+                        <span key={index}>{type}</span>
+                    ))}
+                </div>
+            </div>
+            {/* 내 프로필이면 매칭률 숨기기 */}
+            {!isMine && (
+                <div className="matching_wrapper">
+                     <div className="matching_title">궁합도</div>
+                    <div className={`matching_rate ${getMatchClass(matchingRate)}`}>
+                        {matchingRate === -1 ? '??' : matchingRate}
+                        {matchingRate !== -1 && <span className="percent">%</span>}
+                    </div>
+                </div>
+            )}
+            <div className="stats_section full">
+                <div className="stat_item full"
+                onClick={(e) => { e.stopPropagation(); onTabClick('review'); }}>
+                    <div className="stat_value full">{reviews}</div>
+                    <div className="stat_label full">리뷰</div>
+                </div>
+                <div className="stat_item full"
+                onClick={(e) => { e.stopPropagation(); onTabClick('like'); }}>
+                    <div className="stat_value full">{likes}</div>
+                    <div className="stat_label full">좋아요</div>
+                </div>
+                <div className="stat_item full"
+                onClick={(e) => { e.stopPropagation(); onTabClick('follower'); }}>
+                    <div className="stat_value full">{followers}</div>
+                    <div className="stat_label full">팔로워</div>
+                </div>
+                <div className="stat_item full"
+                onClick={(e) => { e.stopPropagation(); onTabClick('following'); }}>
+                    <div className="stat_value full">{following}</div>
+                    <div className="stat_label full">팔로잉</div>
+                </div>
+            </div>
+            </div>
+            {/* 내 프로필이면 팔로우 버튼 숨기기 */}
+            {!isMine && (
+                <button
+                    className={`follow_btn full ${isFollowing ? "active" : ""}`}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onFollowClick();
+                    }}
+                >
+                    {isFollowing ? "팔로잉" : "팔로우"}
+                </button>
+            )}
+            {/* 내 프로필이면 피부 프로필 설정 버튼 */}
+            {isMine && (
+                <button
+                    className="set_skinProfile_btn"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        navigate("/profile-edit");
+                    }}
+                >
+                    피부 프로필 수정
+                </button>
+            )}
+        </div>
+    );
+};
+
+export default ComateFullProfile;

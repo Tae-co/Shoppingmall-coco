@@ -1,0 +1,164 @@
+/* 데스크톱 기본 스타일 */
+.sidebar {
+  width: 240px;
+  margin-right: 30px;
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.close-button {
+  display: none;
+}
+
+.backdrop {
+  display: none;
+}
+
+.filter-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #333;
+  padding-bottom: 10px;
+}
+
+.filter-group {
+  margin-bottom: 25px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+}
+
+.filter-group-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.filter-label {
+  margin-bottom: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.filter-label:hover {
+  color: #555;
+}
+
+/* 커스텀 체크박스 스타일 */
+.filter-checkbox {
+  display: none; 
+}
+
+.checkbox-custom {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-right: 10px;
+  position: relative;
+  top: -1px;
+}
+
+.filter-checkbox:checked + .checkbox-custom {
+  background: #333;
+  border-color: #333;
+}
+
+.filter-checkbox:checked + .checkbox-custom::before {
+  content: '✔';
+  color: white;
+  font-size: 12px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 프로필 토글 버튼 */
+.profile-toggle-btn {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.profile-toggle-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.profile-toggle-btn.active {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #333;
+}
+
+.profile-toggle-btn.active:hover {
+  opacity: 0.9;
+  background-color: #444;
+}
+
+/* 모바일 스타일 */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background: white;
+    z-index: 3000;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+    margin-right: 0;
+    transform: translateX(-100%); /* 기본 숨김 */
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .close-button {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    border: none;
+    background: none;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #555;
+  }
+
+  .backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  .backdrop.open {
+    display: block;
+  }
+}

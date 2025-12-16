@@ -1,10 +1,12 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.5.7'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '3.5.7'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'war'
+    id "org.sonarqube" version "6.3.1.5724"
 }
 
-group = 'com.ShoppingMall-coco'
+group = 'com.shoppingmallcoco'
 version = '0.0.1-SNAPSHOT'
 description = 'shoppingmall-coco'
 
@@ -12,6 +14,13 @@ java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
+}
+
+bootWar {
+    enabled = true
+}
+bootJar {
+    enabled = false
 }
 
 configurations {
@@ -22,13 +31,21 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
+	// JWT 의존성
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.h2database:h2'
@@ -37,6 +54,14 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    
+    // 이미지 썸네일 및 리사이징 라이브러리 (Thumbnailator)
+    implementation 'net.coobird:thumbnailator:0.4.20'
+    
+    // Java 이미지 처리 라이브러리 (TwelveMonkeys ImageIO)
+    implementation 'com.twelvemonkeys.imageio:imageio-webp:3.10.1' // WebP 지원
+    implementation 'com.twelvemonkeys.imageio:imageio-core:3.10.1' // 핵심 모듈
 }
 
 tasks.named('test') {

@@ -1,0 +1,281 @@
+.account-settings-container {
+  color: #222;
+  min-height: 100vh;
+  padding: 30px 80px;
+  font-family: "Pretendard", sans-serif;
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #fff;
+}
+
+/* 뒤로가기 */
+.back-btn {
+  border: none;
+  background: none;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 18px;
+}
+
+.back-btn:hover {
+  color: #000;
+}
+
+/* 제목 */
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 28px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #000;
+  color: #000;
+}
+
+/* 섹션 */
+.setting-section {
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin-bottom: 28px;
+}
+
+.setting-section h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #000;
+}
+
+.section-desc {
+  font-size: 13px;
+  color: #444;
+  margin-bottom: 18px;
+}
+
+/* 인풋 */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input-group input {
+  width: 100%;
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #000;
+}
+
+.input-group input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.input-group input[readOnly] {
+  background-color: #f9f9f9;
+  cursor: default;
+}
+
+/* 변경 버튼 */
+.change-btn {
+  width: 100%;
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 12px 0;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s ease;
+}
+
+.change-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.change-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 알림 토글 */
+.notify-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #000;
+  padding: 14px 0;
+  position: relative;
+}
+
+.notify-item:first-of-type {
+  border-top: none;
+}
+
+.notify-item span {
+  font-weight: 600;
+  color: #000;
+}
+
+.notify-item p {
+  position: absolute;
+  left: 140px;
+  font-size: 13px;
+  color: #555;
+}
+
+/* 토글 스위치 */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 22px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  border: 1px solid #000;
+  transition: 0.3s;
+  border-radius: 22px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #000;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #000;
+  border-color: #000;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+  background-color: #fff;
+}
+
+/* 개인정보 버튼 */
+.privacy-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.privacy-btns button {
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 10px 0;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.privacy-btns button:hover {
+  background: #f5f5f5;
+}
+
+/* 계정 삭제 섹션 */
+.setting-section.danger {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid #000;
+}
+
+.delete-btn {
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 10px 0;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  color: red;
+}
+
+.delete-btn:hover:not(:disabled) {
+  background: #f5f5f5;
+  transform: none;
+}
+
+.delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 에러 메시지 스타일 통일 */
+.error-message {
+  color: #d32f2f;
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* 주소 검색 버튼이 있는 입력 그룹 */
+.input-with-button {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.input-with-button input {
+  flex: 1;
+  min-width: 0;
+}
+
+.check-button {
+  padding: 10px 20px;
+  border: 1px solid #000;
+  border-radius: 6px;
+  background: #fff;
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.check-button:hover:not(:disabled) {
+  background: #000;
+  color: #fff;
+}
+
+.check-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f5f5f5;
+}
+

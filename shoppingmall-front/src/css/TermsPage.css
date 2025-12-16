@@ -1,0 +1,142 @@
+/* 약관 페이지 컨테이너 */
+.terms-page-container {
+  width: 100%;
+  background: #fff;
+  font-family: 'Inter', sans-serif;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 약관 페이지 내용 영역 */
+.terms-page-content {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 약관 페이지 헤더 */
+.terms-page-header {
+  border-bottom: 1px solid #eee;
+  padding: 40px 60px 24px 60px;
+}
+
+.terms-page-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 약관 페이지 본문 영역 */
+.terms-page-body {
+  padding: 32px 60px 32px 60px;
+  overflow: visible;
+}
+
+/* 약관 내용 */
+.terms-content {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.8;
+}
+
+/* 약관 내용 내 소제목 스타일 */
+.terms-content h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 32px;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.terms-content h4:first-child {
+  margin-top: 0;
+}
+
+.terms-content p {
+  margin-bottom: 16px;
+  color: #555;
+}
+
+.terms-content ul {
+  margin: 16px 0;
+  padding-left: 24px;
+}
+
+.terms-content li {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.terms-content strong {
+  color: #333;
+  font-weight: 600;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .terms-page-header {
+    padding: 32px 32px 20px 32px;
+  }
+
+  .terms-page-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .terms-page-body {
+    padding: 24px 32px 24px 32px;
+  }
+
+  .terms-content {
+    font-size: 0.9rem;
+  }
+
+  .terms-content h4 {
+    font-size: 1.1rem;
+    margin-top: 24px;
+    margin-bottom: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .terms-page-header {
+    padding: 24px 20px 16px 20px;
+  }
+
+  .terms-page-header h1 {
+    font-size: 1.2rem;
+  }
+
+  .terms-page-body {
+    padding: 20px;
+  }
+
+  .terms-content {
+    font-size: 0.85rem;
+  }
+
+  .terms-content h4 {
+    font-size: 1rem;
+  }
+}
+

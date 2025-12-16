@@ -1,0 +1,250 @@
+.signup-terms-container {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  padding: 24px;
+  box-sizing: border-box;
+  animation: fadeBackground 0.8s ease;
+}
+
+.signup-terms-card {
+  width: min(672px, 100%);
+  min-height: 348px;
+  background: white;
+  border-radius: 14px;
+  outline: 1px solid rgba(0, 0, 0, 0.10);
+  outline-offset: -1px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: cardEnter 0.6s ease;
+}
+
+.signup-terms-header {
+  padding: 24px 24px 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.signup-terms-title {
+  color: #0A0A0A;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  margin: 0 0 8px 0;
+  text-align: left;
+}
+
+.signup-terms-subtitle {
+  color: #717182;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  margin: 0;
+  text-align: left;
+}
+
+.signup-terms-body {
+  flex: 1;
+  padding: 0 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-height: 0;
+}
+
+.terms-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.all-agree-item {
+  height: 48px;
+  padding-left: 16px;
+  background: #F9FAFB;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  background: #F3F3F5;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkbox.checked {
+  background: white;
+}
+
+.checkbox svg {
+  width: 12px;
+  height: 12px;
+}
+
+.all-agree-text {
+  color: #0A0A0A;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+}
+
+.terms-list {
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.term-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 32px;
+  width: 100%;
+}
+
+.term-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 1 auto;
+  justify-content: flex-start;
+}
+
+.term-label {
+  color: #0A0A0A;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 14px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.view-button {
+  padding: 0 12px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  color: #0A0A0A;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  margin-right: 16px;
+}
+
+.view-button:hover {
+  background: #F3F3F5;
+  transform: translateY(-1px);
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  height: 36px;
+  margin-top: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cancel-button {
+  flex: 1;
+  height: 36px;
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  border-radius: 8px;
+  color: #0A0A0A;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.cancel-button:hover {
+  background: #F3F3F5;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 14px rgba(0, 0, 0, 0.08);
+}
+
+.next-button {
+  flex: 1;
+  height: 36px;
+  padding: 8px 16px;
+  background: #030213;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  opacity: 0.5;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.next-button.active {
+  opacity: 1;
+}
+
+.next-button.active:hover {
+  background: #1a1a2e;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.12);
+}
+
+.next-button:disabled {
+  cursor: not-allowed;
+}
+
+@keyframes fadeBackground {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+

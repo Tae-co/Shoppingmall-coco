@@ -1,0 +1,209 @@
+.order-detail-container {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 10px;
+  font-family: "Pretendard", sans-serif;
+}
+
+/* 뒤로가기 버튼 */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.back-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.order-header {
+  padding-left: 22px;
+  padding-right: 22px; 
+}
+
+.order-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.order-no {
+  color: #888;
+  font-size: 13px;
+}
+
+.section-box {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 22px;
+  margin-top: 28px;
+}
+
+.section-box p {
+  margin: 10px 0;
+  line-height: 1.4;
+}
+
+.section-box h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.delivery-msg {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #999;
+}
+
+/* 상품 카드 */
+.product-card {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between !important;
+  padding: 18px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.product-card:last-child {
+  border-bottom: none;
+}
+
+.product-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.product-name {
+  font-size: 15px !important;
+  font-weight: 500;
+  color: #222;
+  line-height: 1.3;
+}
+
+.product-detail {
+  font-size: 15px;
+  color: #777;
+  margin-bottom: 10px;
+}
+
+.product-info {
+  flex: 1;
+}
+
+/* 버튼 */
+.review-btn,
+.action-btn,
+.list-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid #222;
+  background-color: #fff;
+  color: #222;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+}
+
+.review-btn {
+  align-self: flex-end;
+  padding: 4px 10px !important;
+  height: 30px !important;
+  font-size: 12px !important;
+  margin-left: auto !important;
+  border-radius: 6px !important;
+  white-space: nowrap;
+}
+
+.review-btn:hover,
+.action-btn:hover,
+.list-btn:hover {
+  background-color: #222;
+  color: #fff;
+}
+
+.status-actions {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin: 25px 0 10px;
+}
+
+.action-btn {
+  padding: 10px 22px !important;
+  width: 250px;
+  text-align: center;
+  border: 1px solid #222 !important;
+  border-radius: 8px;
+  font-size: 15px !important;
+  font-weight: 600;
+  background: #fff !important;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.action-btn:hover {
+  background-color: #222 !important;
+  color: #fff !important;
+}
+
+.list-btn {
+  width: 150px;
+  margin: 35px auto;
+  display: block;
+  font-weight: 600;
+}
+
+/* 결제 정보 */
+.price-row,
+.price-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin: 6px 0;
+}
+
+.price-total {
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.list-btn.cancel-btn {
+  background-color: #dc3545;
+  color: white;
+  border: 1px solid #dc3545;
+  margin-left: 10px;
+  cursor: pointer;
+  height: 40px;
+  padding: 0 15px;
+  border-radius: 4px;
+}
+
+/* 마우스 호버 시 스타일 */
+.list-btn.cancel-btn:hover {
+  background-color: #c82333;
+  border-color: #c82333;
+}
+
+.order-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

@@ -1,0 +1,177 @@
+.reviewBox {
+    display: flex;
+    position: relative;
+    width: 1246px;
+    padding: 16px 16px 24px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    flex: 1 0 0;
+}
+
+.reviewBox:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.headBox {
+    display: flex;
+    height: 44px;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.name-star {
+    display: flex;
+    height: 44px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    flex: 1 0 0;
+
+}
+
+.username {
+    font-weight: 600;
+    font-size: 18px;
+    color: #222;
+}
+
+.resale {
+    display: flex;
+    font-size: 10px;
+    color: #555;
+}
+
+.stars {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.stars img {
+    width: 20px;
+    height: 20px;
+}
+
+.date-edit {
+    position: absolute;
+    display: flex;
+    top: 16px;
+    right: 16px;
+    align-items: center;
+    gap: 8px;
+}
+
+.date {
+    padding-bottom: 2px;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    font-size: 10px;
+}
+
+.icon-btn {
+    width: 32px;
+    height: 32px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.icon-btn:hover {
+    opacity: 1;
+}
+
+.imgBox {
+    margin-top: 25px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.imgBox img {
+    width: 150px;
+    height: 150px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid #eee;
+}
+
+.tagBox {
+    margin-top: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tagBox span {
+    background-color: #f4f4f4;
+    border-radius: 20px;
+    padding: 6px 13px;
+    font-size: 14px;
+    color: #555;
+}
+
+.textBox {
+    margin-top: 18px;
+}
+
+.textBox p {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.6;
+    white-space: pre-line;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.textBox p.clamped {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.textBox p.expanded {
+    -webkit-line-clamp: unset;
+}
+
+.detail-box {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    color: #666;
+    font-size: 14px;
+    width: fit-content;
+    transition: color 0.2s ease;
+}
+
+.detail-box:hover {
+    color: #111;
+}
+
+.detail-box img {
+    width: 16px;
+    height: 16px;
+    transform: rotate(0deg);
+    transition: transform 0.2s ease;
+}
+
+.detail-box.expanded img {
+    transform: rotate(180deg);
+}
+
+.like img {
+    width: 30px;
+    height: 30px;
+}
+
+.like span {
+    background-color: #f4f4f4;
+    border-radius: 20px;
+    padding: 6px 13px;
+    font-size: 14px;
+    color: #555;
+}

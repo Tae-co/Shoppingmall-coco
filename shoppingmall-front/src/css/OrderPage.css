@@ -1,0 +1,208 @@
+/* --- 1. 기본 레이아웃 --- */
+.order-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #333;
+}
+.order-page h1 {
+  font-size: 2rem;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+.order-page h2 {
+  font-size: 1.5rem;
+  font-weight: 600; /* h2 폰트 굵기 추가 */
+  margin: 0; /* .section-header가 여백을 관리하므로 제거 */
+  padding: 0;
+  border-bottom: none; /* .section-header가 밑줄을 관리 */
+  text-align: left;
+}
+/* '배송방법' h2는 .section-header가 없으므로 기존 스타일 유지 */
+.shipping-details > h2 {
+  font-size: 1.5rem;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  text-align: left;
+  font-weight: 600; /* 폰트 굵기 통일 */
+}
+.order-page h3 {
+  font-size: 1.25rem;
+  margin-bottom: 20px;
+}
+.order-content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+.shipping-details {
+  flex-grow: 1;
+}
+.order-summary-sidebar {
+  width: 320px;
+  flex-shrink: 0;
+}
+
+/* --- 2. 상단 진행 단계 --- */
+.checkout-progress {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 40px;
+}
+.step-item { display: flex; flex-direction: column; align-items: center; color: #ccc; font-weight: bold; }
+.step-item .step-icon { width: 30px; height: 30px; border-radius: 50%; background-color: #eee; color: #ccc; display: flex; justify-content: center; align-items: center; font-size: 1rem; margin-bottom: 8px; }
+.step-item.active { color: #333; }
+.step-item.active .step-icon { background-color: #333; color: #fff; }
+.step-item.complete { color: #00c73c; }
+.step-item.complete .step-icon { background-color: #00c73c; color: #fff; }
+.step-connector { flex-grow: 1; height: 2px; background-color: #eee; margin: 0 10px; position: relative; bottom: 15px; }
+
+
+/* --- 3. 배송 정보 폼 --- */
+
+.section-header {
+  display: flex;
+  justify-content: space-between; /* h2와 버튼을 양쪽 끝으로 */
+  align-items: center; /* 세로 중앙 정렬 */
+  border-bottom: 1px solid #eee; /* h2에 있던 밑줄을 여기로 이동 */
+  padding-bottom: 10px;
+  margin-bottom: 20px; /* 폼과의 간격 */
+}
+
+.btn-load-info {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  color: #333;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0; /* 버튼 찌그러짐 방지 */
+}
+.btn-load-info:hover {
+  background-color: #e9e9e9;
+}
+
+
+
+.shipping-form .form-group {
+  margin-bottom: 20px;
+}
+.shipping-form label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  text-align: left;
+}
+.shipping-form input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.shipping-form input[type="text"]::placeholder {
+  color: #aaa;
+}
+
+.form-group-half { display: flex; gap: 20px; }
+.form-group-half .form-group { width: 50%; }
+
+
+.form-group-with-button {
+  display: flex;
+  align-items: flex-end; /* 입력폼 그룹과 버튼을 하단에 정렬 */
+  gap: 10px;
+}
+/* '주소 검색' 아랫줄 정렬을 위한 수정 */
+.shipping-form .form-group-with-button .form-group {
+  flex-grow: 1;
+  margin-bottom: 0; 
+}
+.btn-outline {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 1px solid #555;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+/* --- 4. 배송 방법 --- */
+.shipping-method-box {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 20px;
+}
+.shipping-method-box .method-title {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+.shipping-method-box .method-title .free {
+  color: #00c73c;
+  font-weight: bold;
+}
+.shipping-method-box .method-title .fee {
+  color: #333;
+  font-weight: bold;
+}
+.shipping-method-box p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 15px;
+}
+.shipping-highlight {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #00c73c;
+}
+.shipping-warning {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #d9534f; 
+}
+.shipping-fine-print {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 15px;
+  line-height: 1.5;
+}
+
+/* --- 5. 오른쪽 사이드바 --- */
+.summary-box {
+  border: 1px solid #eee;
+  background-color: #fafafa;
+  padding: 24px;
+  border-radius: 4px;
+  text-align: left;
+}
+.summary-box p {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+.btn-primary { width: 100%; padding: 14px; font-size: 1rem; font-weight: 600; color: #fff; 
+  background-color: #333; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 10px; }
+.btn-secondary { width: 100%; padding: 14px; font-size: 1rem; font-weight: 600; color: #333; 
+  background-color: #fff; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+
+.required-note {
+    font-size: 0.9em;
+    color: #6c757d; 
+    margin-top: -10px; 
+}  

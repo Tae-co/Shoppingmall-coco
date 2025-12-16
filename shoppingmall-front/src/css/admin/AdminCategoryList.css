@@ -1,0 +1,142 @@
+.admin-page-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.admin-card {
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.content-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 15px 0;
+}
+
+/* === 폼 레이아웃 === */
+.category-form {
+  display: grid !important;
+  /* 1열(240px) | 2열(나머지) | 3열(자동) */
+  grid-template-columns: 240px 1fr auto !important;
+  gap: 12px;
+  /* 하단 정렬: 모든 요소의 밑바닥을 맞춤 */
+  align-items: end !important;
+  
+  background-color: #f8f9fa;
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 입력 그룹 (라벨 + 인풋) */
+.category-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0; /* 패딩 초기화 */
+}
+
+/* 상위 카테고리 */
+.category-form .form-group:nth-child(1) {
+  width: 100%; /* 그리드 셀 안에서 꽉 차게 */
+}
+
+/* 카테고리 이름 */
+.category-form .form-group:nth-child(2) {
+  min-width: 200px; /* 최소 너비 방어 */
+}
+
+/* 라벨 스타일 */
+.category-form label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #555;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+/* 입력창 & 선택박스 */
+.category-form .admin-input {
+  display: block;
+  width: 100%;
+  height: 48px !important; /* 높이 고정 */
+  padding: 0 12px;
+  font-size: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  box-sizing: border-box; /* 테두리 포함 크기 */
+  margin: 0; /* 마진 제거 */
+}
+
+/* 버튼 그룹 */
+.category-form .button-group {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  margin: 0;
+  padding: 0;
+}
+
+/* 버튼 스타일 */
+.category-form .btn {
+  height: 48px !important;
+  padding: 0 24px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 1px solid transparent; 
+  width: auto !important;
+  min-width: 80px;
+  margin-bottom: 1px !important;
+}
+
+/* 버튼 색상 */
+.category-form .btn-primary {
+  background-color: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.category-form .btn-secondary {
+  background-color: #fff;
+  color: #555;
+  border: 1px solid #ddd;
+}
+
+.category-form .btn:hover {
+  opacity: 0.9;
+}
+
+/* 모바일에서는 세로 배치 */
+@media (max-width: 768px) {
+  .category-form {
+    grid-template-columns: 1fr !important;
+    align-items: stretch !important;
+  }
+  .category-form .btn {
+    width: 100% !important;
+    margin-bottom: 0 !important;
+  }
+}

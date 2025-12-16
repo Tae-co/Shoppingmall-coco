@@ -1,0 +1,39 @@
+.image-gallery-box {
+  flex: 1;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.main-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+.thumbnail-container {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+}
+
+.thumbnail {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 2px solid #eee;
+  transition: border-color 0.2s;
+}
+
+.thumbnail:hover {
+  border-color: #888;
+}
+
+.thumbnail.active {
+  border-color: #333;
+}

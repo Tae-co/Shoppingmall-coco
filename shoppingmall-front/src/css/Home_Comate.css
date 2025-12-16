@@ -1,0 +1,20 @@
+.slick-center > div > div > div {
+    box-shadow: 0 10px 30px 5px rgba(0, 0, 0, 0.3);
+}
+
+.comate-slider-container .slick-prev:before,
+.comate-slider-container .slick-next:before {
+    color: #E2E2E2;
+    font-size: 50px;
+    z-index: 20;
+}
+.comate-slider-container .slick-prev,
+.comate-slider-container .slick-next {
+    z-index: 10;
+}
+.comate-slider-container .slick-prev {
+    left: 30px;
+}
+.comate-slider-container .slick-next {
+    right: 75px;
+}

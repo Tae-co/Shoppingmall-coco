@@ -1,0 +1,283 @@
+/* --- Spinner --- */
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  min-height: 300px;
+}
+
+.spinner-wheel {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #333; /* Primary Color */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* --- Pagination --- */
+.pagination-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 20px;
+}
+
+.page-btn {
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #333;
+  padding: 8px 12px;
+  margin: 0 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.page-btn.active {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.page-btn:disabled {
+  background: #eee;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+/* --- TagCheckboxGroup --- */
+.tag-group {
+  margin-bottom: 15px;
+}
+
+.tag-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.checkbox-item input {
+  margin-right: 8px;
+  transform: scale(1.2);
+}
+
+/* --- Modal Styles (주문 상세 팝업) --- */
+
+/* 배경 (검은색 반투명) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 뒤 배경 어둡게 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* 제일 위에 뜨도록 */
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* 모달 창 (흰색 박스) */
+.modal-content {
+  background: white;
+  width: 600px;
+  max-width: 90%;
+  max-height: 90vh; /* 화면보다 크면 스크롤 */
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 헤더 */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+}
+
+.btn-close:hover {
+  color: #333;
+}
+
+/* 본문 */
+.modal-body {
+  padding: 20px;
+  overflow-y: auto; /* 내용 길면 스크롤 */
+}
+
+.info-group {
+  margin-bottom: 25px;
+}
+
+.info-group h4 {
+  font-size: 15px;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #333;
+  padding-bottom: 5px;
+}
+
+.info-group p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* 모달 내부 테이블 */
+.modal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.modal-table th {
+  background: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+  padding: 8px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.modal-table td {
+  border-bottom: 1px solid #eee;
+  padding: 8px;
+  text-align: center;
+}
+
+/* 푸터 (닫기 버튼 영역) */
+.modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  text-align: right;
+  background-color: #fafafa;
+}
+
+.btn-secondary {
+  padding: 8px 16px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-secondary:hover {
+  background-color: #f0f0f0;
+}
+
+/* 등장 애니메이션 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* === 아이콘 버튼 스타일 === */
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  margin: 0 4px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.icon-btn img {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.icon-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.icon-btn.edit:hover {
+  background-color: #e3f2fd; /* 파란색 틴트 */
+}
+
+.icon-btn.delete:hover {
+  background-color: #ffebee; /* 빨간색 틴트 */
+}
+
+/* 모든 관리자 테이블의 헤더 스타일 통일 */
+.admin-table th, .category-table th {
+  background: #f9f9f9;
+  border-bottom: 2px solid #eee;
+  padding: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Pagination 줄임표 스타일 */
+.page-ellipsis {
+  padding: 0 8px;
+  color: #888;
+  font-weight: bold;
+  user-select: none;
+  align-self: center; /* 세로 중앙 정렬 */
+}
+
+/* 숫자 입력창 화살표 제거 */
+/* Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
