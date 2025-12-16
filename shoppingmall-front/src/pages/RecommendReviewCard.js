@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 
 import '../css/ComateReviewCard.css';
 
-import sampleImg_product from '../images/sampleImg_product.png';
 import sampleImg_profile from '../images/sampleImg_profile.png'; // 임시 프로필 이미지
 import starIcon from '../images/review_rate_icon_star.png';
 
