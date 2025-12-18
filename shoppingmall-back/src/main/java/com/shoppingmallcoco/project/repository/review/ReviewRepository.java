@@ -48,11 +48,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         "JOIN r.orderItem oi " +
         "JOIN oi.order o " +
         "JOIN o.member m " +
-        "JOIN m.skin s " +
+        "JOIN Follow f " +
+        "ON f.following = m " +
         "WHERE oi.product.prdNo = :prdNo " +
-        "AND s.skinType = :skinType ")
+        "AND f.follower.memNo = :currentMemberNo ")
     Page<Review> findPageByProductAndSkinType(@Param("prdNo") Long prdNo,
-        @Param("skinType") String skinType, Pageable pageable);
+        @Param("currentMemberNo") Long currentMemberNo, Pageable pageable);
 
     Page<Review> findByOrderItemProductPrdNo(Long prdNo, Pageable pageable);
     
