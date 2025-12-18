@@ -19,7 +19,7 @@ const RecommendPrdCard = ({
 
     return (
         <div className="recommend_prd_wrapper">
-            <Link to={`/products/${productNo}`}>
+            <Link to={`/products/${productNo}`} className="recommend_prd_link">
                 <img src={productImg} className="recommend_prd_img" />
                 <div className="prd_info">
                     <div className={`recommend_prd_name ${isOverflow ? 'overflow' : ''}`}>

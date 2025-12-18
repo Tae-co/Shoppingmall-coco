@@ -52,7 +52,7 @@ const ComateRecommend = ({ loginUserNo }) => {
                         </div>
                     )}
                 </div>
-                <div className="recommend_grid_4">
+                <div className="user_grid_4">
                 {recommendData?.users?.map((user) => (
                     <RecommendUserCard key={user.memNo} {...user} />
                 ))} 
@@ -80,7 +80,7 @@ const ComateRecommend = ({ loginUserNo }) => {
                     <div className="recommend_title">이런 상품은 어떠세요?</div>
                     <div className="recommend_sub"></div>
                 </div>
-                <div className="recommend_grid_4">
+                <div className="prd_grid_4">
                 {recommendData?.products?.map((product) => (
                     <RecommendPrdCard key={product.productNo} {...product} />
                 ))} 
