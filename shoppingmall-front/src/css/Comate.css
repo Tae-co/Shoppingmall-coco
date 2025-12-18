@@ -61,7 +61,7 @@
 .comate_search_container input[type="text"] {
     width: 400px;
     font-size: 16px;
-    padding: 15px 20px;
+    padding: 10px 20px;
     border: none;
     outline: none;
 }
@@ -132,6 +132,7 @@
 
     .comate_search_container input {
         font-size: 14px;
+        width: 100%;
     }
 
     /* 프로필 내 닉네임, 매칭률 등 글자 축소 */
@@ -158,7 +159,10 @@
         position: static !important;
         top: auto !important;
     }
+    
     .comate_content_wrapper, .recommend_wrapper {
+        margin-right: 0;
         margin: 20px 10px;
     }
+    
 }

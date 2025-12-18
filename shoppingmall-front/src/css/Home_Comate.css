@@ -18,3 +18,7 @@
 .comate-slider-container .slick-next {
     right: 75px;
 }
+
+@media (max-width: 960px) {
+
+}

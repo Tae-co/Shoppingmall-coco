@@ -34,6 +34,8 @@ ul {
     font-size: 12px;
     height: 14px;
     margin-left: auto;
+    flex-wrap: nowrap;
+    white-space: nowrap;
 }
 .top_item+.top_item {
     margin-left: 24px;
@@ -307,13 +309,18 @@ ul {
     .header_center {
         margin: 0 20px;
     }
+    .header_top.top_list {
+        font-size: 10px;
+    }
 }
 @media (max-width: 600px) {
     .logo {
-        width: 95px;
+        display: none;
     }
     .gnb_list {
         gap: 4px;
+        flex-wrap: nowrap;
+        white-space: nowrap;
     }
     .gnb_list .gnb_link {
         font-size: 16px;
@@ -323,6 +330,14 @@ ul {
         margin-right: 5px;
     }
     .header_center {
-        margin: 0 10px;
+        flex: none;
+        margin: 0 5px;
     }
+    .header_right {
+        flex-wrap: nowrap; 
+        white-space: nowrap;
+        gap: 0;
+        justify-content: flex-start;
+        min-width: auto;
+      }
 }

@@ -105,3 +105,9 @@
     font-size: 12px;
     color: #777777;
 }
+
+@media (max-width: 822px) {
+    .footer_top {
+        display: none;
+    }
+}

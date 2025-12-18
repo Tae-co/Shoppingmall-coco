@@ -1,8 +1,11 @@
 section {
     margin-bottom: 20px;
 }
-.recommend_wrapper {
-    margin-right: 50px;
+.recommend_prd_wrapper {
+    width: 100%;
+}
+.recommend_prd_link {
+    display:block;
 }
 .recommend_title {
     font-size: 20px;
@@ -12,23 +15,53 @@ section {
 .recommend_sub {
     color: #777;
 }
-.recommend_grid_4 {
+.user_grid_4 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 5px;
     padding: 20px 10px;
 }
+.prd_grid_4 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    padding: 20px 10px;
+}
 .recommend_prd_img {
-    width: 85%;
+    width: 100%;
     border-radius: 5px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
 }
 .prd_info {
     margin: 5px 10px;
 }
 .recommend_prd_name {
-    font-weight: 500;
-    font-size: 15px;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
 }
+.prd_name_text {
+    display: inline-block;
+    white-space: nowrap;
+    padding-left: 0;
+    transform: translateX(0);
+}
+
+.recommend_prd_name.overflow:hover .prd_name_text {
+    padding-left: 100%;
+    animation: marquee 6s linear infinite;
+}
+  
+@keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+}
+  
 .recommend_prd_price {
     font-size: 15px;
 }

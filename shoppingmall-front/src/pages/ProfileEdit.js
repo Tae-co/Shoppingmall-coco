@@ -29,7 +29,7 @@ function ProfileEdit() {
       .get(`http://13.231.28.89:18080/api/coco/members/profile/${memNo}`, { headers })
       .then((res) => {
         const data = res.data;
-        console.log("프로필 조회 성공:", data);
+        // console.log("프로필 조회 성공:", data);
 
         setSkinType(data.skinType || "");
         setPersonalColor(data.personalColor || "");
@@ -39,7 +39,7 @@ function ProfileEdit() {
         }
       })
       .catch((err) => {
-        console.error("프로필 조회 실패:", err);
+        // console.error("프로필 조회 실패:", err);
         if (err.response?.status === 403) {
           alert("본인의 프로필만 조회할 수 있습니다.");
         } else if (err.response?.status === 401) {
@@ -81,7 +81,7 @@ function ProfileEdit() {
         navigate("/mypage");
       })
       .catch((err) => {
-        console.error("프로필 저장 실패:", err);
+        // console.error("프로필 저장 실패:", err);
         if (err.response?.status === 403) {
           alert("본인의 프로필만 수정할 수 있습니다.");
         } else if (err.response?.status === 401) {

@@ -16,12 +16,12 @@ function Home_Comate() {
 
     const settings = {
         accessibility: false,
+        infinite: true,
         className: "center",
         centerMode: true,
-        infinite: true,
         centerPadding: "60px",
         slidesToShow: 5,
-        slideToScroll: 1,
+        slidesToScroll: 1,
         speed: 500,
         autoplay: true,
         autoplaySpeed: 3000,
@@ -47,15 +47,16 @@ function Home_Comate() {
                 breakpoint: 768, // 태블릿 ↓
                 settings: {
                     slidesToShow: 2,
-                    centerPadding: "25px",
+                    centerPadding: "0px",
+                    centerMode: false,
                 },
             },
             {
                 breakpoint: 480, // 모바일 ↓
                 settings: {
                     slidesToShow: 1,
-                    centerMode: true,
-                    centerPadding: "20px",
+                    centerPadding: "0px",
+                    centerMode: false,
                 },
             },
         ]

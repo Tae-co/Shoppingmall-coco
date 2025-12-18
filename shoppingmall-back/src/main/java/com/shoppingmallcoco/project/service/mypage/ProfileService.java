@@ -45,7 +45,6 @@ public class ProfileService {
         skin.setPersonalColor(dto.getPersonalColor());
 
         skinRepository.save(skin);
-        
         matchingService.invalidateCacheForUser(memNo);
     }
 
