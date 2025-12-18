@@ -90,7 +90,7 @@ function ProductReviews({ productNo }) {
     return (
         <div className="review-list-container" style={{ maxWidth: '1100px', margin: '0 auto' }}>
             <div className="review-header">
-                <h2 className="review-title">리뷰 (총 {reviews.length}개)</h2>
+                <h2 className="review-title">리뷰</h2>
                 <div className="filter-container">
                     <button type="button" className="filter-latest" onClick={() => {
                         setSortType("latest");
@@ -131,6 +131,11 @@ function ProductReviews({ productNo }) {
                     productNo={productNo}
                 />
             ))}
+
+            {/* 페이지네이션 위에 현재 페이지의 리뷰 개수를 표시 */}
+            <div style={{ textAlign: "right", margin: "20px 0 5px 0", fontSize: "14px", color: "#555" }}>
+                현재 페이지 리뷰: {reviews.length}개
+            </div>
 
             <div className="pagination" style={{ textAlign: "center", margin: "20px 0" }}>
                 <button
