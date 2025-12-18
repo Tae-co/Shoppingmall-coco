@@ -48,7 +48,7 @@
   - '나와 비슷한 피부 타입' 유저의 리뷰만 필터링하여 보기
 - **관리자(Admin)**
   - 상품 등록/수정/삭제 및 카테고리 관리
-  - 전체 회원 조회 및 적립금(포인트) 관리
+  - 전체 회원 조회 및 포인트 관리
   - 주문 현황 조회 및 취소 처리
 
 - ### 1.3 팀 구성 및 역할 분담
@@ -144,7 +144,7 @@
 | | POST | `/api/member/login` | 로그인 (JWT 발급) | 🌐 |
 | | POST | `/api/member/oauth/{provider}` | 소셜 로그인 (Kakao/Naver/Google) | 🌐 |
 | | GET | `/api/member/admin/list` | 전체 회원 목록 조회 (검색/페이징) | 👑 |
-| | PUT | `/api/member/admin/{no}/point` | **회원 적립금(포인트) 수정** | 👑 |
+| | PUT | `/api/member/admin/{no}/point` | **회원 포인트 수정** | 👑 |
 | **Product** | GET | `/api/products` | 상품 목록 조회 (피부타입 필터링) | 🌐 |
 | | GET | `/api/products/{no}` | 상품 상세 조회 | 🌐 |
 | | GET | `/api/products/{no}/similar-skin` | **유사 피부 타입 유저 통계 조회** | ✅ |
@@ -325,7 +325,7 @@ sequenceDiagram
 <br>
 
 #### ② 예외 처리 흐름 (Exception Path: 자동 환불)
-*결제는 성공했으나, **재고 부족**이나 **금액 위변조(해킹 시도)**가 감지될 경우, **즉시 결제를 취소(환불)하고 롤백** 처리하는 방어 로직입니다.*
+*결제는 성공했으나, **재고 부족**이나 **금액 위변조(해킹 시도)** 가 감지될 경우, **즉시 결제를 취소(환불)하고 롤백** 처리하는 방어 로직입니다.*
 
 ```mermaid
 sequenceDiagram
