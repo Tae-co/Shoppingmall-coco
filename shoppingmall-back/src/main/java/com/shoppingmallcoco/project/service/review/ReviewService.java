@@ -283,7 +283,6 @@ public class ReviewService implements IReviewService {
             prdNo, skinType, top3);
 
         // 백분율 변환 및 DTO 생성
-
         List<SimilarSkinStatsDTO.TagStat> stats = topTags.stream().map(tag -> {
             int percentage = (int) Math.round(((double) tag.getCount() / totalReviewers) * 100);
             return new SimilarSkinStatsDTO.TagStat(tag.getTagName(), percentage, tag.getCount(),
@@ -335,12 +334,7 @@ public class ReviewService implements IReviewService {
         Page<Review> reviewPage;
 
         if (Boolean.TRUE.equals(coMate)) {
-            SkinProfile skin = skinRepository.findByMember_MemNo(memNo)
-                .orElseThrow(() -> new IllegalArgumentException("피부 타입 설정이 되지 않았습니다."));
-
-            String skinType = skin.getSkinType();
-
-            reviewPage = reviewRepository.findPageByProductAndSkinType(productNo, skinType,
+            reviewPage = reviewRepository.findPageByProductAndSkinType(productNo, memNo,
                 pageable);
         } else {
             reviewPage = reviewRepository.findByOrderItemProductPrdNo(productNo, pageable);
