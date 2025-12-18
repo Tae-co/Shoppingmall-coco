@@ -51,3 +51,9 @@
     font-weight: 600;
     color: #777777;
 }
+
+@media (max-width: 960px) {
+    .comate_recommend_wrapper {
+        display: none;
+    }
+}
